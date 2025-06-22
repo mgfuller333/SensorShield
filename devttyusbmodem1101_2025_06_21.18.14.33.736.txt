@@ -1,0 +1,223 @@
+  Classic BT        : No
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237364 B ( 231.8 KB)
+  Free Bytes        :   192276 B ( 187.8 KB)
+  Allocated Bytes   :    38824 B (  37.9 KB)
+  Minimum Free Bytes:   188472 B ( 184.1 KB)
+  BT Low Energy     : Yes
+  Largest Free Block:   126964 B ( 124.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2095104 B (2046.0 KB)
+  IEEE 802.15.4     : No
+------------------------------------------
+  Allocated Bytes   :        0 B (   0.0 KB)
+  Minimum Free Bytes:  2095104 B (2046.0 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+  Bus Mode          : QSPI
+------------------------------------------
+Flash Info:
+------------------------------------------
+  Chip Size         : 16777216 B (16 MB)
+  Block Size        :    65536 B (  64.0 KB)
+  Sector Size       :     4096 B (   4.0 KB)
+  Page Size         :      256 B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Bus Mode          : QIO
+------------------------------------------
+Partitions Info:
+------------------------------------------
+                nvs : addr: 0x00009000, size:    20.0 KB, type: DATA, subtype: NVS
+            otadata : addr: 0x0000E000, size:     8.0 KB, type: DATA, subtype: OTA
+               app0 : addr: 0x00010000, size:  2048.0 KB, type:  APP, subtype: OTA_0
+               app1 : addr: 0x00210000, size:  2048.0 KB, type:  APP, subtype: OTA_1
+               ffat : addr: 0x00410000, size: 12160.0 KB, type: DATA, subtype: FAT
+           coredump : addr: 0x00FF0000, size:    64.0 KB, type: DATA, subtype: COREDUMP
+------------------------------------------
+Software Info:
+------------------------------------------
+  Compile Date/Time : Jun 21 2025 12:30:58
+  Compile Host OS   : macosx
+  ESP-IDF Version   : v5.3.2-584-g489d7a2b3a-dirty
+  Arduino Version   : 3.1.3
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32S3_DEV
+  Arduino Variant   : esp32s3
+  Arduino FQBN      : esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=debug,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default
+============ Before Setup End ============
+[  1688][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 19 already has type USB_DM (45) with bus 0x3fcba1bc
+[  1688][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 20 already has type USB_DP (46) with bus 0x3fcba1bc
+[  1997][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=4 scl=5 freq=100000
+Wire and SPI set
+[  2048][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=6 scl=7 freq=100000
+[  2048][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Wire and SPI initialized
+Setting up sensor:
+0
+allocating memory:
+0
+beginning sensor comm:
+0
+subscribing to sensor:
+0
+adding callback to sensor:
+0
+Setting up sensor:
+1
+allocating memory:
+1
+beginning sensor comm:
+1
+subscribing to sensor:
+1
+adding callback to sensor:
+1
+Setting up sensor:
+2
+allocating memory:
+2
+beginning sensor comm:
+2
+subscribing to sensor:
+2
+adding callback to sensor:
+2
+Setting up sensor:
+3
+allocating memory:
+3
+beginning sensor comm:
+3
+subscribing to sensor:
+3
+adding callback to sensor:
+3
+Setting up sensor:
+4
+allocating memory:
+4
+beginning sensor comm:
+4
+subscribing to sensor:
+4
+adding callback to sensor:
+4
+Setting up sensor:
+5
+allocating memory:
+5
+beginning sensor comm:
+5
+subscribing to sensor:
+5
+adding callback to sensor:
+5
+Setting up sensor:
+6
+allocating memory:
+6
+beginning sensor comm:
+6
+subscribing to sensor:
+6
+adding callback to sensor:
+6
+Setting up sensor:
+7
+allocating memory:
+7
+beginning sensor comm:
+7
+subscribing to sensor:
+7
+adding callback to sensor:
+7
+BSEC library version 2.6.1.0
+BatteryHelper: sensors ready.
+init SD and RTC...
+[  2278][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[  2279][E][esp32-hal-adc.c:267] __analogRead(): Pin 0 is not ADC pin!
+SD and RTC init complete
+is_bme68x_conf_available...
+EDK_SENSOR_CONFIG_MISSING_ERROR
+ret_code Good: Setting to DEMO_IDLE_MODE
+[ 10008][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +SYSSTART
+[ 10009][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CMEE=1
+[ 10905][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 10906][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CEREG=1
+Modem initialization OK
+Configured low power mode
+=========== After Setup Start ============
+[ 10925][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237364 B ( 231.8 KB)
+  Free Bytes        :   185832 B ( 181.5 KB)
+  Allocated Bytes   :    44852 B (  43.8 KB)
+  Minimum Free Bytes:   185728 B ( 181.4 KB)
+  Largest Free Block:   122868 B ( 120.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2092564 B (2043.5 KB)
+  Allocated Bytes   :     2252 B (   2.2 KB)
+  Minimum Free Bytes:  2092564 B (2043.5 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+------------------------------------------
+GPIO Info:
+------------------------------------------
+  GPIO : BUS_TYPE[bus/unit][chan]
+  --------------------------------------  
+     2 : GPIO
+     4 : I2C_MASTER_SDA[0]
+     5 : I2C_MASTER_SCL[0]
+     6 : I2C_MASTER_SDA[1]
+     7 : I2C_MASTER_SCL[1]
+    11 : SPI_MASTER_MOSI[0]
+    12 : SPI_MASTER_SCK[0]
+    13 : SPI_MASTER_MISO[0]
+    21 : UART_RTS[2]
+    14 : UART_RX[2]
+    20 : USB_DP
+    19 : USB_DM
+    43 : UART_TX[0]
+    42 : GPIO
+    44 : UART_RX[0]
+    47 : UART_CTS[2]
+    48 : UART_TX[2]
+============ After Setup End =============
+Guru Meditation Error: Core  1 panic'ed (InstructionFetchError). Exception was unhandled.
+
+Core  1 register dump:
+PC      : 0x3fcc65b4  PS      : 0x00060530  A0      : 0x82013b3c  A1      : 0x3fcc9e30  
+A2      : 0x00000000  A3      : 0x3fcc9e5e  A4      : 0x00000001  A5      : 0x3fcc9ec5  
+A6      : 0x00000002  A7      : 0x3fcbf19c  A8      : 0x820807dc  A9      : 0x3fcc65b4  
+A10     : 0x3fcca080  A11     : 0x3fcc9e5e  A12     : 0x00000001  A13     : 0x3fcc9ec5  
+A14     : 0x00000002  A15     : 0x3fcbf19c  SAR     : 0x00000020  EXCCAUSE: 0x00000002  
+EXCVADDR: 0x3fcc65b4  LBEG    : 0x40056f08  LEND    : 0x40056f12  LCOUNT  : 0x00000000  
+
+
+Backtrace: 0x3fcc65b1:0x3fcc9e30 |<-CORRUPTED
+
+
+Core  0 register dump:
+PC      : 0x4037be7e  PS      : 0x00060334  A0      : 0x82020540  A1      : 0x3fcc6970  
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00060020  A5      : 0x3fcc62d0  
+A6      : 0x00000001  A7      : 0x00000160  A8      : 0x8201f56a  A9      : 0x3fcc6930  
+A10     : 0x00000000  A11     : 0x00000000  A12     : 0x3fc9ee50  A13     : 0x00000000  
+A14     : 0x00060020  A15     : 0x3fc9f9a4  SAR     : 0x0000001d  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x00000000  LBEG    : 0x00000000  LEND    : 0x00000000  LCOUNT  : 0x00000000  
+
+
+Backtrace: 0x4037be7b:0x3fcc6970 0x4202053d:0x3fcc6990 0x4038102f:0x3fcc69b0 0x4037feb2:0x3fcc69d0
+
+
+
+
+ELF file SHA256: e84

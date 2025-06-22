@@ -1,0 +1,91 @@
+[  2667][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=4 scl=5 freq=100000
+Wire and SPI set
+[  2718][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=6 scl=7 freq=100000
+[  2718][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Wire and SPI initialized
+Setting up sensor:
+0
+allocating memory:
+0
+beginning sensor comm:
+0
+subscribing to sensor:
+0
+adding callback to sensor:
+0
+Setting up sensor:
+1
+allocating memory:
+1
+beginning sensor comm:
+1
+subscribing to sensor:
+1
+adding callback to sensor:
+1
+Setting up sensor:
+2
+allocating memory:
+2
+beginning sensor comm:
+2
+subscribing to sensor:
+2
+adding callback to sensor:
+2
+Setting up sensor:
+3
+allocating memory:
+3
+beginning sensor comm:
+3
+subscribing to sensor:
+3
+adding callback to sensor:
+3
+Setting up sensor:
+4
+allocating memory:
+4
+beginning sensor comm:
+4
+subscribing to sensor:
+4
+adding callback to sensor:
+4
+Setting up sensor:
+5
+allocating memory:
+5
+beginning sensor comm:
+5
+subscribing to sensor:
+5
+adding callback to sensor:
+5
+Setting up sensor:
+6
+allocating memory:
+6
+beginning sensor comm:
+6
+subscribing to sensor:
+6
+adding callback to sensor:
+6
+Setting up sensor:
+7
+allocating memory:
+7
+beginning sensor comm:
+7
+subscribing to sensor:
+7
+adding callback to sensor:
+7
+BSEC library version 2.6.1.0
+Initializing BatteryHelper...
+Initializing INA219 sensors...
+[  2931][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Failed to initialize INA219 for battery.
+ERROR: INA219 init failed. Check wiring & addresses.

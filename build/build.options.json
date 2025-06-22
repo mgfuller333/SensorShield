@@ -1,0 +1,9 @@
+{
+  "additionalFiles": "../../..,../../..,../../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..,../..",
+  "compiler.optimization_flags": "-Os",
+  "customBuildProperties": "build.warn_data_percentage=75",
+  "fqbn": "esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=debug,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default",
+  "hardwareFolders": "/Users/morganfuller/Library/Arduino15/packages",
+  "otherLibrariesFolders": "/Users/morganfuller/Documents/Arduino/libraries",
+  "sketchLocation": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield"
+}

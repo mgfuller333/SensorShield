@@ -1,0 +1,492 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "/Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32"
+  },
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "/Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/variants/esp32s3"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "Wire.h",
+    "Includepath": "/Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/libraries/Wire/src"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "SPI.h",
+    "Includepath": "/Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/libraries/SPI/src"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "WalterModem.h",
+    "Includepath": "/Users/morganfuller/Documents/Arduino/libraries/WalterModem/src"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "bsec2.h",
+    "Includepath": "/Users/morganfuller/Documents/Arduino/libraries/bsec2/src"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "bme68xLibrary.h",
+    "Includepath": "/Users/morganfuller/Documents/Arduino/libraries/BME68x_Sensor_library/src"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "SdFat.h",
+    "Includepath": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "RTClib.h",
+    "Includepath": "/Users/morganfuller/Documents/Arduino/libraries/RTClib/src"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "Adafruit_I2CDevice.h",
+    "Includepath": "/Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "ArduinoJson.h",
+    "Includepath": "/Users/morganfuller/Documents/Arduino/libraries/ArduinoJson/src"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "Adafruit_INA219.h",
+    "Includepath": "/Users/morganfuller/Documents/Arduino/libraries/Adafruit_INA219"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "Adafruit_LTR329_LTR303.h",
+    "Includepath": "/Users/morganfuller/Documents/Arduino/libraries/Adafruit_LTR329_and_LTR303"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "Adafruit_MPL3115A2.h",
+    "Includepath": "/Users/morganfuller/Documents/Arduino/libraries/Adafruit_MPL3115A2_Library"
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/WalterPatch.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/batteryHelper.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/bme68x_datalogger.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/bsec_datalogger.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/cellularHelper.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/commMux.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/gpsHelper.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/label_provider.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/led_controller.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/sensor_manager.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/utils.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/libraries/Wire/src/Wire.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/libraries/SPI/src/SPI.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/WalterModem.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/proto/WalterBlueCherry.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/proto/WalterCoAP.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/proto/WalterGNSS.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/proto/WalterHTTP.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/proto/WalterMQTT.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/proto/WalterSocket.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/bsec2/src/bsec2.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/bsec2/src/commMux/commMux.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/BME68x_Sensor_library/src/bme68x/bme68x.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/BME68x_Sensor_library/src/bme68xLibrary.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatDbg.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatFile.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatFilePrint.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatFileWrite.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatFormatter.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatName.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatPartition.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatVolume.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatDbg.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatFile.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatFileLFN.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatFilePrint.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatFileSFN.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatFormatter.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatName.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatPartition.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatVolume.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FreeStack.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FsLib/FsFile.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FsLib/FsNew.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FsLib/FsVolume.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/MinimumSerial.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/SdCardInfo.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/SdSpiCard.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/SdioTeensy.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SpiDriver/SdSpiArtemis.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SpiDriver/SdSpiChipSelect.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SpiDriver/SdSpiDue.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SpiDriver/SdSpiESP.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SpiDriver/SdSpiParticle.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SpiDriver/SdSpiSTM32.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SpiDriver/SdSpiSTM32Core.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SpiDriver/SdSpiTeensy3.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/common/FmtNumber.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/common/FsCache.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/common/FsDateTime.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/common/FsName.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/common/FsStructs.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/common/FsUtf.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/common/PrintBasic.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/common/upcase.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/iostream/StdioStream.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/iostream/StreamBaseClass.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/iostream/istream.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/SdFat/src/iostream/ostream.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/RTClib/src/RTC_DS1307.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/RTClib/src/RTC_DS3231.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/RTClib/src/RTC_Micros.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/RTClib/src/RTC_Millis.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/RTClib/src/RTC_PCF8523.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/RTClib/src/RTC_PCF8563.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/RTClib/src/RTClib.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_BusIO_Register.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_GenericDevice.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_I2CDevice.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_SPIDevice.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/Adafruit_INA219/Adafruit_INA219.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/Adafruit_LTR329_and_LTR303/Adafruit_LTR329_LTR303.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/morganfuller/Documents/Arduino/libraries/Adafruit_MPL3115A2_Library/Adafruit_MPL3115A2.cpp",
+    "Include": "",
+    "Includepath": null
+  }
+]

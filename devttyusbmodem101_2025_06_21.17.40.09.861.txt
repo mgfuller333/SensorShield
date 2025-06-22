@@ -1,0 +1,2809 @@
+  Classic BT        : No
+  BT Low Energy     : Yes
+  IEEE 802.15.4     : No
+------------------------------------------
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   192124 B ( 187.6 KB)
+  Allocated Bytes   :    38824 B (  37.9 KB)
+  Minimum Free Bytes:   188320 B ( 183.9 KB)
+  Largest Free Block:   126964 B ( 124.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2095104 B (2046.0 KB)
+  Allocated Bytes   :        0 B (   0.0 KB)
+  Minimum Free Bytes:  2095104 B (2046.0 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+  Bus Mode          : QSPI
+------------------------------------------
+Flash Info:
+------------------------------------------
+  Chip Size         : 16777216 B (16 MB)
+  Block Size        :    65536 B (  64.0 KB)
+  Sector Size       :     4096 B (   4.0 KB)
+  Page Size         :      256 B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Bus Mode          : QIO
+------------------------------------------
+Partitions Info:
+------------------------------------------
+                nvs : addr: 0x00009000, size:    20.0 KB, type: DATA, subtype: NVS
+            otadata : addr: 0x0000E000, size:     8.0 KB, type: DATA, subtype: OTA
+               app0 : addr: 0x00010000, size:  2048.0 KB, type:  APP, subtype: OTA_0
+               app1 : addr: 0x00210000, size:  2048.0 KB, type:  APP, subtype: OTA_1
+               ffat : addr: 0x00410000, size: 12160.0 KB, type: DATA, subtype: FAT
+           coredump : addr: 0x00FF0000, size:    64.0 KB, type: DATA, subtype: COREDUMP
+------------------------------------------
+Software Info:
+------------------------------------------
+  Compile Date/Time : Jun 21 2025 12:30:58
+  Compile Host OS   : macosx
+  ESP-IDF Version   : v5.3.2-584-g489d7a2b3a-dirty
+  Arduino Version   : 3.1.3
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32S3_DEV
+  Arduino Variant   : esp32s3
+  Arduino FQBN      : esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=debug,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default
+============ Before Setup End ============
+[  1818][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 19 already has type USB_DM (45) with bus 0x3fcba254
+[  1818][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 20 already has type USB_DP (46) with bus 0x3fcba254
+[  2127][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=4 scl=5 freq=100000
+Wire and SPI set
+[  2178][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=6 scl=7 freq=100000
+[  2178][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Wire and SPI initialized
+Setting up sensor:
+0
+allocating memory:
+0
+beginning sensor comm:
+0
+subscribing to sensor:
+0
+adding callback to sensor:
+0
+Setting up sensor:
+1
+allocating memory:
+1
+beginning sensor comm:
+1
+subscribing to sensor:
+1
+adding callback to sensor:
+1
+Setting up sensor:
+2
+allocating memory:
+2
+beginning sensor comm:
+2
+subscribing to sensor:
+2
+adding callback to sensor:
+2
+Setting up sensor:
+3
+allocating memory:
+3
+beginning sensor comm:
+3
+subscribing to sensor:
+3
+adding callback to sensor:
+3
+Setting up sensor:
+4
+allocating memory:
+4
+beginning sensor comm:
+4
+subscribing to sensor:
+4
+adding callback to sensor:
+4
+Setting up sensor:
+5
+allocating memory:
+5
+beginning sensor comm:
+5
+subscribing to sensor:
+5
+adding callback to sensor:
+5
+Setting up sensor:
+6
+allocating memory:
+6
+beginning sensor comm:
+6
+subscribing to sensor:
+6
+adding callback to sensor:
+6
+Setting up sensor:
+7
+allocating memory:
+7
+beginning sensor comm:
+7
+subscribing to sensor:
+7
+adding callback to sensor:
+7
+BSEC library version 2.6.1.0
+BatteryHelper: sensors ready.
+init SD and RTC...
+[  2408][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[  2409][E][esp32-hal-adc.c:267] __analogRead(): Pin 0 is not ADC pin!
+SD and RTC init complete
+is_bme68x_conf_available...
+EDK_SENSOR_CONFIG_MISSING_ERROR
+ret_code Good: Setting to DEMO_IDLE_MODE
+[  9782][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: 
+[  9782][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +SYSSTART
+[  9785][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CMEE=1
+[ 10685][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 10686][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CEREG=1
+[ 10705][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Modem initialization OK
+Configured low power mode
+=========== After Setup Start ============
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   185680 B ( 181.3 KB)
+  Allocated Bytes   :    44852 B (  43.8 KB)
+  Minimum Free Bytes:   185576 B ( 181.2 KB)
+  Largest Free Block:   122868 B ( 120.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2092564 B (2043.5 KB)
+  Allocated Bytes   :     2252 B (   2.2 KB)
+  Minimum Free Bytes:  2092564 B (2043.5 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+------------------------------------------
+GPIO Info:
+------------------------------------------
+  GPIO : BUS_TYPE[bus/unit][chan]
+  --------------------------------------  
+     2 : GPIO
+     4 : I2C_MASTER_SDA[0]
+     5 : I2C_MASTER_SCL[0]
+     6 : I2C_MASTER_SDA[1]
+     7 : I2C_MASTER_SCL[1]
+    11 : SPI_MASTER_MOSI[0]
+    12 : SPI_MASTER_SCK[0]
+    13 : SPI_MASTER_MISO[0]
+    14 : UART_RX[2]
+    19 : USB_DM
+    20 : USB_DP
+    21 : UART_RTS[2]
+    42 : GPIO
+    43 : UART_TX[0]
+    44 : UART_RX[0]
+    47 : UART_CTS[2]
+    48 : UART_TX[2]
+============ After Setup End =============
+[ 10833][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 10847][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 10862][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 10848][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 10862][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 10868][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 10886][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 10886][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 10892][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 10911][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 10911][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 10917][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 10934][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to NO RF
+[ 10935][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CGDCONT=1,"IP",,,0,0,0,0,0,0,0,0,0,0,0
+[ 11067][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Created PDP context
+[ 11068][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=1
+[ 11226][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to FULL
+[ 11226][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+COPS=0
+[ 11235][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Network selection mode to was set to automatic
+[ 11236][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+SQNHTTPCFG=1,"coap.bluecherry.io",80,0,"","",0,120,,,60,15
+[ 11378][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully configured the http profile
+waiting for the network...
+[ 11871][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 2
+[ 13265][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 5
+Connected to the network
+[ 13279][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 13290][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 13290][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 13296][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 13314][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 13314][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 13320][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 13339][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 13339][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 13845][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 13855][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "2025-06-21T22:40:21"
+[ 13856][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 13861][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSASSISTANCE?
+[ 13881][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 0,1,129516,15455769,15455769
+[ 13887][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 1,1,598,4761,8361
+[ 13890][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 2,0,0,0,0
+[ 13899][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 13906][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 14405][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 14406][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 0
+Disconnected from the network
+[ 14408][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 14424][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Disconnected from the network
+[ 14425][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 14438][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 14939][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 14975][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[122830][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSFIXREADY: 0,"2025-06-21T23:20:25.767184",67293,"20000000.000000","-2.880199","73.027801","247727.392162","580.334201","752.172371","97.400355","ywCCVQ4AAADfYQAACwAAAAAgGsX4PwAAAMDsLVDAAAAAYGMgwUDoAwAA3QYBAAkATgArBREAAADuAAAAAAAAAFjVmvMFAEEAZQISAAAArgAAAAAAAABqDtsDEACMADoCAQAAANIAAAAAAAAAvnHQAx4AdgD0Aw4AAADjAAAAAAAAACDHcPsTAAUAOQATAAAA1wAAAAAAAABwDyAHBABYAJ0AAQAAAOgAAAAAAAAA1mXN9x8APgDsBQ4AAADzAAAAAAAAADgEm/MUAHkAJQYOAAAAuwAAAAAAAAB/6r8DCwB1AMACAQAAAMwAAAAAAAAACOs6Ax0ALQD1AA0AAADHAAAAAAAAAAoU6P8DAC4A9gcEAAAAsgAAAAAAAAAAk/T/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAHNqGMalCgfABF/HfMdBUkBWAyYjez0OQQ9XcXGsIoJAdfnOA2GBh0CKu8lrn1lYQAAAAADQEnNBAAD//wAAAAABAAIA/////////////wAAAgACAAIAAgACAAQAAgACAAIAAgAEAAAAOT5XaF5Pui0=",(9,30),(5,22),(16,26),(30,28),(19,27),(4,29),(31,30),(20,23),(11,26),(29,25),(3,22)
+[122976][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[123012][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[123012][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[123079][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[123079][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[123216][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[123217][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[123256][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Failed to get a valid GNSS fix
+Guru Meditation Error: Core  / panic'ed (Cache disabled but cached memory region accessed). 
+MMU entry fault error occurred while accessing the address 0x43cc65f4 (invalid mmu entry)
+
+
+Core  0 register dump:
+PC      : 0x4037be7e  PS      : 0x00060334  A0      : 0x82020e6c  A1      : 0x3fcc6a10  
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00060020  A5      : 0x3fcc6360  
+A6      : 0x00000001  A7      : 0x00000160  A8      : 0x8201fe96  A9      : 0x3fcc69d0  
+A10     : 0x00000000  A11     : 0x00000000  A12     : 0x3fc9eee0  A13     : 0x00000000  
+A14     : 0x00060020  A15     : 0x3fc9fa34  SAR     : 0x0000001d  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x00000000  LBEG    : 0x00000000  LEND    : 0x00000000  LCOUNT  : 0x00000000  
+
+
+Backtrace: 0x4037be7b:0x3fcc6a10 0x42020e69:0x3fcc6a30 0x4038102f:0x3fcc6a50 0x4037feb2:0x3fcc6a70
+
+
+Core  1 register dump:
+PC      : 0x40387a9b  PS      : 0x00060534  A0      : 0x40379e84  A1      : 0x3fcc9d60  
+A2      : 0x00000000  A3      : 0x400556d5  A4      : 0x00000001  A5      : 0x3fcc9eb5  
+A6      : 0x00000002  A7      : 0x0000001c  A8      : 0x82081134  A9      : 0x3fcc65ec  
+A10     : 0x3630328c  A11     : 0x3fcc9e4e  A12     : 0x00000001  A13     : 0x3fcc9eb5  
+A14     : 0x00000002  A15     : 0x3fcbf234  SAR     : 0x00000020  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x3fcc65ec  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffd  
+
+
+Backtrace: 0x40387a98:0x3fcc9d60 0x40379e81:0x3fcc9e40 0x420144b8:0x3fcc9e70 0x420148d6:0x3fcc9e90 0x420149b9:0x3fcc9ee0 0x42004905:0x3fcc9f00 0x420043b6:0x3fcc9f30 0x4201be14:0x3fcca310 0x4037feb2:0x3fcca330
+
+
+
+
+ELF file SHA256: 64c11c4bf
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x2b (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40377269
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1188
+load:0x403c8700,len:0x4
+load:0x403cb700,len:0x30e4
+load:0x403c8704,len:0xbf0
+entry 0x403c88ac
+[    18][I][esp32-hal-psram.c:102] psramAddToHeap(): PSRAM added to the heap.
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Cores             : 2
+  CPU Frequency     : 240 MHz
+  XTAL Frequency    : 40 MHz
+  Features Bitfield : 0x00000012
+  Embedded Flash    : No
+  Embedded PSRAM    : No
+  2.4GHz WiFi       : Yes
+  Model             : ESP32-S3
+  Package           : 0
+  Revision          : 0.02
+  Classic BT        : No
+  BT Low Energy     : Yes
+  IEEE 802.15.4     : No
+------------------------------------------
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   192124 B ( 187.6 KB)
+  Allocated Bytes   :    38824 B (  37.9 KB)
+  Minimum Free Bytes:   188320 B ( 183.9 KB)
+  Largest Free Block:   126964 B ( 124.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2095104 B (2046.0 KB)
+  Allocated Bytes   :        0 B (   0.0 KB)
+  Minimum Free Bytes:  2095104 B (2046.0 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+  Bus Mode          : QSPI
+------------------------------------------
+Flash Info:
+------------------------------------------
+  Chip Size         : 16777216 B (16 MB)
+  Block Size        :    65536 B (  64.0 KB)
+  Sector Size       :     4096 B (   4.0 KB)
+  Page Size         :      256 B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Bus Mode          : QIO
+------------------------------------------
+Partitions Info:
+------------------------------------------
+                nvs : addr: 0x00009000, size:    20.0 KB, type: DATA, subtype: NVS
+            otadata : addr: 0x0000E000, size:     8.0 KB, type: DATA, subtype: OTA
+               app0 : addr: 0x00010000, size:  2048.0 KB, type:  APP, subtype: OTA_0
+               app1 : addr: 0x00210000, size:  2048.0 KB, type:  APP, subtype: OTA_1
+               ffat : addr: 0x00410000, size: 12160.0 KB, type: DATA, subtype: FAT
+           coredump : addr: 0x00FF0000, size:    64.0 KB, type: DATA, subtype: COREDUMP
+------------------------------------------
+Software Info:
+------------------------------------------
+  Compile Date/Time : Jun 21 2025 12:30:58
+  Compile Host OS   : macosx
+  ESP-IDF Version   : v5.3.2-584-g489d7a2b3a-dirty
+  Arduino Version   : 3.1.3
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32S3_DEV
+  Arduino Variant   : esp32s3
+  Arduino FQBN      : esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=debug,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default
+============ Before Setup End ============
+[   371][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 19 already has type USB_DM (45) with bus 0x3fcba254
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 20 already has type USB_DP (46) with bus 0x3fcba254
+[   681][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=4 scl=5 freq=100000
+Wire and SPI set
+[   732][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=6 scl=7 freq=100000
+[   732][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Wire and SPI initialized
+Setting up sensor:
+0
+allocating memory:
+0
+beginning sensor comm:
+0
+subscribing to sensor:
+0
+adding callback to sensor:
+0
+Setting up sensor:
+1
+allocating memory:
+1
+beginning sensor comm:
+1
+subscribing to sensor:
+1
+adding callback to sensor:
+1
+Setting up sensor:
+2
+allocating memory:
+2
+beginning sensor comm:
+2
+subscribing to sensor:
+2
+adding callback to sensor:
+2
+Setting up sensor:
+3
+allocating memory:
+3
+beginning sensor comm:
+3
+subscribing to sensor:
+3
+adding callback to sensor:
+3
+Setting up sensor:
+4
+allocating memory:
+4
+beginning sensor comm:
+4
+subscribing to sensor:
+4
+adding callback to sensor:
+4
+Setting up sensor:
+5
+allocating memory:
+5
+beginning sensor comm:
+5
+subscribing to sensor:
+5
+adding callback to sensor:
+5
+Setting up sensor:
+6
+allocating memory:
+6
+beginning sensor comm:
+6
+subscribing to sensor:
+6
+adding callback to sensor:
+6
+Setting up sensor:
+7
+allocating memory:
+7
+beginning sensor comm:
+7
+subscribing to sensor:
+7
+adding callback to sensor:
+7
+BSEC library version 2.6.1.0
+BatteryHelper: sensors ready.
+init SD and RTC...
+[   961][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   962][E][esp32-hal-adc.c:267] __analogRead(): Pin 0 is not ADC pin!
+SD and RTC init complete
+is_bme68x_conf_available...
+EDK_SENSOR_CONFIG_MISSING_ERROR
+ret_code Good: Setting to DEMO_IDLE_MODE
+[  8506][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: 
+[  8507][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +SYSSTART
+[  8509][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CMEE=1
+[  9409][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9409][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CEREG=1
+[  9429][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Modem initialization OK
+Configured low power mode
+=========== After Setup Start ============
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   185680 B ( 181.3 KB)
+  Allocated Bytes   :    44852 B (  43.8 KB)
+  Minimum Free Bytes:   185576 B ( 181.2 KB)
+  Largest Free Block:   122868 B ( 120.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2092564 B (2043.5 KB)
+  Allocated Bytes   :     2252 B (   2.2 KB)
+  Minimum Free Bytes:  2092564 B (2043.5 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+------------------------------------------
+GPIO Info:
+------------------------------------------
+  GPIO : BUS_TYPE[bus/unit][chan]
+  --------------------------------------  
+     2 : GPIO
+     4 : I2C_MASTER_SDA[0]
+     5 : I2C_MASTER_SCL[0]
+     6 : I2C_MASTER_SDA[1]
+     7 : I2C_MASTER_SCL[1]
+    11 : SPI_MASTER_MOSI[0]
+    12 : SPI_MASTER_SCK[0]
+    13 : SPI_MASTER_MISO[0]
+    14 : UART_RX[2]
+    19 : USB_DM
+    20 : USB_DP
+    21 : UART_RTS[2]
+    42 : GPIO
+    43 : UART_TX[0]
+    44 : UART_RX[0]
+    47 : UART_CTS[2]
+    48 : UART_TX[2]
+============ After Setup End =============
+[  9557][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9571][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9572][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9585][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9586][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9591][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9609][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9610][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9616][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9634][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9634][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9641][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9658][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to NO RF
+[  9658][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CGDCONT=1,"IP",,,0,0,0,0,0,0,0,0,0,0,0
+[  9791][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Created PDP context
+[  9792][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=1
+[ 10148][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to FULL
+[ 10148][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+COPS=0
+[ 10156][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Network selection mode to was set to automatic
+[ 10157][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+SQNHTTPCFG=1,"coap.bluecherry.io",80,0,"","",0,120,,,60,15
+[ 10180][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully configured the http profile
+waiting for the network...
+[ 10564][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 2
+[ 11859][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 5
+Connected to the network
+[ 11881][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11892][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11892][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 11897][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11916][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11916][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 11922][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11940][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11941][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 12447][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 12458][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "2025-06-21T22:42:24"
+[ 12459][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12464][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSASSISTANCE?
+[ 12484][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 0,1,129639,15455646,15455646
+[ 12490][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 1,1,721,4638,8238
+[ 12493][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 2,0,0,0,0
+[ 12502][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12509][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 13323][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 13323][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 0
+Disconnected from the network
+[ 13326][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 13342][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Disconnected from the network
+[ 13343][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 13356][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 13856][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 13893][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[109924][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSFIXREADY: 0,"2025-06-21T22:42:25.000000",66565,"20000000.000000","0.000000","0.000000","0.000000","0.000000","0.000000","0.000000","4/eBVQ4AAADeYQAAAAAAAAAgGsX4PwAAAMDsLVDAAAAAYGMgwUDoAwAABQQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADQEnNBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUTVXaAAAAAA="
+[110393][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110429][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110430][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110496][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110497][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110536][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110536][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110707][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Failed to get a valid GNSS fix
+Guru Meditation Error: Core  / panic'ed (Cache disabled but cached memory region accessed). 
+MMU entry fault error occurred while accessing the address 0x43cc65f4 (invalid mmu entry)
+
+
+Core  0 register dump:
+PC      : 0x4037be7e  PS      : 0x00060334  A0      : 0x82020e6c  A1      : 0x3fcc6a10  
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00060020  A5      : 0x3fcc6360  
+A6      : 0x00000001  A7      : 0x00000160  A8      : 0x8201fe96  A9      : 0x3fcc69d0  
+A10     : 0x00000000  A11     : 0x00000000  A12     : 0x3fc9eee0  A13     : 0x00000000  
+A14     : 0x00060020  A15     : 0x3fc9fa34  SAR     : 0x0000001d  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x00000000  LBEG    : 0x00000000  LEND    : 0x00000000  LCOUNT  : 0x00000000  
+
+
+Backtrace: 0x4037be7b:0x3fcc6a10 0x42020e69:0x3fcc6a30 0x4038102f:0x3fcc6a50 0x4037feb2:0x3fcc6a70
+
+
+Core  1 register dump:
+PC      : 0x40387a9b  PS      : 0x00060534  A0      : 0x40379e84  A1      : 0x3fcc9d60  
+A2      : 0x00000000  A3      : 0x400556d5  A4      : 0x00000001  A5      : 0x3fcc9eb5  
+A6      : 0x00000002  Afcbf234  SAR     : 0x00000020  EXCCAUSE: 0x00000007  
+EXCVADDR: 
+A10     : 0x3630328c  A11     : 0x3fcc9e4e  A12     : 0x00000001  A13     : 0x3fcc9eb5  
+A14     : 0x00000002  A15     : 0x37      : 0x0000001c  A8      : 0x82081134  A9      : 0x3fcc65ec  0x3fcc65ec  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffd  
+
+
+Backtrace: 0x40387a98:0x3fcc9d60 0x40379e81:0x3fcc9e40 0x420144b8:0x3fcc9e70 0x420148d6:0x3fcc9e90 0x420149b9:0x3fcc9ee0 0x42004905:0x3fcc9f00 0x420043b6:0x3fcc9f30 0x4201be14:0x3fcca310 0x4037feb2:0x3fcca330
+
+
+
+
+ELF file SHA256: 64c11c4bf
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x2b (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40377269
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1188
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xbf0
+load:0x403cb700,len:0x30e4
+entry 0x403c88ac
+[    18][I][esp32-hal-psram.c:102] psramAddToHeap(): PSRAM added to the heap.
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32-S3
+  Package           : 0
+  Revision          : 0.02
+  Cores             : 2
+  CPU Frequency     : 240 MHz
+  XTAL Frequency    : 40 MHz
+  Features Bitfield : 0x00000012
+  Embedded Flash    : No
+  Embedded PSRAM    : No
+  2.4GHz WiFi       : Yes
+  Classic BT        : No
+  BT Low Energy     : Yes
+  IEEE 802.15.4     : No
+------------------------------------------
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   192124 B ( 187.6 KB)
+  Allocated Bytes   :    38824 B (  37.9 KB)
+  Minimum Free Bytes:   188320 B ( 183.9 KB)
+  Largest Free Block:   126964 B ( 124.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2095104 B (2046.0 KB)
+  Allocated Bytes   :        0 B (   0.0 KB)
+  Minimum Free Bytes:  2095104 B (2046.0 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+  Bus Mode          : QSPI
+------------------------------------------
+Flash Info:
+------------------------------------------
+  Chip Size         : 16777216 B (16 MB)
+  Block Size        :    65536 B (  64.0 KB)
+  Sector Size       :     4096 B (   4.0 KB)
+  Page Size         :      256 B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Bus Mode          : QIO
+------------------------------------------
+Partitions Info:
+------------------------------------------
+                nvs : addr: 0x00009000, size:    20.0 KB, type: DATA, subtype: NVS
+            otadata : addr: 0x0000E000, size:     8.0 KB, type: DATA, subtype: OTA
+               app0 : addr: 0x00010000, size:  2048.0 KB, type:  APP, subtype: OTA_0
+               app1 : addr: 0x00210000, size:  2048.0 KB, type:  APP, subtype: OTA_1
+               ffat : addr: 0x00410000, size: 12160.0 KB, type: DATA, subtype: FAT
+           coredump : addr: 0x00FF0000, size:    64.0 KB, type: DATA, subtype: COREDUMP
+------------------------------------------
+Software Info:
+------------------------------------------
+  Compile Date/Time : Jun 21 2025 12:30:58
+  Compile Host OS   : macosx
+  ESP-IDF Version   : v5.3.2-584-g489d7a2b3a-dirty
+  Arduino Version   : 3.1.3
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32S3_DEV
+  Arduino Variant   : esp32s3
+  Arduino FQBN      : esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=debug,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default
+============ Before Setup End ============
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 19 already has type USB_DM (45) with bus 0x3fcba254
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 20 already has type USB_DP (46) with bus 0x3fcba254
+[   681][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=4 scl=5 freq=100000
+Wire and SPI set
+[   732][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=6 scl=7 freq=100000
+[   733][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Wire and SPI initialized
+Setting up sensor:
+0
+allocating memory:
+0
+beginning sensor comm:
+0
+subscribing to sensor:
+0
+adding callback to sensor:
+0
+Setting up sensor:
+1
+allocating memory:
+1
+beginning sensor comm:
+1
+subscribing to sensor:
+1
+adding callback to sensor:
+1
+Setting up sensor:
+2
+allocating memory:
+2
+beginning sensor comm:
+2
+subscribing to sensor:
+2
+adding callback to sensor:
+2
+Setting up sensor:
+3
+allocating memory:
+3
+beginning sensor comm:
+3
+subscribing to sensor:
+3
+adding callback to sensor:
+3
+Setting up sensor:
+4
+allocating memory:
+4
+beginning sensor comm:
+4
+subscribing to sensor:
+4
+adding callback to sensor:
+4
+Setting up sensor:
+5
+allocating memory:
+5
+beginning sensor comm:
+5
+subscribing to sensor:
+5
+adding callback to sensor:
+5
+Setting up sensor:
+6
+allocating memory:
+6
+beginning sensor comm:
+6
+subscribing to sensor:
+6
+adding callback to sensor:
+6
+Setting up sensor:
+7
+allocating memory:
+7
+beginning sensor comm:
+7
+subscribing to sensor:
+7
+adding callback to sensor:
+7
+BSEC library version 2.6.1.0
+BatteryHelper: sensors ready.
+init SD and RTC...
+[   962][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   963][E][esp32-hal-adc.c:267] __analogRead(): Pin 0 is not ADC pin!
+SD and RTC init complete
+is_bme68x_conf_available...
+EDK_SENSOR_CONFIG_MISSING_ERROR
+ret_code Good: Setting to DEMO_IDLE_MODE
+[  8361][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: 
+[  8361][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +SYSSTART
+[  8364][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CMEE=1
+[  9259][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9260][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CEREG=1
+[  9279][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Modem initialization OK
+Configured low power mode
+=========== After Setup Start ============
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   185680 B ( 181.3 KB)
+  Allocated Bytes   :    44852 B (  43.8 KB)
+  Minimum Free Bytes:   185576 B ( 181.2 KB)
+  Largest Free Block:   122868 B ( 120.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2092564 B (2043.5 KB)
+  Allocated Bytes   :     2252 B (   2.2 KB)
+  Minimum Free Bytes:  2092564 B (2043.5 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+------------------------------------------
+GPIO Info:
+------------------------------------------
+  GPIO : BUS_TYPE[bus/unit][chan]
+  --------------------------------------  
+     2 : GPIO
+     4 : I2C_MASTER_SDA[0]
+     5 : I2C_MASTER_SCL[0]
+     6 : I2C_MASTER_SDA[1]
+     7 : I2C_MASTER_SCL[1]
+    11 : SPI_MASTER_MOSI[0]
+    12 : SPI_MASTER_SCK[0]
+    13 : SPI_MASTER_MISO[0]
+    14 : UART_RX[2]
+    19 : USB_DM
+    20 : USB_DP
+    21 : UART_RTS[2]
+    42 : GPIO
+    43 : UART_TX[0]
+    44 : UART_RX[0]
+    47 : UART_CTS[2]
+    48 : UART_TX[2]
+============ After Setup End =============
+[  9407][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9421][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9422][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9436][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9436][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9442][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9460][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9460][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9466][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9484][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9485][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9491][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9508][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to NO RF
+[  9509][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CGDCONT=1,"IP",,,0,0,0,0,0,0,0,0,0,0,0
+[  9641][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Created PDP context
+[  9641][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=1
+[  9857][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to FULL
+[  9857][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+COPS=0
+[  9866][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Network selection mode to was set to automatic
+[  9866][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+SQNHTTPCFG=1,"coap.bluecherry.io",80,0,"","",0,120,,,60,15
+[  9889][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully configured the http profile
+waiting for the network...
+[ 10334][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 2
+[ 11767][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 5
+Connected to the network
+[ 11790][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11801][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11801][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 11807][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11825][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11825][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 11832][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11850][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11850][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 12357][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 12369][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "2025-06-21T22:44:16"
+[ 12369][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12374][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSASSISTANCE?
+[ 12395][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 0,1,129751,15455534,15455534
+[ 12400][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 1,1,833,4526,8126
+[ 12404][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 2,0,0,0,0
+[ 12413][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12419][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 13095][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 13095][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 0
+Disconnected from the network
+[ 13097][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 13114][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Disconnected from the network
+[ 13114][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 13128][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 13628][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 13664][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[109704][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSFIXREADY: 0,"2025-06-21T22:44:17.000000",66565,"20000000.000000","0.000000","0.000000","0.000000","0.000000","0.000000","0.000000","U/iBVQ4AAADeYQAAAAAAAAAgGsX4PwAAAMDsLVDAAAAAYGMgwUDoAwAABQQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADQEnNBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwTVXaAAAAAA="
+[110165][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110201][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110201][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110365][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110365][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110404][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110405][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110444][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Failed to get a valid GNSS fix
+Guru Meditation Error: Core  / panic'ed (Cache disabled but cached memory region accessed). 
+MMU entry fault error occurred while accessing the address 0x43cc65f4 (invalid mmu entry)
+
+
+Core  0 register dump:
+PC      : 0x4037be7e  PS      : 0x00060334  A0      : 0x82020e6c  A1      : 0x3fcc6a10  
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00060020  A5      : 0x3fcc6360  
+A6      : 0x00000001  A7      : 0x00000160  A8      : 0x8201fe96  A9      : 0x3fcc69d0  
+A10     : 0x00000000  A11     : 0x00000000  A12     : 0x3fc9eee0  A13     : 0x00000000  
+A14     : 0x00060020  A15     : 0x3fc9fa34  SAR     : 0x0000001d  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x00000000  LBEG    : 0x00000000  LEND    : 0x00000000  LCOUNT  : 0x00000000  
+
+
+Backtrace: 0x4037be7b:0x3fcc6a10 0x42020e69:0x3fcc6a30 0x4038102f:0x3fcc6a50 0x4037feb2:0x3fcc6a70
+
+
+Core  1 register dump:
+PC      : 0x40387a9b  PS      : 0x00060534  A0      : 0x40379e84  A1      : 0x3fcc9d60  
+A2      : 0x00000000  A3      : 0x400556d5  A4      : 0x00000001  A5      : 0x3fcc9eb5  
+A6      : 0x00000002  A7      : 0x0000001c  A8      : 0x82081134  A9      : 0x3fcc65ec  
+A10     : 0x3630328c  A11     : 0x3fcc9e4e  A12     : 0x00000001  A13     : 0x3fcc9eb5  
+A14     : 0x00000002  A15     : 0x3fcbf234  SAR     : 0x00000020  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x3fcc65ec  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffd  
+
+
+Backtrace: 0x40387a98:0x3fcc9d60 0x40379e81:0x3fcc9e40 0x420144b8:0x3fcc9e70 0x420148d6:0x3fcc9e90 0x420149b9:0x3fcc9ee0 0x42004905:0x3fcc9f00 0x420043b6:0x3fcc9f30 0x4201be14:0x3fcca310 0x4037feb2:0x3fcca330
+
+
+
+
+ELF file SHA256: 64c11c4bf
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x2b (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40377269
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1188
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xbf0
+load:0x403cb700,len:0x30e4
+entry 0x403c88ac
+[    18][I][esp32-hal-psram.c:102] psramAddToHeap(): PSRAM added to the heap.
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32-S3
+  Package           : 0
+  Revision          : 0.02
+  Cores             : 2
+  CPU Frequency     : 240 MHz
+  XTAL Frequency    : 40 MHz
+  Features Bitfield : 0x00000012
+  Embedded Flash    : No
+  Embedded PSRAM    : No
+  2.4GHz WiFi       : Yes
+  Classic BT        : No
+  BT Low Energy     : Yes
+  IEEE 802.15.4     : No
+------------------------------------------
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   192124 B ( 187.6 KB)
+  Allocated Bytes   :    38824 B (  37.9 KB)
+  Minimum Free Bytes:   188320 B ( 183.9 KB)
+  Largest Free Block:   126964 B ( 124.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2095104 B (2046.0 KB)
+  Allocated Bytes   :        0 B (   0.0 KB)
+  Minimum Free Bytes:  2095104 B (2046.0 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+  Bus Mode          : QSPI
+------------------------------------------
+Flash Info:
+------------------------------------------
+  Chip Size         : 16777216 B (16 MB)
+  Block Size        :    65536 B (  64.0 KB)
+  Sector Size       :     4096 B (   4.0 KB)
+  Page Size         :      256 B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Bus Mode          : QIO
+------------------------------------------
+Partitions Info:
+------------------------------------------
+                nvs : addr: 0x00009000, size:    20.0 KB, type: DATA, subtype: NVS
+            otadata : addr: 0x0000E000, size:     8.0 KB, type:  APP, subtype: OTA_0
+ APP, subtype: OTA_1
+               ffat : addr: 0x00410000, size: 12160.0 KB, type: DATA, subtype: FAT
+           coredump : addr: 0x00FF0000, size:    64.0 KB, type:                app0 : addr: 0x00010000, size:  2048.0 KB, type: ------------------------------------------
+Software Info:
+------------------------------------------
+  Compile Date/Time : Jun 21 2025 12:30:58
+DATA, subtype: OTA
+DATA, subtype: COREDUMP
+               app1 : addr: 0x00210000, size:  2048.0 KB, type:   Compile Host OS   : macosx
+  ESP-IDF Version   : v5.3.2-584-g489d7a2b3a-dirty
+  Arduino Version   : 3.1.3
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32S3_DEV
+  Arduino Variant   : esp32s3
+  Arduino FQBN      : esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=debug,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default
+============ Before Setup End ============
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 19 already has type USB_DM (45) with bus 0x3fcba254
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 20 already has type USB_DP (46) with bus 0x3fcba254
+[   681][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=4 scl=5 freq=100000
+Wire and SPI set
+[   732][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=6 scl=7 freq=100000
+[   732][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Wire and SPI initialized
+Setting up sensor:
+0
+allocating memory:
+0
+beginning sensor comm:
+0
+subscribing to sensor:
+0
+adding callback to sensor:
+0
+Setting up sensor:
+1
+allocating memory:
+1
+beginning sensor comm:
+1
+subscribing to sensor:
+1
+adding callback to sensor:
+1
+Setting up sensor:
+2
+allocating memory:
+2
+beginning sensor comm:
+2
+subscribing to sensor:
+2
+adding callback to sensor:
+2
+Setting up sensor:
+3
+allocating memory:
+3
+beginning sensor comm:
+3
+subscribing to sensor:
+3
+adding callback to sensor:
+3
+Setting up sensor:
+4
+allocating memory:
+4
+beginning sensor comm:
+4
+subscribing to sensor:
+4
+adding callback to sensor:
+4
+Setting up sensor:
+5
+allocating memory:
+5
+beginning sensor comm:
+5
+subscribing to sensor:
+5
+adding callback to sensor:
+5
+Setting up sensor:
+6
+allocating memory:
+6
+beginning sensor comm:
+6
+subscribing to sensor:
+6
+adding callback to sensor:
+6
+Setting up sensor:
+7
+allocating memory:
+7
+beginning sensor comm:
+7
+subscribing to sensor:
+7
+adding callback to sensor:
+7
+BSEC library version 2.6.1.0
+BatteryHelper: sensors ready.
+init SD and RTC...
+[   962][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   962][E][esp32-hal-adc.c:267] __analogRead(): Pin 0 is not ADC pin!
+SD and RTC init complete
+is_bme68x_conf_available...
+EDK_SENSOR_CONFIG_MISSING_ERROR
+ret_code Good: Setting to DEMO_IDLE_MODE
+[  8356][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: 
+[  8356][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +SYSSTART
+[  8359][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CMEE=1
+[  9259][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9259][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CEREG=1
+[  9279][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Modem initialization OK
+Configured low power mode
+=========== After Setup Start ============
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   185680 B ( 181.3 KB)
+  Allocated Bytes   :    44852 B (  43.8 KB)
+  Minimum Free Bytes:   185576 B ( 181.2 KB)
+  Largest Free Block:   122868 B ( 120.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2092564 B (2043.5 KB)
+  Allocated Bytes   :     2252 B (   2.2 KB)
+  Minimum Free Bytes:  2092564 B (2043.5 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+------------------------------------------
+GPIO Info:
+------------------------------------------
+  GPIO : BUS_TYPE[bus/unit][chan]
+  --------------------------------------  
+     2 : GPIO
+     4 : I2C_MASTER_SDA[0]
+     5 : I2C_MASTER_SCL[0]
+     6 : I2C_MASTER_SDA[1]
+     7 : I2C_MASTER_SCL[1]
+    11 : SPI_MASTER_MOSI[0]
+    12 : SPI_MASTER_SCK[0]
+    13 : SPI_MASTER_MISO[0]
+    14 : UART_RX[2]
+    19 : USB_DM
+    20 : USB_DP
+    21 : UART_RTS[2]
+    42 : GPIO
+    43 : UART_TX[0]
+    44 : UART_RX[0]
+    47 : UART_CTS[2]
+    48 : UART_TX[2]
+============ After Setup End =============
+[  9407][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9421][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9422][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9435][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9436][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9441][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9460][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9460][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9466][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9484][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9485][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9491][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9508][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to NO RF
+[  9508][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CGDCONT=1,"IP",,,0,0,0,0,0,0,0,0,0,0,0
+[  9641][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Created PDP context
+[  9642][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=1
+[  9807][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to FULL
+[  9807][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+COPS=0
+[  9815][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Network selection mode to was set to automatic
+[  9816][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+SQNHTTPCFG=1,"coap.bluecherry.io",80,0,"","",0,120,,,60,15
+[  9839][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully configured the http profile
+waiting for the network...
+[ 10288][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 2
+[ 11466][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 5
+Connected to the network
+[ 11540][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11551][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11551][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 11556][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11575][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11575][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 11581][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11599][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11600][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 12107][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 12117][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "2025-06-21T22:46:06"
+[ 12118][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12123][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSASSISTANCE?
+[ 12144][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 0,1,129861,15455424,15455424
+[ 12149][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 1,1,943,4416,8016
+[ 12153][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 2,0,0,0,0
+[ 12162][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12168][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12654][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12654][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 0
+Disconnected from the network
+[ 12657][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12673][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Disconnected from the network
+[ 12674][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12687][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 13188][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 13224][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[109734][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSFIXREADY: 0,"2025-06-21T22:46:07.000000",66565,"20000000.000000","0.000000","0.000000","0.000000","0.000000","0.000000","0.000000","wfiBVQ4AAADeYQAAAAAAAAAgGsX4PwAAAMDsLVDAAAAAYGMgwUDoAwAABQQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADQEnNBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALzZXaAAAAAA="
+[110225][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110260][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110261][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110328][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110328][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110463][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110463][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110503][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Failed to get a valid GNSS fix
+Guru Meditation Error: Core  / panic'ed (Cache disabled but cached memory region accessed). 
+MMU entry fault error occurred while accessing the address 0x43cc65f4 (invalid mmu entry)
+
+
+Core  0 register dump:
+PC      : 0x4037be7e  PS      : 0x00060334  A0      : 0x82020e6c  A1      : 0x3fcc6a10  
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00060020  A5      : 0x3fcc6360  
+A6      : 0x00000001  A7      : 0x00000160  A8      : 0x8201fe96  A9      : 0x3fcc69d0  
+A10     : 0x00000000  A11     : 0x3fcc6bec  A12     : 0x80380152  A13     : 0x3fcc6910  
+A14     : 0x00060023  A15     : 0x00000003  SAR     : 0x0000001d  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x00000000  LBEG    : 0x00000000  LEND    : 0x00000000  LCOUNT  : 0x00000000  
+
+
+Backtrace: 0x4037be7b:0x3fcc6a10 0x42020e69:0x3fcc6a30 0x4038102f:0x3fcc6a50 0x4037feb2:0x3fcc6a70
+
+
+Core  1 register dump:
+PC      : 0x40387a9b  PS      : 0x00060534  A0      : 0x40379e84  A1      : 0x3fcc9d60  
+A2      : 0x00000000  A3      : 0x400556d5  A4      : 0x00000001  A5      : 0x3fcc9eb5  
+A6      : 0x00000002  A7      : 0x0000001c  A8      : 0x82081134  A9      : 0x3fcc65ec  
+A10     : 0x3630328c  A11     : 0x3fcc9e4e  A12     : 0x00000001  A13     : 0x3fcc9eb5  
+A14     : 0x00000002  A15     : 0x3fcbf234  SAR     : 0x00000020  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x3fcc65ec  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffd  
+
+
+Backtrace: 0x40387a98:0x3fcc9d60 0x40379e81:0x3fcc9e40 0x420144b8:0x3fcc9e70 0x420148d6:0x3fcc9e90 0x420149b9:0x3fcc9ee0 0x42004905:0x3fcc9f00 0x420043b6:0x3fcc9f30 0x4201be14:0x3fcca310 0x4037feb2:0x3fcca330
+
+
+
+
+ELF file SHA256: 64c11c4bf
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x2b (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40377269
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1188
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xbf0
+load:0x403cb700,len:0x30e4
+entry 0x403c88ac
+[    18][I][esp32-hal-psram.c:102] psramAddToHeap(): PSRAM added to the heap.
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32-S3
+  Package           : 0
+  Revision          : 0.02
+  Cores             : 2
+  CPU Frequency     : 240 MHz
+  XTAL Frequency    : 40 MHz
+  Features Bitfield : 0x00000012
+  Embedded Flash    : No
+  Embedded PSRAM    : No
+  2.4GHz WiFi       : Yes
+  Classic BT        : No
+  BT Low Energy     : Yes
+  IEEE 802.15.4     : No
+------------------------------------------
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   192124 B ( 187.6 KB)
+  Allocated Bytes   :    38824 B (  37.9 KB)
+  Minimum Free Bytes:   188320 B ( 183.9 KB)
+  Largest Free Block:   126964 B ( 124.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2095104 B (2046.0 KB)
+  Allocated Bytes   :        0 B (   0.0 KB)
+  Minimum Free Bytes:  2095104 B (2046.0 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+  Bus Mode          : QSPI
+------------------------------------------
+Flash Info:
+------------------------------------------
+  Chip Size         : 16777216 B (16 MB)
+  Block Size        :    65536 B (  64.0 KB)
+  Sector Size       :     4096 B (   4.0 KB)
+  Page Size         :      256 B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Bus Mode          : QIO
+------------------------------------------
+Partitions Info:
+------------------------------------------
+                nvs : addr: 0x00009000, size:    20.0 KB, type: DATA, subtype: NVS
+            otadata : addr: 0x0000E000, size:     8.0 KB, type: DATA, subtype: OTA
+               app0 : addr: 0x00010000, size:  2048.0 KB, type:  APP, subtype: OTA_0
+               app1 : addr: 0x00210000, size:  2048.0 KB, type:  APP, subtype: OTA_1
+               ffat : addr: 0x00410000, size: 12160.0 KB, type: DATA, subtype: FAT
+           coredump : addr: 0x00FF0000, size:    64.0 KB, type: DATA, subtype: COREDUMP
+------------------------------------------
+Software Info:
+------------------------------------------
+  Compile Date/Time : Jun 21 2025 12:30:58
+  Compile Host OS   : macosx
+  ESP-IDF Version   : v5.3.2-584-g489d7a2b3a-dirty
+  Arduino Version   : 3.1.3
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32S3_DEV
+  Arduino Variant   : esp32s3
+  Arduino FQBN      : esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=debug,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default
+============ Before Setup End ============
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 19 already has type USB_DM (45) with bus 0x3fcba254
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 20 already has type USB_DP (46) with bus 0x3fcba254
+[   681][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=4 scl=5 freq=100000
+Wire and SPI set
+[   732][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=6 scl=7 freq=100000
+[   733][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Wire and SPI initialized
+Setting up sensor:
+0
+allocating memory:
+0
+beginning sensor comm:
+0
+subscribing to sensor:
+0
+adding callback to sensor:
+0
+Setting up sensor:
+1
+allocating memory:
+1
+beginning sensor comm:
+1
+subscribing to sensor:
+1
+adding callback to sensor:
+1
+Setting up sensor:
+2
+allocating memory:
+2
+beginning sensor comm:
+2
+subscribing to sensor:
+2
+adding callback to sensor:
+2
+Setting up sensor:
+3
+allocating memory:
+3
+beginning sensor comm:
+3
+subscribing to sensor:
+3
+adding callback to sensor:
+3
+Setting up sensor:
+4
+allocating memory:
+4
+beginning sensor comm:
+4
+subscribing to sensor:
+4
+adding callback to sensor:
+4
+Setting up sensor:
+5
+allocating memory:
+5
+beginning sensor comm:
+5
+subscribing to sensor:
+5
+adding callback to sensor:
+5
+Setting up sensor:
+6
+allocating memory:
+6
+beginning sensor comm:
+6
+subscribing to sensor:
+6
+adding callback to sensor:
+6
+Setting up sensor:
+7
+allocating memory:
+7
+beginning sensor comm:
+7
+subscribing to sensor:
+7
+adding callback to sensor:
+7
+BSEC library version 2.6.1.0
+BatteryHelper: sensors ready.
+init SD and RTC...
+[   962][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   963][E][esp32-hal-adc.c:267] __analogRead(): Pin 0 is not ADC pin!
+SD and RTC init complete
+is_bme68x_conf_available...
+EDK_SENSOR_CONFIG_MISSING_ERROR
+ret_code Good: Setting to DEMO_IDLE_MODE
+[  8358][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: 
+[  8359][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +SYSSTART
+[  8361][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CMEE=1
+[  9259][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9260][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CEREG=1
+[  9279][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Modem initialization OK
+Configured low power mode
+=========== After Setup Start ============
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   185680 B ( 181.3 KB)
+  Allocated Bytes   :    44852 B (  43.8 KB)
+  Minimum Free Bytes:   185576 B ( 181.2 KB)
+  Largest Free Block:   122868 B ( 120.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2092564 B (2043.5 KB)
+  Allocated Bytes   :     2252 B (   2.2 KB)
+  Minimum Free Bytes:  2092564 B (2043.5 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+------------------------------------------
+GPIO Info:
+------------------------------------------
+  GPIO : BUS_TYPE[bus/unit][chan]
+  --------------------------------------  
+     2 : GPIO
+     4 : I2C_MASTER_SDA[0]
+     6 : I2C_MASTER_SDA[1]
+     5 : I2C_MASTER_SCL[0]
+     7 : I2C_MASTER_SCL[1]
+    11 : SPI_MASTER_MOSI[0]
+    12 : SPI_MASTER_SCK[0]
+    13 : SPI_MASTER_MISO[0]
+    14 : UART_RX[2]
+    19 : USB_DM
+    20 : USB_DP
+    21 : UART_RTS[2]
+    42 : GPIO
+    43 : UART_TX[0]
+    44 : UART_RX[0]
+    47 : UART_CTS[2]
+    48 : UART_TX[2]
+============ After Setup End =============
+[  9407][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9421][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9422][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9436][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9436][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9442][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9460][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9460][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9467][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9485][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9485][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9491][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9508][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to NO RF
+[  9509][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CGDCONT=1,"IP",,,0,0,0,0,0,0,0,0,0,0,0
+[  9641][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Created PDP context
+[  9642][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=1
+[  9801][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to FULL
+[  9802][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+COPS=0
+[  9810][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Network selection mode to was set to automatic
+[  9811][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+SQNHTTPCFG=1,"coap.bluecherry.io",80,0,"","",0,120,,,60,15
+[  9838][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully configured the http profile
+waiting for the network...
+[ 10233][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 2
+[ 11512][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 5
+Connected to the network
+[ 11538][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11549][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11550][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 11555][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11573][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11574][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 11580][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11598][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11598][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 12105][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 12116][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "2025-06-21T22:47:58"
+[ 12116][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12121][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSASSISTANCE?
+[ 12142][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 0,1,129973,15455312,15455312
+[ 12147][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 1,1,1055,4304,7904
+[ 12151][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 2,0,0,0,0
+[ 12159][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12166][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12592][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12593][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 0
+Disconnected from the network
+[ 12595][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12612][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Disconnected from the network
+[ 12612][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12625][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 13126][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 13162][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[109704][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSFIXREADY: 0,"2025-06-21T22:47:59.000000",66565,"20000000.000000","0.000000","0.000000","0.000000","0.000000","0.000000","0.000000","MfmBVQ4AAADeYQAAAAAAAAAgGsX4PwAAAMDsLVDAAAAAYGMgwUDoAwAABQQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADQEnNBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnzZXaAAAAAA="
+[110163][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110199][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110199][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110266][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110266][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110399][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[110399][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[110439][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Failed to get a valid GNSS fix
+Guru Meditation Error: Core  / panic'ed (Cache disabled but cached memory region accessed). 
+MMU entry fault error occurred while accessing the address 0x43cc65f4 (invalid mmu entry)
+
+
+Core  0 register dump:
+PC      : 0x4037be7e  PS      : 0x00060334  A0      : 0x82020e6c  A1      : 0x3fcc6a10  
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00060020  A5      : 0x3fcc6360  
+A6      : 0x00000001  A7      : 0x00000160  A8      : 0x8201fe96  A9      : 0x3fcc69d0  
+A10     : 0x00000000  A11     : 0x00000000  A12     : 0x3fc9eee0  A13     : 0x00000000  
+A14     : 0x00060020  A15     : 0x3fc9fa34  SAR     : 0x0000001d  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x00000000  LBEG    : 0x00000000  LEND    : 0x00000000  LCOUNT  : 0x00000000  
+
+
+Backtrace: 0x4037be7b:0x3fcc6a10 0x42020e69:0x3fcc6a30 0x4038102f:0x3fcc6a50 0x4037feb2:0x3fcc6a70
+
+
+Core  1 register dump:
+PC      : 0x40387a9b  PS      : 0x00060534  A0      : 0x40379e84  A1      : 0x3fcc9d60  
+A2      : 0x00000000  A3      : 0x400556d5  A4      : 0x00000001  A5      : 0x3fcc9eb5  
+A6      : 0x00000002  A7      : 0x0000001c  A8      : 0x82081134  A9      : 0x3fcc65ec  
+A10     : 0x3630328c  A11     : 0x3fcc9e4e  A12     : 0x00000001  A13     : 0x3fcc9eb5  
+A14     : 0x00000002  A15     : 0x3fcbf234  SAR     : 0x00000020  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x3fcc65ec  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffd  
+
+
+Backtrace: 0x40387a98:0x3fcc9d60 0x40379e81:0x3fcc9e40 0x420144b8:0x3fcc9e70 0x420148d6:0x3fcc9e90 0x420149b9:0x3fcc9ee0 0x42004905:0x3fcc9f00 0x420043b6:0x3fcc9f30 0x4201be14:0x3fcca310 0x4037feb2:0x3fcca330
+
+
+
+
+ELF file SHA256: 64c11c4bf
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x2b (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40377269
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1188
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xbf0
+load:0x403cb700,len:0x30e4
+entry 0x403c88ac
+[    19][I][esp32-hal-psram.c:102] psramAddToHeap(): PSRAM added to the heap.
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32-S3
+  Package           : 0
+  Revision          : 0.02
+  Cores             : 2
+  CPU Frequency     : 240 MHz
+  XTAL Frequency    : 40 MHz
+  Features Bitfield : 0x00000012
+  Embedded Flash    : No
+  Embedded PSRAM    : No
+  2.4GHz WiFi       : Yes
+  Classic BT        : No
+  BT Low Energy     : Yes
+  IEEE 802.15.4     : No
+------------------------------------------
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   192124 B ( 187.6 KB)
+  Allocated Bytes   :    38824 B (  37.9 KB)
+  Minimum Free Bytes:   188320 B ( 183.9 KB)
+  Largest Free Block:   126964 B ( 124.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2095104 B (2046.0 KB)
+  Allocated Bytes   :        0 B (   0.0 KB)
+  Minimum Free Bytes:  2095104 B (2046.0 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+  Bus Mode          : QSPI
+------------------------------------------
+Flash Info:
+------------------------------------------
+  Chip Size         : 16777216 B (16 MB)
+  Block Size        :    65536 B (  64.0 KB)
+  Sector Size       :     4096 B (   4.0 KB)
+  Page Size         :      256 B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Bus Mode          : QIO
+------------------------------------------
+Partitions Info:
+------------------------------------------
+                nvs : addr: 0x00009000, size:    20.0 KB, type: DATA, subtype: NVS
+            otadata : addr: 0x0000E000, size:     8.0 KB, type: DATA, subtype: OTA
+               app0 : addr: 0x00010000, size:  2048.0 KB, type:  APP, subtype: OTA_0
+               app1 : addr: 0x00210000, size:  2048.0 KB, type:  APP, subtype: OTA_1
+               ffat : addr: 0x00410000, size: 12160.0 KB, type: DATA, subtype: FAT
+           coredump : addr: 0x00FF0000, size:    64.0 KB, type: DATA, subtype: COREDUMP
+------------------------------------------
+Software Info:
+------------------------------------------
+  Compile Date/Time : Jun 21 2025 12:30:58
+  Compile Host OS   : macosx
+  ESP-IDF Version   : v5.3.2-584-g489d7a2b3a-dirty
+  Arduino Version   : 3.1.3
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32S3_DEV
+  Arduino Variant   : esp32s3
+  Arduino FQBN      : esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=debug,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default
+============ Before Setup End ============
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 19 already has type USB_DM (45) with bus 0x3fcba254
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 20 already has type USB_DP (46) with bus 0x3fcba254
+[   681][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=4 scl=5 freq=100000
+Wire and SPI set
+[   732][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=6 scl=7 freq=100000
+[   733][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Wire and SPI initialized
+Setting up sensor:
+0
+allocating memory:
+0
+beginning sensor comm:
+0
+subscribing to sensor:
+0
+adding callback to sensor:
+0
+Setting up sensor:
+1
+allocating memory:
+1
+beginning sensor comm:
+1
+subscribing to sensor:
+1
+adding callback to sensor:
+1
+Setting up sensor:
+2
+allocating memory:
+2
+beginning sensor comm:
+2
+subscribing to sensor:
+2
+adding callback to sensor:
+2
+Setting up sensor:
+3
+allocating memory:
+3
+beginning sensor comm:
+3
+subscribing to sensor:
+3
+adding callback to sensor:
+3
+Setting up sensor:
+4
+allocating memory:
+4
+beginning sensor comm:
+4
+subscribing to sensor:
+4
+adding callback to sensor:
+4
+Setting up sensor:
+5
+allocating memory:
+5
+beginning sensor comm:
+5
+subscribing to sensor:
+5
+adding callback to sensor:
+5
+Setting up sensor:
+6
+allocating memory:
+6
+beginning sensor comm:
+6
+subscribing to sensor:
+6
+adding callback to sensor:
+6
+Setting up sensor:
+7
+allocating memory:
+7
+beginning sensor comm:
+7
+subscribing to sensor:
+7
+adding callback to sensor:
+7
+BSEC library version 2.6.1.0
+BatteryHelper: sensors ready.
+init SD and RTC...
+[   962][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   963][E][esp32-hal-adc.c:267] __analogRead(): Pin 0 is not ADC pin!
+SD and RTC init complete
+is_bme68x_conf_available...
+EDK_SENSOR_CONFIG_MISSING_ERROR
+ret_code Good: Setting to DEMO_IDLE_MODE
+[  8557][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: 
+[  8558][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +SYSSTART
+[  8560][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CMEE=1
+[  9460][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9460][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CEREG=1
+[  9479][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Modem initialization OK
+Configured low power mode
+=========== After Setup Start ============
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   185680 B ( 181.3 KB)
+  Allocated Bytes   :    44852 B (  43.8 KB)
+  Minimum Free Bytes:   185576 B ( 181.2 KB)
+  Largest Free Block:   122868 B ( 120.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2092564 B (2043.5 KB)
+  Allocated Bytes   :     2252 B (   2.2 KB)
+  Minimum Free Bytes:  2092564 B (2043.5 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+------------------------------------------
+GPIO Info:
+------------------------------------------
+  GPIO : BUS_TYPE[bus/unit][chan]
+  --------------------------------------  
+     2 : GPIO
+     4 : I2C_MASTER_SDA[0]
+     5 : I2C_MASTER_SCL[0]
+     6 : I2C_MASTER_SDA[1]
+     7 : I2C_MASTER_SCL[1]
+    11 : SPI_MASTER_MOSI[0]
+    12 : SPI_MASTER_SCK[0]
+    13 : SPI_MASTER_MISO[0]
+    14 : UART_RX[2]
+    19 : USB_DM
+    20 : USB_DP
+    21 : UART_RTS[2]
+    42 : GPIO
+    43 : UART_TX[0]
+    44 : UART_RX[0]
+    47 : UART_CTS[2]
+    48 : UART_TX[2]
+============ After Setup End =============
+[  9607][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9622][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9623][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9636][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9636][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9642][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9660][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9660][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9667][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9685][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9685][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9692][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9709][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to NO RF
+[  9709][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CGDCONT=1,"IP",,,0,0,0,0,0,0,0,0,0,0,0
+[  9842][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Created PDP context
+[  9842][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=1
+[ 10129][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to FULL
+[ 10129][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+COPS=0
+[ 10138][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Network selection mode to was set to automatic
+[ 10139][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+SQNHTTPCFG=1,"coap.bluecherry.io",80,0,"","",0,120,,,60,15
+[ 10161][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully configured the http profile
+waiting for the network...
+[ 10534][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 2
+[ 11856][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 5
+Connected to the network
+[ 11862][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11873][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+em] RX: +CME ERROR: 4
+[ 11874][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterMod[ 11879][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11898][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11898][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 11904][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11922][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11922][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 12429][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 12440][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "2025-06-21T22:49:49"
+[ 12440][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12445][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSASSISTANCE?
+[ 12466][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 0,1,130084,15455201,15455201
+[ 12471][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 1,1,1166,4193,7793
+[ 12475][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 2,0,0,0,0
+[ 12484][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12490][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 13184][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 13185][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 0
+Disconnected from the network
+[ 13187][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 13204][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Disconnected from the network
+[ 13204][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 13218][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 13718][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 13755][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 93155][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSFIXREADY: 0,"2025-06-21T22:42:30.373703",67297,"20000000.000000","-8.175139","-45.166838","11751.475137","-258.266720","18.516498","56.226088","6PeBVQ4AAADfYQAADAAAAAAgGsX4PwAAAMDsLVDAAAAAYGMgwUDoAwAA4QYBAAoAHgDdAQsAAADTAAAAAAAAAJcA5PsIAHkARwYCAAAAswAAAAAAAABlhGj0AgBXAMgHCgAAAOwAAAAAAAAAYlHC9wEABABDAA8AAADfAAAAAAAAAG1T+/cgAPj/3AELAAAA+QAAAAAAAACONNfzDwByAD8ACwAAAM0AAAAAAAAA1C2W/xYAbAC8BwkAAACuAAAAAAAAAKEpIAAcAEAAjQYKAAAA2gAAAAAAAABWLMj3EgBsAKsHCgAAAP0AAAAAAAAA+LvX8w4AfQAfBAoAAADLAAAAAAAAAJJbZgcYALL/IgANAAAApwAAAAAAAADZ1VH4FwBE/7sHEQAAAIcAAAAAAAAAzhzG/HrKucmrWSDAzKQE8FqVRsDAhUrRvPPGQOlX93tEJHDAYhZDMzmEMkDDSQlz8BxMQAAAAADQEnNBAwD//wQAAwACAP////8AAAAA////////AgACAAQABAACAAIAAgACAAIAAgACAAIAVjVXaDdDRhY=",(10,26),(8,22),(2,30),(1,28),(32,31),(15,26),(22,22),(28,27),(18,32),(14,25),(24,21),(23,17)
+[ 93255][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 93291][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 93292][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 93358][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 93358][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 93497][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 93497][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 93537][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Failed to get a valid GNSS fix
+Guru Meditation Error: Core  / panic'ed (Cache disabled but cached memory region accessed). 
+MMU entry fault error occurred while accessing the address 0x43cc65f4 (invalid mmu entry)
+
+
+Core  0 register dump:
+PC      : 0x4037be7e  PS      : 0x00060334  A0      : 0x82020e6c  A1      : 0x3fcc6a10  
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00060020  A5      : 0x3fcc6360  
+A6      : 0x00000001  A7      : 0x00000160  A8      : 0x8201fe96  A9      : 0x3fcc69d0  
+A10     : 0x00000000  A11     : 0x00000000  A12     : 0x3fc9eee0  A13     : 0x00000000  
+A14     : 0x00060020  A15     : 0x3fc9fa34  SAR     : 0x0000001d  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x00000000  LBEG    : 0x00000000  LEND    : 0x00000000  LCOUNT  : 0x00000000  
+
+
+Backtrace: 0x4037be7b:0x3fcc6a10 0x42020e69:0x3fcc6a30 0x4038102f:0x3fcc6a50 0x4037feb2:0x3fcc6a70
+
+
+Core  1 register dump:
+PC      : 0x40387a9b  PS      : 0x00060534  A0      : 0x40379e84  A1      : 0x3fcc9d60  
+A2      : 0x00000000  A3      : 0x400556d5  A4      : 0x00000001  A5      : 0x3fcc9eb5  
+A6      : 0x00000002  A7      : 0x0000001c  A8      : 0x82081134  A9      : 0x3fcc65ec  
+A10     : 0x3630328c  A11     : 0x3fcc9e4e  A12     : 0x00000001  A13     : 0x3fcc9eb5  
+A14     : 0x00000002  A15     : 0x3fcbf234  SAR     : 0x00000020  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x3fcc65ec  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffd  
+
+
+Backtrace: 0x40387a98:0x3fcc9d60 0x40379e81:0x3fcc9e40 0x420144b8:0x3fcc9e70 0x420148d6:0x3fcc9e90 0x420149b9:0x3fcc9ee0 0x42004905:0x3fcc9f00 0x420043b6:0x3fcc9f30 0x4201be14:0x3fcca310 0x4037feb2:0x3fcca330
+
+
+
+
+ELF file SHA256: 64c11c4bf
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x2b (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40377269
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1188
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xbf0
+load:0x403cb700,len:0x30e4
+entry 0x403c88ac
+[    18][I][esp32-hal-psram.c:102] psramAddToHeap(): PSRAM added to the heap.
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Package           : 0
+  Model             : ESP32-S3
+  Cores             : 2
+  Revision          : 0.02
+  CPU Frequency     : 240 MHz
+  XTAL Frequency    : 40 MHz
+  Features Bitfield : 0x00000012
+  Embedded Flash    : No
+  Embedded PSRAM    : No
+  2.4GHz WiFi       : Yes
+  Classic BT        : No
+  BT Low Energy     : Yes
+  IEEE 802.15.4     : No
+------------------------------------------
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   192124 B ( 187.6 KB)
+  Allocated Bytes   :    38824 B (  37.9 KB)
+  Minimum Free Bytes:   188320 B ( 183.9 KB)
+  Largest Free Block:   126964 B ( 124.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2095104 B (2046.0 KB)
+  Allocated Bytes   :        0 B (   0.0 KB)
+  Minimum Free Bytes:  2095104 B (2046.0 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+  Bus Mode          : QSPI
+------------------------------------------
+Flash Info:
+------------------------------------------
+  Chip Size         : 16777216 B (16 MB)
+  Block Size        :    65536 B (  64.0 KB)
+  Sector Size       :     4096 B (   4.0 KB)
+  Page Size         :      256 B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Bus Mode          : QIO
+------------------------------------------
+Partitions Info:
+------------------------------------------
+                nvs : addr: 0x00009000, size:    20.0 KB, type: DATA, subtype: NVS
+            otadata : addr: 0x0000E000, size:     8.0 KB, type: DATA, subtype: OTA
+               app0 : addr: 0x00010000, size:  2048.0 KB, type:  APP, subtype: OTA_0
+               app1 : addr: 0x00210000, size:  2048.0 KB, type:  APP, subtype: OTA_1
+               ffat : addr: 0x00410000, size: 12160.0 KB, type: DATA, subtype: FAT
+           coredump : addr: 0x00FF0000, size:    64.0 KB, type: DATA, subtype: COREDUMP
+------------------------------------------
+Software Info:
+------------------------------------------
+  Compile Date/Time : Jun 21 2025 12:30:58
+  Compile Host OS   : macosx
+  ESP-IDF Version   : v5.3.2-584-g489d7a2b3a-dirty
+  Arduino Version   : 3.1.3
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32S3_DEV
+  Arduino Variant   : esp32s3
+  Arduino FQBN      : esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=debug,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default
+============ Before Setup End ============
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 19 already has type USB_DM (45) with bus 0x3fcba254
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 20 already has type USB_DP (46) with bus 0x3fcba254
+[   681][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=4 scl=5 freq=100000
+Wire and SPI set
+[   732][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=6 scl=7 freq=100000
+[   733][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Wire and SPI initialized
+Setting up sensor:
+0
+allocating memory:
+0
+beginning sensor comm:
+0
+subscribing to sensor:
+0
+adding callback to sensor:
+0
+Setting up sensor:
+1
+allocating memory:
+1
+beginning sensor comm:
+1
+subscribing to sensor:
+1
+adding callback to sensor:
+1
+Setting up sensor:
+2
+allocating memory:
+2
+beginning sensor comm:
+2
+subscribing to sensor:
+2
+adding callback to sensor:
+2
+Setting up sensor:
+3
+allocating memory:
+3
+beginning sensor comm:
+3
+subscribing to sensor:
+3
+adding callback to sensor:
+3
+Setting up sensor:
+4
+allocating memory:
+4
+beginning sensor comm:
+4
+subscribing to sensor:
+4
+adding callback to sensor:
+4
+Setting up sensor:
+5
+allocating memory:
+5
+beginning sensor comm:
+5
+subscribing to sensor:
+5
+adding callback to sensor:
+5
+Setting up sensor:
+6
+allocating memory:
+6
+beginning sensor comm:
+6
+subscribing to sensor:
+6
+adding callback to sensor:
+6
+Setting up sensor:
+7
+allocating memory:
+7
+beginning sensor comm:
+7
+subscribing to sensor:
+7
+adding callback to sensor:
+7
+BSEC library version 2.6.1.0
+BatteryHelper: sensors ready.
+init SD and RTC...
+[   962][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   963][E][esp32-hal-adc.c:267] __analogRead(): Pin 0 is not ADC pin!
+SD and RTC init complete
+is_bme68x_conf_available...
+EDK_SENSOR_CONFIG_MISSING_ERROR
+ret_code Good: Setting to DEMO_IDLE_MODE
+[  8361][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: 
+[  8361][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +SYSSTART
+[  8364][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CMEE=1
+[  9259][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9260][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CEREG=1
+[  9279][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Modem initialization OK
+Configured low power mode
+=========== After Setup Start ============
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   185680 B ( 181.3 KB)
+  Allocated Bytes   :    44852 B (  43.8 KB)
+  Minimum Free Bytes:   185576 B ( 181.2 KB)
+  Largest Free Block:   122868 B ( 120.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2092564 B (2043.5 KB)
+  Allocated Bytes   :     2252 B (   2.2 KB)
+  Minimum Free Bytes:  2092564 B (2043.5 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+------------------------------------------
+GPIO Info:
+------------------------------------------
+  GPIO : BUS_TYPE[bus/unit][chan]
+  --------------------------------------  
+     2 : GPIO
+     4 : I2C_MASTER_SDA[0]
+     5 : I2C_MASTER_SCL[0]
+     6 : I2C_MASTER_SDA[1]
+     7 : I2C_MASTER_SCL[1]
+    11 : SPI_MASTER_MOSI[0]
+    12 : SPI_MASTER_SCK[0]
+    13 : SPI_MASTER_MISO[0]
+    14 : UART_RX[2]
+    19 : USB_DM
+    20 : USB_DP
+    21 : UART_RTS[2]
+    42 : GPIO
+    43 : UART_TX[0]
+    44 : UART_RX[0]
+    47 : UART_CTS[2]
+    48 : UART_TX[2]
+============ After Setup End =============
+[  9407][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9422][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9422][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9436][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9436][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9442][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9460][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9460][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9467][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9485][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9485][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9492][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9508][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to NO RF
+[  9509][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CGDCONT=1,"IP",,,0,0,0,0,0,0,0,0,0,0,0
+[  9641][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Created PDP context
+[  9641][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=1
+[  9806][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to FULL
+[  9806][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+COPS=0
+[  9815][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Network selection mode to was set to automatic
+[  9815][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+SQNHTTPCFG=1,"coap.bluecherry.io",80,0,"","",0,120,,,60,15
+[  9838][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully configured the http profile
+waiting for the network...
+[ 10335][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 2
+[ 11990][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 5
+Connected to the network
+[ 12039][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 12056][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 12056][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 12062][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 12083][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 12083][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 12088][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 12107][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 12107][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 12613][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 12624][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "2025-06-21T22:51:23"
+[ 12624][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12629][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSASSISTANCE?
+[ 12650][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 0,1,130178,15455107,15455107
+[ 12655][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 1,1,1260,4099,7699
+[ 12659][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 2,0,0,0,0
+[ 12668][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12674][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 14726][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 14726][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 0
+Disconnected from the network
+[ 14729][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 14746][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Disconnected from the network
+[ 14746][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 14759][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 15260][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 15296][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 76377][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSFIXREADY: 0,"2025-06-21T22:44:43.579663",60690,"20000000.000000","-34.852025","-3.664165","27208.708378","2147483647.2147483647","2147483647.2147483647","2147483647.2147483647","bfiBVQ4AAADfYQAADAAAAAAgGsX4PwAAAMDsLVDAAAAAYGMgwUDoAwAAEu0AAAoAngAnBgMAAADGAAAAAAAAAACRnvsYABAAhgcTAAAA+QAAAAAAAADF6SzwEgBfAJUEAQAAAMMAAAAAAAAASMbyBwEAcgDPAA8AAACHAAAAAAAAAHDAwfQPAIQAqQYOAAAAoQAAAAAAAAA2jXr3CADY/00AEwAAAP4AAAAAAAAApopS7BcAQQDIAQEAAADSAAAAAAAAAGpA3v8bAJAAIQUFAAAA2AAAAAAAAAA01bYDHABUAMIEDgAAAJ8AAAAAAAAA4DVn+xYA4P8fBg4AAADyAAAAAAAAANzIVewCAGIA3AAQAAAAewAAAAAAAAA6RY8GDgA5APMEBAAAAIwAAAAAAAAA8O2v9GRe7CsPbUHAdJV67zVQDcAAihBWLZLaQP////////9//////////3//////////fwAAAADQEnNBBAADAP///////wMAAAAAAP//////////AgACAAIABAACAAIAAgACAAIAAgAEAAIA2zVXaIn3jCI=",(10,25),(24,31),(18,24),(1,17),(15,20),(8,32),(23,26),(27,27),(28,20),(22,30),(2,15),(14,18)
+[ 76797][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 76833][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 76833][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 76900][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 76900][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 77028][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 77028][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 77067][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Failed to get a valid GNSS fix
+Guru Meditation Error: Core  / panic'ed (Cache disabled but cached memory region accessed). 
+MMU entry fault error occurred while accessing the address 0x43cc6444 (invalid mmu entry)
+
+
+Core  0 register dump:
+PC      : 0x4037be7e  PS      : 0x00060334  A0      : 0x82020e6c  A1      : 0x3fcc6a10  
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00060020  A5      : 0x3fcc6360  
+A6      : 0x00000001  A7      : 0x00000160  A8      : 0x8201fe96  A9      : 0x3fcc69d0  
+A10     : 0x00000000  A11     : 0x00000000  A12     : 0x3fc9eee0  A13     : 0x00000000  
+A14     : 0x00060020  A15     : 0x3fc9fa34  SAR     : 0x0000001d  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x00000000  LBEG    : 0x00000000  LEND    : 0x00000000  LCOUNT  : 0x00000000  
+
+
+Backtrace: 0x4037be7b:0x3fcc6a10 0x42020e69:0x3fcc6a30 0x4038102f:0x3fcc6a50 0x4037feb2:0x3fcc6a70
+
+
+Core  1 register dump:
+PC      : 0x40387a9b  PS      : 0x00060534  A0      : 0x40379e84  A1      : 0x3fcc9d60  
+A2      : 0x00000000  A3      : 0x400556d5  A4      : 0x00000001  A5      : 0x3fcc9eb5  
+A6      : 0x00000002  A7      : 0x0000001c  A8      : 0x82081134  A9      : 0x3fcc643c  
+A10     : 0x3630328c  A11     : 0x3fcc9e4e  A12     : 0x00000001  A13     : 0x3fcc9eb5  
+A14     : 0x00000002  A15     : 0x3fcbf234  SAR     : 0x00000020  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x3fcc643c  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffd  
+
+
+Backtrace: 0x40387a98:0x3fcc9d60 0x40379e81:0x3fcc9e40 0x420144b8:0x3fcc9e70 0x420148d6:0x3fcc9e90 0x420149b9:0x3fcc9ee0 0x42004905:0x3fcc9f00 0x420043b6:0x3fcc9f30 0x4201be14:0x3fcca310 0x4037feb2:0x3fcca330
+
+
+
+
+ELF file SHA256: 64c11c4bf
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1188
+Saved PC:0x40377269
+rst:0xc (RTC_SW_CPU_RST),boot:0x2b (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xbf0
+load:0x403cb700,len:0x30e4
+entry 0x403c88ac
+[    18][I][esp32-hal-psram.c:102] psramAddToHeap(): PSRAM added to the heap.
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32-S3
+  Package           : 0
+  Revision          : 0.02
+  Cores             : 2
+  CPU Frequency     : 240 MHz
+  XTAL Frequency    : 40 MHz
+  Features Bitfield : 0x00000012
+  Embedded Flash    : No
+  Embedded PSRAM    : No
+  2.4GHz WiFi       : Yes
+  Classic BT        : No
+  BT Low Energy     : Yes
+  IEEE 802.15.4     : No
+------------------------------------------
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   192124 B ( 187.6 KB)
+  Allocated Bytes   :    38824 B (  37.9 KB)
+  Minimum Free Bytes:   188320 B ( 183.9 KB)
+  Largest Free Block:   126964 B ( 124.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2095104 B (2046.0 KB)
+  Minimum Free Bytes:  2095104 B (2046.0 KB)
+  Allocated Bytes   :        0 B (   0.0 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+  Bus Mode          : QSPI
+------------------------------------------
+Flash Info:
+------------------------------------------
+  Chip Size         : 16777216 B (16 MB)
+  Block Size        :    65536 B (  64.0 KB)
+  Sector Size       :     4096 B (   4.0 KB)
+  Page Size         :      256 B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Bus Mode          : QIO
+------------------------------------------
+Partitions Info:
+------------------------------------------
+                nvs : addr: 0x00009000, size:    20.0 KB, type: DATA, subtype: NVS
+            otadata : addr: 0x0000E000, size:     8.0 KB, type: DATA, subtype: OTA
+               app0 : addr: 0x00010000, size:  2048.0 KB, type:  APP, subtype: OTA_0
+               app1 : addr: 0x00210000, size:  2048.0 KB, type:  APP, subtype: OTA_1
+               ffat : addr: 0x00410000, size: 12160.0 KB, type: DATA, subtype: FAT
+           coredump : addr: 0x00FF0000, size:    64.0 KB, type: DATA, subtype: COREDUMP
+------------------------------------------
+Software Info:
+------------------------------------------
+  Compile Date/Time : Jun 21 2025 12:30:58
+  Compile Host OS   : macosx
+  ESP-IDF Version   : v5.3.2-584-g489d7a2b3a-dirty
+  Arduino Version   : 3.1.3
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32S3_DEV
+  Arduino Variant   : esp32s3
+  Arduino FQBN      : esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=debug,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default
+============ Before Setup End ============
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 19 already has type USB_DM (45) with bus 0x3fcba254
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 20 already has type USB_DP (46) with bus 0x3fcba254
+[   681][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=4 scl=5 freq=100000
+Wire and SPI set
+[   732][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=6 scl=7 freq=100000
+[   733][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Wire and SPI initialized
+Setting up sensor:
+0
+allocating memory:
+0
+beginning sensor comm:
+0
+subscribing to sensor:
+0
+adding callback to sensor:
+0
+Setting up sensor:
+1
+allocating memory:
+1
+beginning sensor comm:
+1
+subscribing to sensor:
+1
+adding callback to sensor:
+1
+Setting up sensor:
+2
+allocating memory:
+2
+beginning sensor comm:
+2
+subscribing to sensor:
+2
+adding callback to sensor:
+2
+Setting up sensor:
+3
+allocating memory:
+3
+beginning sensor comm:
+3
+subscribing to sensor:
+3
+adding callback to sensor:
+3
+Setting up sensor:
+4
+allocating memory:
+4
+beginning sensor comm:
+4
+subscribing to sensor:
+4
+adding callback to sensor:
+4
+Setting up sensor:
+5
+allocating memory:
+5
+beginning sensor comm:
+5
+subscribing to sensor:
+5
+adding callback to sensor:
+5
+Setting up sensor:
+6
+allocating memory:
+6
+beginning sensor comm:
+6
+subscribing to sensor:
+6
+adding callback to sensor:
+6
+Setting up sensor:
+7
+allocating memory:
+7
+beginning sensor comm:
+7
+subscribing to sensor:
+7
+adding callback to sensor:
+7
+BSEC library version 2.6.1.0
+BatteryHelper: sensors ready.
+init SD and RTC...
+[   962][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   963][E][esp32-hal-adc.c:267] __analogRead(): Pin 0 is not ADC pin!
+SD and RTC init complete
+is_bme68x_conf_available...
+EDK_SENSOR_CONFIG_MISSING_ERROR
+ret_code Good: Setting to DEMO_IDLE_MODE
+[  8481][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: 
+[  8481][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +SYSSTART
+[  8484][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CMEE=1
+[  9379][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9380][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CEREG=1
+[  9399][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Modem initialization OK
+Configured low power mode
+=========== After Setup Start ============
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   185680 B ( 181.3 KB)
+  Allocated Bytes   :    44852 B (  43.8 KB)
+  Minimum Free Bytes:   185576 B ( 181.2 KB)
+  Largest Free Block:   122868 B ( 120.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2092564 B (2043.5 KB)
+  Allocated Bytes   :     2252 B (   2.2 KB)
+  Minimum Free Bytes:  2092564 B (2043.5 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+------------------------------------------
+GPIO Info:
+------------------------------------------
+  GPIO : BUS_TYPE[bus/unit][chan]
+  --------------------------------------  
+     2 : GPIO
+     4 : I2C_MASTER_SDA[0]
+     5 : I2C_MASTER_SCL[0]
+     6 : I2C_MASTER_SDA[1]
+     7 : I2C_MASTER_SCL[1]
+    11 : SPI_MASTER_MOSI[0]
+    12 : SPI_MASTER_SCK[0]
+    13 : SPI_MASTER_MISO[0]
+    14 : UART_RX[2]
+    19 : USB_DM
+    20 : USB_DP
+    21 : UART_RTS[2]
+    42 : GPIO
+    43 : UART_TX[0]
+    44 : UART_RX[0]
+    47 : UART_CTS[2]
+    48 : UART_TX[2]
+============ After Setup End =============
+[  9527][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9542][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9542][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9556][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9556][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9562][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9580][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9580][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9587][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9605][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9605][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9612][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9628][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to NO RF
+[  9629][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CGDCONT=1,"IP",,,0,0,0,0,0,0,0,0,0,0,0
+[  9762][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Created PDP context
+[  9762][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=1
+[ 10113][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to FULL
+[ 10113][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+COPS=0
+[ 10121][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Network selection mode to was set to automatic
+[ 10122][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+SQNHTTPCFG=1,"coap.bluecherry.io",80,0,"","",0,120,,,60,15
+[ 10145][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully configured the http profile
+waiting for the network...
+[ 10482][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 2
+[ 11465][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 5
+Connected to the network
+[ 11545][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11556][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11556][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 11562][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11580][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[ 11581][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[ 11587][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11679][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "2025-06-21T22:52:41"
+[ 11679][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 11684][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSASSISTANCE?
+[ 11762][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 0,1,130256,15455029,15455029
+[ 11767][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 1,1,1338,4021,7621
+[ 11771][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 2,0,0,0,0
+[ 11780][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 11786][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12332][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12332][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 0
+Disconnected from the network
+[ 12335][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12351][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Disconnected from the network
+[ 12352][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12365][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12866][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 12902][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 71235][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSFIXREADY: 0,"2025-06-21T22:53:14.530704",57942,"20000000.000000","2.809450","-19.352542","12632.031770","195.407331","-343.865349","-548.660938","bPqBVQ4AAADfYQAADAAAAAAgGsX4PwAAAMDsLVDAAAAAYGMgwUDoAwAAVuIAAAoAXQB4BAYAAADhAAAAAAAAAIJ15fsgAGIA+AQMAAAA3QAAAAAAAABEglMTAQB0AN8CAwAAAPQAAAAAAAAAIhv/9xIAhwBkAg8AAACFAAAAAAAAALSyqfYYADMAWwYTAAAA8gAAAAAAAADFyi3wCABoAMgCEwAAAOUAAAAAAAAAxKce9BcAgQCCAAQAAADfAAAAAAAAAJVNzf8CAFcAfAQJAAAAswAAAAAAAAAr2yYAHABfAG8FBgAAAOMAAAAAAAAAoDvM/xYAlQAsAwgAAADMAAAAAAAAADrhQwsOAGAADAcFAAAAugAAAAAAAADeDnoDGwAtAAgEAwAAAMkAAAAAAAAAmK4VEyBvGwrBeQZAK6TCL0BaM8DAgAgRBKzIQNtXu9oIbWhAV0sBeNh9dcD9qeqZSSWBwAAAAADQEnNB////////////////AAD/////////////AgACAAQAAgACAAIAAgAEAAIAAgACAAIA2jdXaHLooR8=",(10,28),(32,28),(1,31),(18,17),(24,30),(8,29),(23,28),(2,22),(28,28),(22,26),(14,23),(27,25)
+[ 71403][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 71439][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 71439][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 71506][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 71506][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 71638][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 71639][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 71678][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Failed to get a valid GNSS fix
+Guru Meditation Error: Core  / panic'ed (Cache disabled but cached memory region accessed). 
+MMU entry fault error occurred while accessing the address 0x43cc65f4 (invalid mmu entry)
+
+
+Core  0 register dump:
+PC      : 0x4037be7e  PS      : 0x00060334  A0      : 0x82020e6c  A1      : 0x3fcc6a10  
+A2      : 0x00000000  A3      : 0x00000000  A4      : 0x00060020  A5      : 0x3fcc6360  
+A6      : 0x00000001  A7      : 0x00000160  A8      : 0x8201fe96  A9      : 0x3fcc69d0  
+A10     : 0x00000000  A11     : 0x00000000  A12     : 0x3fc9eee0  A13     : 0x00000000  
+A14     : 0x00060020  A15     : 0x3fc9fa34  SAR     : 0x0000001d  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x00000000  LBEG    : 0x00000000  LEND    : 0x00000000  LCOUNT  : 0x00000000  
+
+
+Backtrace: 0x4037be7b:0x3fcc6a10 0x42020e69:0x3fcc6a30 0x4038102f:0x3fcc6a50 0x4037feb2:0x3fcc6a70
+
+
+Core  1 register dump:
+PC      : 0x40387a9b  PS      : 0x00060534  A0      : 0x40379e84  A1      : 0x3fcc9d60  
+A2      : 0x00000000  A3      : 0x400556d5  A4      : 0x00000001  A5      : 0x3fcc9eb5  
+A6      : 0x00000002  A7      : 0x0000001c  A8      : 0x82081134  A9      : 0x3fcc65ec  
+A10     : 0x3630328c  A11     : 0x3fcc9e4e  A12     : 0x00000001  A13     : 0x3fcc9eb5  
+A14     : 0x00000002  A15     : 0x3fcbf234  SAR     : 0x00000020  EXCCAUSE: 0x00000007  
+EXCVADDR: 0x3fcc65ec  LBEG    : 0x400556d5  LEND    : 0x400556e5  LCOUNT  : 0xfffffffd  
+
+
+Backtrace: 0x40387a98:0x3fcc9d60 0x40379e81:0x3fcc9e40 0x420144b8:0x3fcc9e70 0x420148d6:0x3fcc9e90 0x420149b9:0x3fcc9ee0 0x42004905:0x3fcc9f00 0x420043b6:0x3fcc9f30 0x4201be14:0x3fcca310 0x4037feb2:0x3fcca330
+
+
+
+
+ELF file SHA256: 64c11c4bf
+
+Rebooting...
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0xc (RTC_SW_CPU_RST),boot:0x2b (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40377269
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1188
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xbf0
+load:0x403cb700,len:0x30e4
+entry 0x403c88ac
+[    18][I][esp32-hal-psram.c:102] psramAddToHeap(): PSRAM added to the heap.
+=========== Before Setup Start ===========
+Chip Info:
+------------------------------------------
+  Model             : ESP32-S3
+  Package           : 0
+  Revision          : 0.02
+  Cores             : 2
+  CPU Frequency     : 240 MHz
+  XTAL Frequency    : 40 MHz
+  Features Bitfield : 0x00000012
+  Embedded Flash    : No
+  Embedded PSRAM    : No
+  2.4GHz WiFi       : Yes
+  Classic BT        : No
+  BT Low Energy     : Yes
+  IEEE 802.15.4     : No
+------------------------------------------
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   192124 B ( 187.6 KB)
+  Allocated Bytes   :    38824 B (  37.9 KB)
+  Minimum Free Bytes:   188320 B ( 183.9 KB)
+  Largest Free Block:   126964 B ( 124.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2095104 B (2046.0 KB)
+  Allocated Bytes   :        0 B (   0.0 KB)
+  Minimum Free Bytes:  2095104 B (2046.0 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+  Bus Mode          : QSPI
+------------------------------------------
+Flash Info:
+------------------------------------------
+  Chip Size         : 16777216 B (16 MB)
+  Block Size        :    65536 B (  64.0 KB)
+  Sector Size       :     4096 B (   4.0 KB)
+  Page Size         :      256 B (   0.2 KB)
+  Bus Speed         : 80 MHz
+  Bus Mode          : QIO
+------------------------------------------
+Partitions Info:
+------------------------------------------
+                nvs : addr: 0x00009000, size:    20.0 KB, type: DATA, subtype: NVS
+            otadata : addr: 0x0000E000, size:     8.0 KB, type: DATA, subtype: OTA
+               app0 : addr: 0x00010000, size:  2048.0 KB, type:  APP, subtype: OTA_0
+               app1 : addr: 0x00210000, size:  2048.0 KB, type:  APP, subtype: OTA_1
+               ffat : addr: 0x00410000, size: 12160.0 KB, type: DATA, subtype: FAT
+           coredump : addr: 0x00FF0000, size:    64.0 KB, type: DATA, subtype: COREDUMP
+------------------------------------------
+Software Info:
+------------------------------------------
+  Compile Date/Time : Jun 21 2025 12:30:58
+  Compile Host OS   : macosx
+  ESP-IDF Version   : v5.3.2-584-g489d7a2b3a-dirty
+  Arduino Version   : 3.1.3
+------------------------------------------
+Board Info:
+------------------------------------------
+  Arduino Board     : ESP32S3_DEV
+  Arduino Variant   : esp32s3
+  Arduino FQBN      : esp32:esp32:esp32s3:UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=debug,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default
+============ Before Setup End ============
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 19 already has type USB_DM (45) with bus 0x3fcba254
+[   372][I][esp32-hal-periman.c:141] perimanSetPinBus(): Pin 20 already has type USB_DP (46) with bus 0x3fcba254
+[   681][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=4 scl=5 freq=100000
+Wire and SPI set
+[   732][I][esp32-hal-i2c.c:125] i2cInit(): Initializing I2C Master: sda=6 scl=7 freq=100000
+[   732][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+Wire and SPI initialized
+Setting up sensor:
+0
+allocating memory:
+0
+beginning sensor comm:
+0
+subscribing to sensor:
+0
+adding callback to sensor:
+0
+Setting up sensor:
+1
+allocating memory:
+1
+beginning sensor comm:
+1
+subscribing to sensor:
+1
+adding callback to sensor:
+1
+Setting up sensor:
+2
+allocating memory:
+2
+beginning sensor comm:
+2
+subscribing to sensor:
+2
+adding callback to sensor:
+2
+Setting up sensor:
+3
+allocating memory:
+3
+beginning sensor comm:
+3
+subscribing to sensor:
+
+4
+allocating memory:
+4
+3
+adding callback to sensor:
+3
+Setting up sensor:beginning sensor comm:
+4
+subscribing to sensor:
+4
+adding callback to sensor:
+4
+Setting up sensor:
+5
+allocating memory:
+5
+beginning sensor comm:
+5
+subscribing to sensor:
+5
+adding callback to sensor:
+5
+Setting up sensor:
+6
+allocating memory:
+6
+beginning sensor comm:
+6
+subscribing to sensor:
+6
+adding callback to sensor:
+6
+Setting up sensor:
+7
+allocating memory:
+7
+beginning sensor comm:
+7
+subscribing to sensor:
+7
+adding callback to sensor:
+7
+BSEC library version 2.6.1.0
+BatteryHelper: sensors ready.
+init SD and RTC...
+[   962][W][Wire.cpp:296] begin(): Bus already started in Master Mode.
+[   962][E][esp32-hal-adc.c:267] __analogRead(): Pin 0 is not ADC pin!
+SD and RTC init complete
+is_bme68x_conf_available...
+EDK_SENSOR_CONFIG_MISSING_ERROR
+ret_code Good: Setting to DEMO_IDLE_MODE
+[  8232][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: 
+[  8233][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +SYSSTART
+[  8235][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CMEE=1
+[  9139][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9139][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CEREG=1
+[  9159][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Modem initialization OK
+Configured low power mode
+=========== After Setup Start ============
+INTERNAL Memory Info:
+------------------------------------------
+  Total Size        :   237212 B ( 231.7 KB)
+  Free Bytes        :   185680 B ( 181.3 KB)
+  Allocated Bytes   :    44852 B (  43.8 KB)
+  Minimum Free Bytes:   185576 B ( 181.2 KB)
+  Largest Free Block:   122868 B ( 120.0 KB)
+------------------------------------------
+SPIRAM Memory Info:
+------------------------------------------
+  Total Size        :  2097152 B (2048.0 KB)
+  Free Bytes        :  2092564 B (2043.5 KB)
+  Allocated Bytes   :     2252 B (   2.2 KB)
+  Minimum Free Bytes:  2092564 B (2043.5 KB)
+  Largest Free Block:  2064372 B (2016.0 KB)
+  GPIO : BUS_TYPE[bus/unit][chan]
+GPIO Info:
+------------------------------------------
+  --------------------------------------  
+     2 : GPIO
+     4 : I2C_MASTER_SDA[0]
+     5 : I2C_MASTER_SCL[0]
+------------------------------------------
+     6 : I2C_MASTER_SDA[1]
+     7 : I2C_MASTER_SCL[1]
+    11 : SPI_MASTER_MOSI[0]
+    12 : SPI_MASTER_SCK[0]
+    13 : SPI_MASTER_MISO[0]
+    14 : UART_RX[2]
+    19 : USB_DM
+    20 : USB_DP
+    21 : UART_RTS[2]
+    42 : GPIO
+    43 : UART_TX[0]
+    44 : UART_RX[0]
+    47 : UART_CTS[2]
+    48 : UART_TX[2]
+============ After Setup End =============
+[  9287][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9301][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[  9302][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9315][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9316][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9321][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9340][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9340][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9346][D][WalterModem.cpp:1423] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[  9364][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "NO_CLOCK_DEFINED"
+[  9365][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CME ERROR: 4
+[  9371][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[  9388][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to NO RF
+[  9389][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CGDCONT=1,"IP",,,0,0,0,0,0,0,0,0,0,0,0
+[  9521][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Created PDP context
+[  9521][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=1
+[  9681][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully set operational state to FULL
+[  9681][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+COPS=0
+[  9689][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Network selection mode to was set to automatic
+[  9690][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+SQNHTTPCFG=1,"coap.bluecherry.io",80,0,"","",0,120,,,60,15
+[  9719][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Successfully configured the http profile
+waiting for the network...
+[ 10112][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 2
+[ 11448][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 5
+Connected to the network
+[ 11519][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSUTCTIME?
+[ 11633][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSUTCTIME: "2025-06-21T22:53:53"
+[ 11634][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 11639][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSASSISTANCE?
+[ 11709][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 0,1,130328,15454957,15454957
+[ 11714][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 1,1,1410,3949,7549
+[ 11718][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +LPGNSSASSISTANCE: 2,0,0,0,0
+[ 11726][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 11733][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12129][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12129][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: +CEREG: 0
+Disconnected from the network
+[ 12132][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12162][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+Disconnected from the network
+[ 12162][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+CFUN=4
+[ 12174][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
+[ 12675][D][WalterModem.cpp:1410] _processQueueCmd(): [WalterModem] TX: AT+LPGNSSFIXPROG="single"
+[ 12711][D][WalterModem.cpp:1486] _processQueueRsp(): [WalterModem] RX: OK
