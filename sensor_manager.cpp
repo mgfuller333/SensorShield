@@ -33,33 +33,48 @@
  * @file	    sensor_manager.cpp
  * @date		03 Jan 2024
  * @version		2.1.5
- * 
+ *
  * @brief    	sensor manager
  *
- * 
+ *
  */
 
 /* own header include */
-#include "sensor_manager.h"
+// The BMV080 Bosch API requires a larger than usual stack size
+// In particular, bmv080_serve_interrupt is the culprit.
+// If we are an ESP32 architecture, then we need to increase the loop stack size
+// to 60KB. This is because the ESP32 has a 32KB stack size by default.
+#include <SparkFun_Toolkit.h> // <<< this defines SET_LOOP_TASK_STACK_SIZE
+#if defined(ESP32)
+SET_LOOP_TASK_STACK_SIZE(60 * 1024); // 60KB
+#endif
 
-bme68x_sensor 	sensorManager::_sensors[NUM_BME68X_UNITS];
+#include "sensor_manager.h"
+#include "SparkFun_BMV080_Arduino_Library.h" // CTRL+Click here to get the library: http://librarymanager/All#SparkFun_BMV080
+#include <Wire.h>
+
+SparkFunBMV080 bmv080;	 // Create an instance of the BMV080 class
+#define BMV080_ADDR 0x57 // SparkFun BMV080 Breakout defaults to 0x57
+
+bme68x_sensor sensorManager::_sensors[NUM_BME68X_UNITS];
 commMux commSetup[NUM_BME68X_UNITS];
 
 /*!
  * @brief The constructor of the sensorManager class
  */
 sensorManager::sensorManager()
-{}
+{
+}
 
 /*!
  * @brief This function initializes the given BME688 sensor
  */
-int8_t sensorManager::initialize_sensor(uint8_t sensor_number, uint32_t& sensor_id)
+int8_t sensorManager::initialize_mox_sensor(uint8_t sensor_number, uint32_t &sensor_id)
 {
 	int8_t bme68x_rslt;
-	
-	bme68xSensors[sensor_number].begin(BME68X_SPI_INTF, commMuxRead, commMuxWrite, commMuxDelay, 
-	                                  &commSetup[sensor_number]);
+
+	bme68xSensors[sensor_number].begin(BME68X_SPI_INTF, commMuxRead, commMuxWrite, commMuxDelay,
+									   &commSetup[sensor_number]);
 	bme68x_rslt = bme68xSensors[sensor_number].status;
 
 	if (bme68x_rslt != BME68X_OK)
@@ -68,20 +83,70 @@ int8_t sensorManager::initialize_sensor(uint8_t sensor_number, uint32_t& sensor_
 	}
 	sensor_id = bme68xSensors[sensor_number].getUniqueId();
 	bme68x_rslt = bme68xSensors[sensor_number].status;
+
 	return bme68x_rslt;
+}
+
+bool sensorManager::initialize_pm_sensor()
+{
+	if (bmv080.begin(BMV080_ADDR, Wire1) == false)
+	{
+		Serial.println("BMV080 not detected at default I2C address. Check your jumpers and the hookup guide. Freezing...");
+		while (1)
+			;
+	}
+	Serial.println("BMV080 found!");
+
+	// wirePort.setClock(400000); //Increase I2C data rate to 400kHz
+
+	/* Initialize the Sensor (read driver, open, reset, id etc.)*/
+	bmv080.init();
+
+	// /* Set the sensor Duty Cycling Period (seconds)*/
+	// uint16_t duty_cycling_period = 20;
+	// if (bmv080.setDutyCyclingPeriod(duty_cycling_period) == true)
+	// {
+	// 	Serial.println("BMV080 set to 20 second duty cycle period");
+	// }
+	// else
+	// {
+	// 	Serial.println("Error setting BMV080 duty cycle period");
+	// }
+
+	// /* Set the sensor mode to Duty Cycle mode */
+	// if (bmv080.setMode(SF_BMV080_MODE_DUTY_CYCLE) == true)
+	// {
+	// 	Serial.println("BMV080 set to Duty Cycle mode");
+	// 	return true;
+	// }
+	// else
+	// {
+	// 	Serial.println("Error setting BMV080 mode");
+	// }
+	/* Set the sensor mode to continuous mode */
+	if (bmv080.setMode(SF_BMV080_MODE_CONTINUOUS) == true)
+	{
+		Serial.println("BMV080 set to continuous mode");
+		return true;
+	}
+	else
+	{
+		Serial.println("Error setting BMV080 mode");
+	}
+	return false;
 }
 
 /*!
  * @brief This function configures the heater settings of the sensor
  */
-int8_t sensorManager::set_heater_profile(const String& heater_profile_str, const String& duty_cycle_str,
-                                       bme68x_heater_profile& heater_profile, uint8_t sensor_number)
+int8_t sensorManager::set_heater_profile(const String &heater_profile_str, const String &duty_cycle_str,
+										 bme68x_heater_profile &heater_profile, uint8_t sensor_number)
 {
 	/* get heater profiles from parsed object */
 	JsonArray heaterProfilesJson = _configDoc["configBody"]["heaterProfiles"].as<JsonArray>();
 
 	/* iterate over all heater profiles */
-	for (JsonVariant _heaterProfileJson: heaterProfilesJson)
+	for (JsonVariant _heaterProfileJson : heaterProfilesJson)
 	{
 
 		/* compare with profile of given sensor */
@@ -98,7 +163,7 @@ int8_t sensorManager::set_heater_profile(const String& heater_profile_str, const
 			break;
 		}
 	}
-	
+
 	/* get duty cycle profiles from parsed object */
 	JsonArray dutyCycleProfilesJson = _configDoc["configBody"]["dutyCycleProfiles"].as<JsonArray>();
 
@@ -129,7 +194,7 @@ int8_t sensorManager::set_heater_profile(const String& heater_profile_str, const
 /*!
  * @brief This function configures the bme688 sensor
  */
-int8_t sensorManager::configure_sensor(bme68x_heater_profile& heater_profile, uint8_t sensor_number)
+int8_t sensorManager::configure_sensor(bme68x_heater_profile &heater_profile, uint8_t sensor_number)
 {
 	bme68xSensors[sensor_number].setTPH();
 	int8_t bme68x_rslt = bme68xSensors[sensor_number].status;
@@ -140,11 +205,11 @@ int8_t sensorManager::configure_sensor(bme68x_heater_profile& heater_profile, ui
 	}
 
 	/* getMeasDur() returns Measurement duration in micro sec. to convert to milli sec. '/ INT64_C(1000)' */
-	uint32_t shared_heatr_dur = HEATER_TIME_BASE - 
-	                            (bme68xSensors[sensor_number].getMeasDur(BME68X_PARALLEL_MODE) / INT64_C(1000));
+	uint32_t shared_heatr_dur = HEATER_TIME_BASE -
+								(bme68xSensors[sensor_number].getMeasDur(BME68X_PARALLEL_MODE) / INT64_C(1000));
 	/* sets the heater configuration of the sensor */
 	bme68xSensors[sensor_number].setHeaterProf(heater_profile.temperature, heater_profile.duration,
-	                                          shared_heatr_dur, heater_profile.length);
+											   shared_heatr_dur, heater_profile.length);
 	return bme68xSensors[sensor_number].status;
 }
 
@@ -155,20 +220,29 @@ demo_ret_code sensorManager::initialize_all_sensors()
 {
 	int8_t bme68x_rslt = BME68X_OK;
 	commMuxBegin(Wire, SPI);
-	
+
 	for (uint8_t i = 0; i < NUM_BME68X_UNITS; i++)
 	{
-		bme68x_sensor* sensor = get_sensor(i);
+		bme68x_sensor *sensor = get_sensor(i);
 		/* Communication interface set for all the 8 sensors */
 		commSetup[i] = commMuxSetConfig(Wire, SPI, i, commSetup[i]);
 
 		if (sensor != nullptr)
 		{
-			sensor->i2c_mask = ((0x01 << i) ^ 0xFF);//TODO
-			bme68x_rslt = initialize_sensor(i, sensor->id);
+			sensor->i2c_mask = ((0x01 << i) ^ 0xFF); // TODO
+			bme68x_rslt = initialize_mox_sensor(i, sensor->id);
 
 			if (bme68x_rslt != BME68X_OK)
 			{
+				Serial.printf("Sensor %d initialization failed with error code: %d\n", i, bme68x_rslt);
+				return EDK_BME68X_DRIVER_ERROR;
+			}
+
+			bool bmv_rslt = initialize_pm_sensor();
+			if (bmv_rslt != true)
+			{
+				Serial.println("PM sensor initialization failed");
+
 				return EDK_BME68X_DRIVER_ERROR;
 			}
 		}
@@ -179,10 +253,10 @@ demo_ret_code sensorManager::initialize_all_sensors()
 /*!
  * @brief This function configures the sensor manager using the provided config file
  */
-demo_ret_code sensorManager::begin(const String& config_name)
+demo_ret_code sensorManager::begin(const String &config_name)
 {
 	int8_t bme68xRslt = BME68X_OK;
-	
+
 	commMuxBegin(Wire, SPI);
 
 	/* Communication interface set for all the 8 sensors in the development kit */
@@ -201,7 +275,7 @@ demo_ret_code sensorManager::begin(const String& config_name)
 		/* close config file */
 		configFile.close();
 
-		if (error) 
+		if (error)
 		{
 			Serial.println(error.c_str());
 			return EDK_SENSOR_MANAGER_JSON_DESERIAL_ERROR;
@@ -211,7 +285,7 @@ demo_ret_code sensorManager::begin(const String& config_name)
 	{
 		return EDK_SENSOR_MANAGER_CONFIG_FILE_ERROR;
 	}
-	
+
 	memset(_sensors, 0, sizeof(_sensors));
 
 	JsonArray devicefigurations = _configDoc["configBody"]["sensorConfigurations"].as<JsonArray>();
@@ -220,16 +294,16 @@ demo_ret_code sensorManager::begin(const String& config_name)
 	{
 		/* save config information to sensor profile */
 		uint8_t sensor_number = devicefig["sensorIndex"].as<uint8_t>();
-		bme68x_sensor* sensor = get_sensor(sensor_number);
+		bme68x_sensor *sensor = get_sensor(sensor_number);
 
 		if (sensor == nullptr)
 		{
 			return EDK_SENSOR_MANAGER_SENSOR_INDEX_ERROR;
 		}
-	  
+
 		String heater_profile_str = devicefig["heaterProfile"].as<String>();
 		String duty_cycle_str = devicefig["dutyCycleProfile"].as<String>();
-		
+
 		sensor->is_configured = false;
 		sensor->wake_up_time = 0;
 		sensor->mode = BME68X_SLEEP_MODE;
@@ -237,23 +311,23 @@ demo_ret_code sensorManager::begin(const String& config_name)
 		sensor->next_gas_index = 0;
 		sensor->i2c_mask = ((0x01 << sensor_number) ^ 0xFF);
 		sensor->scan_cycle_index = 1;
-		
+
 		/* initialize the sensor */
-		bme68xRslt = initialize_sensor(sensor_number, sensor->id);
+		bme68xRslt = initialize_mox_sensor(sensor_number, sensor->id);
 
 		if (bme68xRslt != BME68X_OK)
 		{
 			return EDK_BME68X_DRIVER_ERROR;
-		}		
-	  
+		}
+
 		/* set the heater profile */
 		bme68xRslt = set_heater_profile(heater_profile_str, duty_cycle_str, sensor->heater_profile, sensor_number);
 
 		if (bme68xRslt != BME68X_OK)
 		{
 			return EDK_BME68X_DRIVER_ERROR;
-		}	
-		
+		}
+
 		sensor->is_configured = true;
 	}
 	return EDK_OK;
@@ -262,19 +336,19 @@ demo_ret_code sensorManager::begin(const String& config_name)
 /*!
  * @brief This function retrieves the selected sensor data
  */
-demo_ret_code sensorManager::collect_data(uint8_t num, bme68x_data* data[3])
+demo_ret_code sensorManager::collect_data(uint8_t num, bme68x_data *data[3])
 {
 	demo_ret_code ret_code = EDK_OK;
 	int8_t bme68x_rslt = BME68X_OK;
-	
+
 	data[0] = data[1] = data[2] = nullptr;
-	bme68x_sensor* sensor = get_sensor(num);
+	bme68x_sensor *sensor = get_sensor(num);
 
 	if (sensor == nullptr)
 	{
 		return EDK_SENSOR_MANAGER_SENSOR_INDEX_ERROR;
 	}
-	
+
 	uint64_t time_stamp = utils::get_tick_ms();
 
 	if (sensor->is_configured && (time_stamp >= sensor->wake_up_time))
@@ -292,7 +366,7 @@ demo_ret_code sensorManager::collect_data(uint8_t num, bme68x_data* data[3])
 		else
 		{
 			uint8_t nFields, j = 0;
-			
+
 			nFields = bme68xSensors[num].fetchData();
 			bme68x_data *sensor_data = bme68xSensors[num].getAllData();
 
@@ -318,7 +392,7 @@ demo_ret_code sensorManager::collect_data(uint8_t num, bme68x_data* data[3])
 					}
 
 					data[j++] = &_field_data[i];
-					
+
 					sensor->next_gas_index = _field_data[i].gas_index + 1;
 
 					if (sensor->next_gas_index == sensor->heater_profile.length)
@@ -338,17 +412,46 @@ demo_ret_code sensorManager::collect_data(uint8_t num, bme68x_data* data[3])
 					sensor->wake_up_time = time_stamp + GAS_WAIT_SHARED;
 				}
 			}
-			
+
 			if (data[0] == nullptr)
 			{
 				sensor->wake_up_time = time_stamp + GAS_WAIT_SHARED;
 			}
 		}
-		
+
 		if (bme68x_rslt < BME68X_OK)
 		{
 			ret_code = EDK_BME68X_DRIVER_ERROR;
 		}
 	}
 	return ret_code;
+}
+
+SparkFunBMV080 sensorManager::get_pm_data()
+{
+	Serial.print("starting to read: ");
+	if (bmv080.readSensor())
+	{
+		float pm10 = bmv080.PM10();
+		float pm25 = bmv080.PM25();
+		float pm1 = bmv080.PM1();
+
+		Serial.print("PM10: ");
+		Serial.print(pm10);
+		Serial.print("\t");
+		Serial.print("PM2.5: ");
+		Serial.print(pm25);
+		Serial.print("\t");
+		Serial.print("PM1: ");
+		Serial.print(pm1);
+
+		if (bmv080.isObstructed() == true)
+		{
+			Serial.print("\tObstructed");
+		}
+
+		Serial.println();
+
+		return bmv080;
+	}
 }

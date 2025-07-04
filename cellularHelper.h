@@ -71,6 +71,15 @@ bool lteDisconnect();
  */
 bool modemSetup();
 
+/**
+ * @brief Configures Low Power Settings.
+ *
+ * This function prepares the modem for low power operation by configuring
+ *
+ * @return True on success, false on error.
+ */
+bool configureLowPowerModem();
+
 bool sendSensorData(String jsonPayload);
 
 #endif // CONFIG_H

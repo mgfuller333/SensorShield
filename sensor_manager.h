@@ -45,7 +45,7 @@
 /* Include of Arduino Core */
 #include <Arduino.h>
 #include <SdFat.h>
-#include <RTClib.h>
+
 #include <ArduinoJson.h>
 #include <SPI.h>
 #include <Wire.h>
@@ -53,6 +53,8 @@
 #include "demo_app.h"
 #include <bme68xLibrary.h>
 #include <commMux.h>
+#include "SparkFun_BMV080_Arduino_Library.h" // CTRL+Click here to get the library: http://librarymanager/All#SparkFun_BMV080
+#include <Wire.h>
 
 /* I2C-Expander masks */
 #define I2C_EXPANDER_ADDR 0x20
@@ -104,7 +106,7 @@ private:
 	 *
 	 * @return 0 on success, lessthan zero otherwise
 	 */
-	int8_t initialize_sensor(uint8_t sensor_number, uint32_t &sensor_id);
+	int8_t initialize_mox_sensor(uint8_t sensor_number, uint32_t &sensor_id);
 	/*!
 	 * @brief : This function configures the heater settings of the sensor
 	 *
@@ -115,6 +117,7 @@ private:
 	 *
 	 * @return  bme68x return code
 	 */
+
 	int8_t set_heater_profile(const String &heater_profile_str, const String &duty_cycle_str,
 							  bme68x_heater_profile &heater_profile, uint8_t sensor_number);
 
@@ -220,6 +223,15 @@ public:
 	 * @return  error code
 	 */
 	demo_ret_code collect_data(uint8_t num, bme68x_data *data[3]);
+
+	SparkFunBMV080 get_pm_data();
+
+	bool initialize_pm_sensor();
+	/*!
+	 * @brief : This function configures the BMV to be used for the study
+	 *
+	 * @return  BMV return boolean
+	 */
 };
 
 #endif
