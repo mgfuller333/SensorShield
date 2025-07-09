@@ -91,9 +91,9 @@ bool sensorManager::initialize_pm_sensor()
 {
 	if (bmv080.begin(BMV080_ADDR, Wire1) == false)
 	{
-		Serial.println("BMV080 not detected at default I2C address. Check your jumpers and the hookup guide. Freezing...");
-		while (1)
-			;
+		Serial.println("BMV080 not detected at default I2C address. Check your jumpers and the hookup guide. Not Freezing ...");
+		// while (1)
+		// ;
 	}
 	Serial.println("BMV080 found!");
 
@@ -432,6 +432,7 @@ SparkFunBMV080 sensorManager::get_pm_data()
 	Serial.print("starting to read: ");
 	if (bmv080.readSensor())
 	{
+		delay(100); // Wait for the sensor to read data
 		float pm10 = bmv080.PM10();
 		float pm25 = bmv080.PM25();
 		float pm1 = bmv080.PM1();

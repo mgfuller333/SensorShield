@@ -27,8 +27,8 @@
 // e.g. A0 on many // ESP32Time rtc;
 ESP32Time rtc(-6 * 3600); // offset in seconds GMT+1ESP32 boards is ADC1_CHANNEL_6
 
-#define LED_PIN 42 // Use a free IO pin for LED (example IO2 or any other free)
-constexpr size_t BUFFER_SIZE = 20;
+#define LED_PIN 42                 // Use a free IO pin for LED (example IO2 or any other free)
+constexpr size_t BUFFER_SIZE = 20; // Size of the buffer for incoming data
 // --- these retain GPS Values across deep sleep! ---
 RTC_DATA_ATTR double savedLatitude = 0.0;
 RTC_DATA_ATTR double savedLongitude = 0.0;
@@ -200,6 +200,7 @@ void setup()
 
   //---------BME 688 Setup-----------------//
   /* Desired subscription list of BSEC2 outputs */
+  /* Desired subscription list of BSEC2 outputs */
   bsecSensor sensorList[] = {
       BSEC_OUTPUT_IAQ,
       BSEC_OUTPUT_RAW_TEMPERATURE,
@@ -334,15 +335,15 @@ void setup()
     app_mode = DEMO_IDLE_MODE;
   }
 
-  if (!sensorMgr.initialize_pm_sensor())
-  {
-    Serial.println("Failed to initialize PM sensor");
-    return;
-  }
-  else
-  {
-    Serial.println("PM sensor initialized successfully");
-  }
+  // if (!sensorMgr.initialize_pm_sensor())
+  // {
+  //   Serial.println("Failed to initialize PM sensor");
+  //   return;
+  // }
+  // else
+  // {
+  //   Serial.println("PM sensor initialized successfully");
+  // }
 
   /* Modem initialization */
   if (modemSetup())
@@ -359,22 +360,37 @@ void setup()
     return;
   }
 
+  // /* Modem initialization */
+  // if (configureLowPowerModem())
+  // {
+  //   Serial.println("Modem configureLowPowerModem OK");
+
+  //   delay(20);
+  // }
+  // else
+  // {
+
+  //   Serial.println("Modem initialization ERROR");
+
+  //   return;
+  // }
+
   //-------Start GPS-------//
 
   /* Check clock and assistance data, update if required */
   Serial.println("Initialize GPS");
-  WalterModemGNSSFix gpsData = getGPSFix();
+  // WalterModemGNSSFix gpsData = getGPSFix();
 
   //-------Start GPS-------//
 
   // Save the fix to RTC memory
-  _lastGNSSFix = gpsData;
-  savedLatitude = gpsData.latitude;
-  savedLongitude = gpsData.longitude;
-  savedAltitude = gpsData.height;
-  savedSatCount = gpsData.satCount;
-  Serial.printf("  retrieved Longitude: %.6f\n", gpsData.longitude);
-  Serial.printf("  retrieved Satcount: %d\n", gpsData.satCount);
+  // _lastGNSSFix = gpsData;
+  // savedLatitude = gpsData.latitude;
+  // savedLongitude = gpsData.longitude;
+  // savedAltitude = gpsData.height;
+  // savedSatCount = gpsData.satCount;
+  // Serial.printf("  retrieved Longitude: %.6f\n", gpsData.longitude);
+  // Serial.printf("  retrieved Satcount: %d\n", gpsData.satCount);
 }
 
 void loop()
@@ -409,9 +425,9 @@ void loop()
     DualPowerData data = powerReader.readAllSensors();
     Serial.println("Initializing runInStatus variable...");
     uint8_t runInStatus = -1;
-    Serial.println("Reading PM sensor data...");
-    SparkFunBMV080 pmData = sensorMgr.get_pm_data();
-    Serial.println("PM sensor data read complete.");
+    // Serial.println("Reading PM sensor data...");
+    // SparkFunBMV080 pmData = sensorMgr.get_pm_data();
+    // Serial.println("PM sensor data read complete.");
 
     // Serial.printf("sensor obj Timestamp: %s\n", timestamp);
 
@@ -510,11 +526,11 @@ void loop()
         Serial.println("No valid data - skipping sample");
         // sensors.clear();
         // sensorObj.clear(); // Clear the sensor object
-        delay(1000); // Brief delay before retrying
-        continue;    // Skip to next iteration of while loop
+        delay(50); // Brief delay before retrying
+        continue;  // Skip to next iteration of while loop
       }
 
-      delay(30);
+      delay(50);
       Serial.println("checking if data is populated...");
     }
 
@@ -539,18 +555,18 @@ void loop()
       sensorObj["ts"] = timestamp;
 
       // Add sensor values to the JSON object
-      char locationStr[50];
-      snprintf(locationStr, sizeof(locationStr),
-               "POINT(%.6f %.6f)",
-               savedLongitude, // longitude first!
-               savedLatitude); // then latitude
-      sensorObj["loc"] = locationStr;
-      sensorObj["alt"] = savedAltitude;
-      sensorObj["satCnt"] = savedSatCount;
+      // char locationStr[50];
+      // snprintf(locationStr, sizeof(locationStr),
+      //          "POINT(%.6f %.6f)",
+      //          savedLongitude, // longitude first!
+      //          savedLatitude); // then latitude
+      // sensorObj["loc"] = locationStr;
+      // sensorObj["alt"] = savedAltitude;
+      // sensorObj["satCnt"] = savedSatCount;
 
-      sensorObj["pm10"] = pmData.PM10();
-      sensorObj["pm2_5"] = pmData.PM25();
-      sensorObj["pm1"] = pmData.PM1();
+      // sensorObj["pm10"] = pmData.PM10();
+      // sensorObj["pm2_5"] = pmData.PM25();
+      // sensorObj["pm1"] = pmData.PM1();
 
       sensorObj["batV"] = data.battery.busVoltage;
       sensorObj["batSV"] = data.battery.shuntVoltage;
@@ -617,8 +633,10 @@ void loop()
   // // Reset buffer and sample count
   sensors.clear();
   sampleCount = 0;
-
-  delay(60000); // 10 min delay between batches
+  Serial.println("going to sleep...");
+  // modem.sleep(6000, true); // true = light sleep (ESP32 + modem handled via RTS)
+  // Serial.println("waking up...");
+  // delay(1000); // 10 min delay between batches
 }
 
 demo_ret_code log_sensor_data(uint8_t sens_num)
@@ -949,14 +967,6 @@ void disableWifiAndBluetooth()
 {
   esp_wifi_stop();
   esp_bt_controller_disable();
-}
-
-void configureLowPowerModem()
-{
-  // Enable Power Saving Mode (PSM)
-  // T3412 = "00100001" (1 hour TAU), T3324 = "00000101" (10s active time)
-  // 30s TAU, 10s Active time
-  modem.configPSM(WALTER_MODEM_PSM_ENABLE, "00011110", "00000101");
 }
 
 void enterLightSleep(uint32_t seconds)

@@ -198,12 +198,17 @@ bool updateGNSSAssistance()
 
     bool updateAlmanac = false;
     bool updateEphemeris = false;
-    checkAssistanceData(&rsp, &updateAlmanac, &updateEphemeris);
 
+    Serial.printf("Saved checkAssistanceData\r\n");
+    checkAssistanceData(&rsp, &updateAlmanac, &updateEphemeris);
+    Serial.printf("checked status....\r\n");
     if (!(updateAlmanac || updateEphemeris))
     {
+
+        Serial.printf("no almanac or ephemeris....\r\n");
         if (lteConnected)
         {
+            Serial.printf("attempting to disconnect...\r\n");
             if (!lteDisconnect())
             {
                 Serial.print("Could not disconnect from the LTE network\r\n");
@@ -222,7 +227,7 @@ bool updateGNSSAssistance()
             return false;
         }
     }
-
+    Serial.print("Attempting updateAlmanac gnss UpdateAssistance\r\n");
     if (updateAlmanac)
     {
         if (!modem.gnssUpdateAssistance(WALTER_MODEM_GNSS_ASSISTANCE_TYPE_ALMANAC))
@@ -231,7 +236,7 @@ bool updateGNSSAssistance()
             return false;
         }
     }
-
+    Serial.print("Attempting updateEphemeris gnss UpdateAssistance\r\n");
     if (updateEphemeris)
     {
         if (!modem.gnssUpdateAssistance(
@@ -241,6 +246,7 @@ bool updateGNSSAssistance()
             return false;
         }
     }
+    Serial.print("getting gnss Status\r\n");
 
     if (!modem.gnssGetAssistanceStatus(&rsp) ||
         rsp.type != WALTER_MODEM_RSP_DATA_TYPE_GNSS_ASSISTANCE_DATA)
@@ -248,9 +254,10 @@ bool updateGNSSAssistance()
         Serial.print("Could not request GNSS assistance status\r\n");
         return false;
     }
+    Serial.print("getting checkAssistanceData \r\n");
 
     checkAssistanceData(&rsp, &updateAlmanac, &updateEphemeris);
-
+    Serial.print("trying disconnect\r\n");
     if (!lteDisconnect())
     {
         Serial.print("Could not disconnect from the LTE network\r\n");

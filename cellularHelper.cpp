@@ -327,18 +327,18 @@ bool sendSensorData(String dataPayload)
 
   delay(1000);
 
-  while (modem.mqttDidRing("SireenTest", incomingBuf,
-                           sizeof(incomingBuf), &rsp))
-  {
-    Serial.printf("incoming: qos=%d msgid=%d len=%d:\r\n",
-                  rsp.data.mqttResponse.qos,
-                  rsp.data.mqttResponse.messageId,
-                  rsp.data.mqttResponse.length);
-    for (int i = 0; i < rsp.data.mqttResponse.length; i++)
-    {
-      Serial.printf("'%c' 0x%02x\r\n", incomingBuf[i], incomingBuf[i]);
-    }
-  }
+  // while (modem.mqttDidRing("SireenTest", incomingBuf,
+  //                          sizeof(incomingBuf), &rsp))
+  // {
+  //   Serial.printf("incoming: qos=%d msgid=%d len=%d:\r\n",
+  //                 rsp.data.mqttResponse.qos,
+  //                 rsp.data.mqttResponse.messageId,
+  //                 rsp.data.mqttResponse.length);
+  //   for (int i = 0; i < rsp.data.mqttResponse.length; i++)
+  //   {
+  //     Serial.printf("'%c' 0x%02x\r\n", incomingBuf[i], incomingBuf[i]);
+  //   }
+  // }
 
   // Attempt to send HTTP POST request
 
@@ -404,7 +404,7 @@ bool sendSensorData(String dataPayload)
   //   }
   // }
 
-  delay(5000);
+  // delay(1000);
 
   return true;
 }
@@ -414,6 +414,22 @@ bool configureLowPowerModem()
   // Enable Power Saving Mode (T3412 = TAU, T3324 = Active Time)
   // TAU = "00100001" → 1 hour
   // Active Time = "00000101" → 10s
-  modem.configPSM(WALTER_MODEM_PSM_ENABLE, "00100001", "00000101");
-  modem.configEDRX(WALTER_MODEM_EDRX_ENABLE, "1001", "0000");
+  Serial.println("Configuring Power Saving Mode (PSM)...");
+  if (!modem.configPSM(WALTER_MODEM_PSM_ENABLE, "00100001", "00000101"))
+  {
+    Serial.println("Error: Failed to configure PSM.");
+    return false;
+  }
+  Serial.println("PSM configured successfully.");
+
+  Serial.println("Configuring eDRX...");
+  if (!modem.configEDRX(WALTER_MODEM_EDRX_ENABLE, "1001", "0000"))
+  {
+    Serial.println("Error: Failed to configure eDRX.");
+    return false;
+  }
+  Serial.println("eDRX configured successfully.");
+
+  Serial.println("Low power modem configuration complete.");
+  return true;
 }
