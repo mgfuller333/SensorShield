@@ -84,7 +84,7 @@
 #define PANIC_LED LED_BUILTIN
 #define ERROR_DUR 1000
 
-#define SAMPLE_RATE BSEC_SAMPLE_RATE_ULP
+#define SAMPLE_RATE BSEC_SAMPLE_RATE_CONT
 
 /*!
  * @brief : Class library that holds the functionality of the sensor manager
