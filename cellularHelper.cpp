@@ -37,6 +37,7 @@ uint8_t dataBuf[PACKET_SIZE] = {0};
 
 bool lteConnected()
 {
+
   WalterModemNetworkRegState regState = modem.getNetworkRegState();
   return (regState == WALTER_MODEM_NETWORK_REG_REGISTERED_HOME ||
           regState == WALTER_MODEM_NETWORK_REG_REGISTERED_ROAMING);

@@ -33,24 +33,24 @@ bool BatteryHelper::begin()
     }
     Serial.println("INA219 for battery initialized.");
 
-    if (!inaSolar.begin(&Wire1))
-    {
-        Serial.println("Failed to initialize INA219 for solar panel.");
-        return false;
-    }
-    Serial.println("INA219 for solar panel initialized.");
+    // if (!inaSolar.begin(&Wire1))
+    // {
+    //     Serial.println("Failed to initialize INA219 for solar panel.");
+    //     return false;
+    // }
+    // Serial.println("INA219 for solar panel initialized.");
 
     // Calibrate sensors
     Serial.println("Calibrating INA219 sensors...");
     inaBattery.setCalibration_32V_1A();
     Serial.println("Battery sensor calibrated for 32V, 1A.");
-    inaSolar.setCalibration_32V_1A();
-    Serial.println("Solar panel sensor calibrated for 32V, 1A.");
+    // inaSolar.setCalibration_32V_1A();
+    // Serial.println("Solar panel sensor calibrated for 32V, 1A.");
 
     // Disable power save
     Serial.println("Disabling power save mode for sensors...");
     inaBattery.powerSave(false);
-    inaSolar.powerSave(false);
+    // inaSolar.powerSave(false);
     Serial.println("Sensors power save disabled.");
 
     Serial.println("BatteryHelper initialization complete.");
@@ -74,10 +74,10 @@ DualPowerData BatteryHelper::readAllSensors()
     // Serial.printf("  Power:         %.2f mW\n\n", data.battery.power_mW);
 
     // Read solar panel sensor data
-    data.solarPanel.busVoltage = inaSolar.getBusVoltage_V();
-    data.solarPanel.shuntVoltage = inaSolar.getShuntVoltage_mV();
-    data.solarPanel.current_mA = inaSolar.getCurrent_mA();
-    data.solarPanel.power_mW = inaSolar.getPower_mW();
+    // data.solarPanel.busVoltage = inaSolar.getBusVoltage_V();
+    // data.solarPanel.shuntVoltage = inaSolar.getShuntVoltage_mV();
+    // data.solarPanel.current_mA = inaSolar.getCurrent_mA();
+    // data.solarPanel.power_mW = inaSolar.getPower_mW();
 
     // Serial.println("Solar Panel Sensor Data:");
     // Serial.printf("  Bus Voltage:   %.2f V\n", data.solarPanel.busVoltage);
@@ -87,7 +87,7 @@ DualPowerData BatteryHelper::readAllSensors()
 
     // Optional: re-enable power save after reading
     inaBattery.powerSave(true);
-    inaSolar.powerSave(true);
+    // inaSolar.powerSave(true);
 
     return data;
 }

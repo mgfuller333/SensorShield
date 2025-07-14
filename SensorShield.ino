@@ -1,6 +1,5 @@
 #include <Wire.h>
 #include <SPI.h>
-#include "cellularHelper.h"
 #include "gpsHelper.h"
 #include "bsec2.h" // Bosch BSEC2 library for BME688
 #include "bme68x_datalogger.h"
@@ -26,8 +25,17 @@
 #include "SparkFun_BMV080_Arduino_Library.h"
 #include <ArduinoJson.h>    // <-- new
 #include "cellularHelper.h" // <-- for lteConnect() + sendSensorData()
-
+#include "PMS.h"
 #define BUFFER_SIZE 4
+
+// Define UART1 pins (example: TX = GPIO17, RX = GPIO18)
+
+const int PMS_RX = 9;  // sensor TX → ESP32 RX
+const int PMS_TX = 10; // sensor RX ← ESP32 TX (must be an output-capable pin)
+
+// Use hardware UART2
+PMS pms(Serial1); // Use Serial1 for PMS sensor
+PMS::DATA pmData;
 
 uint8_t sampleCount = 0;
 DynamicJsonDocument payloadDoc(8192); // 16 KB on heap
@@ -87,7 +95,7 @@ void checkBsecStatus(Bsec2 bsec);
 BatteryHelper powerReader; // defaults: 0x40 for battery, 0x41 for solar panel
 
 Bsec2 bsec; // BSEC2 instance for the BME688
-
+Bsec2 envSensor[NUM_OF_SENS];
 // Communication multiplexer configuration for the sensor (use sensor index 0)
 commMux commConfig;
 
@@ -109,9 +117,7 @@ void errLeds(void);
 void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bsec);
 
 /* Create an array of objects of the class Bsec2 */
-Bsec2 envSensor[NUM_OF_SENS];
-commMux communicationSetup[NUM_OF_SENS];
-uint8_t bsecMemBlock[NUM_OF_SENS][BSEC_INSTANCE_SIZE];
+
 uint8_t sensor = 0;
 
 /*!
@@ -141,6 +147,7 @@ demo_ret_code config_file_read(const String &config_file);
  */
 demo_ret_code log_sensor_data(uint8_t sens_num);
 
+void configureUltraLowPowerModem();
 /*!
  * @brief : This function receive the system time (in unix epoch time format) from serial port and update into RTC time
  *
@@ -158,13 +165,15 @@ ledController ledCtlr;
 bme68xDataLogger bme68xDlog;
 bsecDataLogger bsecDlog;
 demo_ret_code ret_code;
-uint8_t selected_sensor;
+
 String bme68x_conf_file_name, bsec_conf_file_name, ai_conf_file_name, config_file_name, label_file_name;
-demo_app_mode app_mode, current_app_mode;
+
 gas_label label;
 bool is_bme68x_conf_available, is_bsec_conf_available, is_ai_conf_available, is_label_info_available;
-commMux comm[NUM_OF_SENS];
+
 uint8_t bsec_mem_block[NUM_OF_SENS][BSEC_INSTANCE_SIZE];
+
+commMux communicationSetup[NUM_OF_SENS];
 
 uint8_t sensor_num;
 uint32_t ground_truth;
@@ -175,7 +184,6 @@ uint32_t received_sys_time = 0;
 
 WalterModemGNSSFix gpsData;
 
-// WalterModemRsp rsp = {};
 //--End of BME Initialization--//
 
 /**
@@ -190,6 +198,8 @@ void setup()
 {
 
   Serial.begin(115200);
+  // Serial1.begin(9600, SERIAL_8N1, PMS_TX, PMS_RX); // Serial1 for PMS sensor, TX: GPIO10, RX: GPIO9
+  //  Switch to passive mode
   delay(5000);
 
   // Set up the LED pin
@@ -241,7 +251,7 @@ void setup()
     communicationSetup[i] = commMuxSetConfig(Wire, SPI, i, communicationSetup[i]);
 
     //   /* Assigning a chunk of memory block to the bsecInstance */
-    envSensor[i].allocateMemory(bsecMemBlock[i]);
+    envSensor[i].allocateMemory(bsec_mem_block[i]);
 
     Serial.println("allocating memory:");
     Serial.println(i);
@@ -287,22 +297,20 @@ void setup()
   Serial.println("BSEC library version " +
                  String(envSensor[0].version.major) + "." + String(envSensor[0].version.minor) + "." + String(envSensor[0].version.major_bugfix) + "." + String(envSensor[0].version.minor_bugfix));
 
-  app_mode = DEMO_RECORDING_MODE;
-  // current_app_mode = DEMO_RECORDING_MODE;
+  // Initialize PMS5003 sensor
 
-  label = BSEC_NO_CLASS;
-
-  /* Setting default sensor as sensor 0 to collect data */
-  selected_sensor = NUM_BME68X_UNITS;
+  // Serial.println("setting plantower to passive mode");
+  //  pms.passiveMode();
+  //  End of PMS5003 sensor initialization
 
   // Initialize the battery helper
 
   if (!powerReader.begin())
   {
-    Serial.println(F("ERROR: INA219 init failed. Check wiring & addresses."));
+    Serial.println("ERROR: INA219 init failed. Check wiring & addresses.");
     delay(10);
   }
-  Serial.println(F("batteryHelper: sensors ready."));
+  Serial.println("batteryHelper: sensors ready.");
 
   /* Initializes the SD and RTC module */
   Serial.println("init SD ...");
@@ -334,25 +342,13 @@ void setup()
   if (ret_code < EDK_OK)
   {
     Serial.println("ret_code Good: Setting to DEMO_IDLE_MODE");
-    current_app_mode = DEMO_IDLE_MODE;
-    app_mode = DEMO_IDLE_MODE;
   }
-
-  // if (!sensorMgr.initialize_pm_sensor())
-  // {
-  //   Serial.println("Failed to initialize PM sensor");
-  //   return;
-  // }
-  // else
-  // {
-  //   Serial.println("PM sensor initialized successfully");
-  // }
 
   /* Modem initialization */
   if (modemSetup())
   {
     Serial.println("Modem initialization OK");
-
+    disableWifiAndBluetooth();
     delay(2000);
   }
   else
@@ -379,18 +375,43 @@ void setup()
   // savedSatCount = gpsData.satCount;
   // Serial.printf("  retrieved Longitude: %.6f\n", gpsData.longitude);
   // Serial.printf("  retrieved Satcount: %d\n", gpsData.satCount);
+  disableWifiAndBluetooth();
 }
 
 void loop()
 {
 
+  // Serial.println("Waking up, wait 30 seconds for stable readings...");
+  // // pms.wakeUp();
+  // for (int i = 0; i < 30; i++)
+  // {
+  //   Serial.print(".");
+  //   delay(1000);
+  // }
+
+  bool isConnected = lteConnected();
+  if (!isConnected)
+  {
+    Serial.println("Modem not connected, attempting to connect...");
+    if (!lteConnect())
+    {
+      Serial.println("Failed to connect to LTE network.");
+      return;
+    }
+    else
+    {
+      // Serial.println("connected to LTE network...");
+    }
+  }
+
   for (sensor = 0; sensor < NUM_OF_SENS; sensor++)
   {
+
     if (!envSensor[sensor].run())
     {
-      delay(1000); // 10 min delay between batches
-      // checkBsecStatus(envSensor[sensor]);
-      // Serial.printf("Sensor %d failed to run\n", sensor);
+
+      checkBsecStatus(envSensor[sensor]);
+      Serial.printf("Sensor %d failed to run\n", sensor);
     }
     else
     {
@@ -413,7 +434,8 @@ demo_ret_code log_sensor_data(uint8_t sens_num)
 
   if (ret < EDK_OK)
   {
-    StaticJsonDocument<1024> jsonDoc;
+
+    DynamicJsonDocument jsonDoc(8192); // 16 KB on heap
     JsonObject errorObj = jsonDoc.createNestedObject("errorCode");
 
     errorObj["sensor_number"] = sens_num;
@@ -528,118 +550,190 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
   if (!outputs.nOutputs)
     return;
 
-  // on first sensor of a new time‐slice, create a fresh object in the array:
+  // On first sensor of a new time-slice, create a fresh object in the array
   if (sensorStepCount == 0)
   {
     currentSampleObj = sensors.createNestedObject();
-    // you can also stamp a timestamp here if you like:
-    // uint64_t ts = outputs.output[0].time_stamp / 1000000;
-    // currentSampleObj["ts"] = ts;
   }
 
-  // now fold in this sensor’s metrics
+  // Temporary JsonObject to collect BSEC outputs
+  DynamicJsonDocument tempDoc(4096); // 4 KB on heap
+  JsonObject tempObj = tempDoc.to<JsonObject>();
+
+  uint8_t runInStatus = -1;
+
+  // Collect BSEC outputs in tempObj
   for (uint8_t i = 0; i < outputs.nOutputs; i++)
   {
     const bsecData &o = outputs.output[i];
+    String sensorIdx = String(sensorStepCount);
     switch (o.sensor_id)
     {
     case BSEC_OUTPUT_IAQ:
-      currentSampleObj[String("iaq_") + String(sensorStepCount)] = o.signal;
-      currentSampleObj[String("iaqAcc_") + String(sensorStepCount)] = o.accuracy;
+      tempObj[String("iaq_") + sensorIdx] = o.signal;
+      tempObj[String("iaqAcc_") + sensorIdx] = o.accuracy;
       break;
     case BSEC_OUTPUT_RAW_TEMPERATURE:
-      currentSampleObj[String("temp_") + String(sensorStepCount)] = o.signal;
+      tempObj[String("temp_") + sensorIdx] = o.signal;
       break;
     case BSEC_OUTPUT_RAW_PRESSURE:
-      currentSampleObj[String("pres_") + String(sensorStepCount)] = o.signal;
+      if (sensorStepCount == 0)
+        tempObj[String("pres_") + sensorIdx] = o.signal;
       break;
     case BSEC_OUTPUT_RAW_HUMIDITY:
-      currentSampleObj[String("hum_") + String(sensorStepCount)] = o.signal;
+      tempObj[String("hum_") + sensorIdx] = o.signal;
       break;
     case BSEC_OUTPUT_RAW_GAS:
-      currentSampleObj[String("gasR_") + String(sensorStepCount)] = o.signal;
-      break;
-    case BSEC_OUTPUT_STABILIZATION_STATUS:
-      currentSampleObj[String("stabStat_") + String(sensorStepCount)] = (int)o.signal;
-      break;
-    case BSEC_OUTPUT_RUN_IN_STATUS:
-      currentSampleObj[String("runIn_") + String(sensorStepCount)] = (int)o.signal;
-      break;
-    case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
-      currentSampleObj[String("ctemp_") + String(sensorStepCount)] = o.signal;
-      break;
-    case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
-      currentSampleObj[String("chum_") + String(sensorStepCount)] = o.signal;
-      break;
-    case BSEC_OUTPUT_STATIC_IAQ:
-      currentSampleObj[String("staq_") + String(sensorStepCount)] = o.signal;
+      tempObj[String("gasR_") + sensorIdx] = o.signal;
       break;
     case BSEC_OUTPUT_CO2_EQUIVALENT:
-      currentSampleObj[String("co2_") + String(sensorStepCount)] = o.signal;
+      tempObj[String("co2_") + sensorIdx] = o.signal;
       break;
     case BSEC_OUTPUT_BREATH_VOC_EQUIVALENT:
-      currentSampleObj[String("bvoc_") + String(sensorStepCount)] = o.signal;
-      break;
-    case BSEC_OUTPUT_GAS_PERCENTAGE:
-      currentSampleObj[String("gasPct_") + String(sensorStepCount)] = o.signal;
+      tempObj[String("bvoc_") + sensorIdx] = o.signal;
       break;
     case BSEC_OUTPUT_COMPENSATED_GAS:
-      currentSampleObj[String("comGas_") + String(sensorStepCount)] = o.signal;
+      tempObj[String("com_gas") + sensorIdx] = o.signal;
       break;
     default:
       break;
     }
+    if (o.sensor_id == BSEC_OUTPUT_RUN_IN_STATUS)
+      runInStatus = o.signal;
   }
 
-  sensorStepCount++;
+  // If runInStatus != 1, add collected data to currentSampleObj
+  if (runInStatus != 1)
+  {
+    // Copy tempObj to currentSampleObj
+    for (JsonPair kv : tempObj)
+    {
+      currentSampleObj[kv.key()] = kv.value();
+    }
 
-  // once we’ve seen all 8 sensors for this time‐slice:
+    // Add power data
+    Serial.println("Configuring communication for INA219...");
+    Serial.println("Reading battery and solar sensors...");
+    DualPowerData powerData = powerReader.readAllSensors();
+    currentSampleObj["batV"] = powerData.battery.busVoltage;
+    currentSampleObj["batSV"] = powerData.battery.shuntVoltage;
+    currentSampleObj["batC"] = powerData.battery.current_mA;
+    currentSampleObj["batP"] = powerData.battery.power_mW;
+    // currentSampleObj["solV"] = powerData.solar.busVoltage;
+    // currentSampleObj["solSV"] = powerData.solar.shuntVoltage;
+    // currentSampleObj["solC"] = powerData.solar.current_mA;
+    // currentSampleObj["solP"] = powerData.solar.power_mW;
+
+    // Add PMS sensor data
+    // Serial.println("Send PM read request...");
+    // pms.requestRead();
+    // delay(10);
+    // Serial.println("Wait max. 1 second for read...");
+    // if (pms.readUntil(pmData))
+    // {
+    //   Serial.print("PM 1.0 (ug/m3): ");
+    //   Serial.println(pmData.PM_AE_UG_1_0);
+    //   Serial.print("PM 2.5 (ug/m3): ");
+    //   Serial.println(pmData.PM_AE_UG_2_5);
+    //   Serial.print("PM 10.0 (ug/m3): ");
+    //   Serial.println(pmData.PM_AE_UG_10_0);
+    //   currentSampleObj["pm10"] = pmData.PM_AE_UG_10_0;
+    //   currentSampleObj["pm2_5"] = pmData.PM_AE_UG_2_5;
+    //   currentSampleObj["pm1"] = pmData.PM_AE_UG_1_0;
+    // }
+    // else
+    // {
+    //   Serial.println("PMS read failed");
+    //   currentSampleObj["pm10"] = nullptr;
+    //   currentSampleObj["pm2_5"] = nullptr;
+    //   currentSampleObj["pm1"] = nullptr;
+    // }
+
+    // Add metadata
+    uint8_t mac[6];
+    esp_read_mac(mac, ESP_MAC_WIFI_STA);
+    char deviceId[13];
+    snprintf(deviceId, sizeof(deviceId), "%02X%02X%02X%02X%02X%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    currentSampleObj["device"] = deviceId;
+    currentSampleObj["ts"] = rtc.getTime("%Y-%m-%dT%H:%M:%S.000Z");
+    char wkt[50];
+    snprintf(wkt, sizeof(wkt), "POINT(%f %f)", savedLongitude, savedLatitude);
+    currentSampleObj["loc"] = wkt;
+    currentSampleObj["alt"] = savedAltitude;
+    currentSampleObj["satCnt"] = savedSatCount;
+    currentSampleObj["bID"] = sampleCount;
+
+    sensorStepCount++;
+    Serial.print("Sensor count: ");
+    Serial.println(sensorStepCount);
+    Serial.print("Sample count: ");
+    Serial.println(sampleCount);
+  }
+
+  // Once all sensors for this time-slice are processed
   if (sensorStepCount >= NUM_SENSORS)
   {
     sampleCount++;
-    sensorStepCount = 0; // reset for next sample
+    sensorStepCount = 0; // Reset for next sample
 
-    // if buffer full, serialize & clear everything
+    // If buffer full, serialize & clear everything
     if (sampleCount >= BUFFER_SIZE)
     {
-      char jsonBuffer[3000];
+      char jsonBuffer[6000];
       Serial.println("=== SENDING BATCH ===");
       serializeJsonPretty(sensors, Serial);
       serializeJson(sensors, jsonBuffer);
       Serial.println();
-      // TODO: actually send `payloadDoc` with your modem or BLE
 
-      if (sendSensorData(jsonBuffer))
+      for (int i = 0; i < BUFFER_SIZE; ++i)
       {
-        Serial.println("sending data to cloud...");
-        digitalWrite(LED_PIN, LOW); // Turn LED OFF
-        delay(50);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(50);                   // Wait 5 ms
-        digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-        delay(50);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(50);                   // Wait 5 ms
-        digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-        delay(50);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(50);                   // Wait 4 seconds
-        digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-      }
-      else
-      {
-        Serial.println("Send failed.");
+
+        JsonObject testObj;
+        Serial.println(String("sending parts... ") + String(i));
+        char jsonBuffer[12000];
+        testObj = sensors[i];
+        serializeJson(testObj, jsonBuffer);
+        Serial.println("serialize json parts...");
+        if (sendSensorData(jsonBuffer))
+        {
+          Serial.println("sending data to cloud...");
+          digitalWrite(LED_PIN, LOW); // Turn LED OFF
+          delay(50);
+          digitalWrite(LED_PIN, HIGH); // Turn LED ON
+          delay(50);                   // Wait 5 ms
+          digitalWrite(LED_PIN, LOW);  // Turn LED OFF
+          delay(50);
+          digitalWrite(LED_PIN, HIGH); // Turn LED ON
+          delay(50);                   // Wait 5 ms
+          digitalWrite(LED_PIN, LOW);  // Turn LED OFF
+          delay(50);
+          digitalWrite(LED_PIN, HIGH); // Turn LED ON
+          delay(50);                   // Wait 4 seconds
+          digitalWrite(LED_PIN, LOW);  // Turn LED OFF
+        }
+        else
+        {
+          Serial.println("Send failed.");
+        }
       }
 
-      // clear for next round
+      // TODO: Send payloadDoc via modem or BLE
+
+      // Clear for next round
       sensors.clear();
-      payloadDoc.clear();                   // resets doc
-      sensors = payloadDoc.to<JsonArray>(); // recreate root array
+      payloadDoc.clear();
+      sensors = payloadDoc.to<JsonArray>();
       sampleCount = 0;
+      // Serial.println("disconnecting from LTE...");
+      if (lteDisconnect())
+      {
+        Serial.println("entering light sleep for 5 seconds...");
+        // delay(5000); // Wait 5 seconds before going to sleep
+        modem.sleep(10, true); // true = light sleep
+      }
     }
   }
 }
-
 demo_ret_code configure_sensor_logging(const String &bme_config_file)
 {
   demo_ret_code ret = sensorMgr.begin(bme_config_file);
@@ -704,21 +798,12 @@ void disableWifiAndBluetooth()
   esp_bt_controller_disable();
 }
 
-// void configureLowPowerModem()
-// {
-//   // Enable Power Saving Mode (PSM)
-//   // T3412 = "00100001" (1 hour TAU), T3324 = "00000101" (10s active time)
-//   // 30s TAU, 10s Active time
-//   modem.configPSM(WALTER_MODEM_PSM_ENABLE, "00011110", "00000101");
-// }
-
-void enterLightSleep(uint32_t seconds)
+void configureUltraLowPowerModem()
 {
-  // ESP32 timer wakeup
-  esp_sleep_enable_timer_wakeup(seconds * 1000000ULL);
-
-  // Walter library manages RTS line before/after sleep
-  modem.sleep(seconds, true); // true = light sleep
+  // Enable Power Saving Mode (PSM)
+  // T3412 = "00100001" (1 hour TAU), T3324 = "00000101" (10s active time)
+  // 30s TAU, 10s Active time
+  modem.configPSM(WALTER_MODEM_PSM_ENABLE, "00011110", "00000101");
 }
 
 void checkBsecStatus(Bsec2 bsec)

@@ -55,7 +55,10 @@
 #include <commMux.h>
 #include "SparkFun_BMV080_Arduino_Library.h" // CTRL+Click here to get the library: http://librarymanager/All#SparkFun_BMV080
 #include <Wire.h>
-
+#include "sensor_manager.h"
+#include "SparkFun_BMV080_Arduino_Library.h" // CTRL+Click here to get the library: http://librarymanager/All#SparkFun_BMV080
+#include "cellularHelper.h"					 // <-- for lteConnect() + sendSensorData()
+#include <Wire.h>
 /* I2C-Expander masks */
 #define I2C_EXPANDER_ADDR 0x20
 #define I2C_EXPANDER_OUTPUT_REG_ADDR 0x01
@@ -130,6 +133,25 @@ private:
 	 * @return  bme68x return code
 	 */
 	int8_t configure_sensor(bme68x_heater_profile &heater_profile, uint8_t sensor_number);
+
+	/*!
+	 * @brief : This function adds a callback for BME 68x Bsec Data
+	 *
+	 * @param[in] data : The heater profile structure
+	 * @param[in] outputs 	: The sensor number
+	 * @param[in] bsec 	: The sensor number
+	 * @return  void
+	 */
+	static void BsecDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bsec);
+
+	/*!
+	 * @brief : This function adds a callback for BME 68x Bsec Data
+	 *
+	 * @param[in] heaterProfile : The heater profile structure
+	 * @param[in] sensorNumber 	: The sensor number
+	 *
+	 * @return  bme68x return code
+	 */
 
 public:
 	/*!

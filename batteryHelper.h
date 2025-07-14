@@ -24,7 +24,7 @@ class BatteryHelper
 {
 public:
     // addrBattery = battery sensor address, addrSolar = solar panel sensor address
-    BatteryHelper(uint8_t addrBattery = 0x40, uint8_t addrSolar = 0x41);
+    BatteryHelper(uint8_t addrBattery = 0x41, uint8_t addrSolar = 0x40);
 
     // Initialize both INA219 sensors
     bool begin();
