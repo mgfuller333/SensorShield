@@ -52,6 +52,7 @@ static JsonObject currentSampleObj; // points into `sensors`
 ESP32Time rtc(-6 * 3600); // offset in seconds GMT+1ESP32 boards is ADC1_CHANNEL_6
 
 #define LED_PIN 42 // Use a free IO pin for LED (example IO2 or any other free)
+
 // --- these retain GPS Values across deep sleep! ---
 RTC_DATA_ATTR double savedLatitude = 0.0;
 RTC_DATA_ATTR double savedLongitude = 0.0;
@@ -344,7 +345,7 @@ void setup()
   if (modemSetup())
   {
     Serial.println("Modem initialization OK");
-    disableWifiAndBluetooth();
+    // disableWifiAndBluetooth();
   }
   else
   {
@@ -371,7 +372,7 @@ void setup()
   savedSatCount = gpsData.satCount;
   Serial.printf("  retrieved Longitude: %.6f\n", gpsData.longitude);
   Serial.printf("  retrieved Satcount: %d\n", gpsData.satCount);
-  disableWifiAndBluetooth();
+  // disableWifiAndBluetooth();
 }
 
 void loop()
@@ -741,24 +742,25 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
         if (sendSensorData(jsonBuffer))
         {
           Serial.println("sending data to cloud...");
-          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
-          delay(50);
-          digitalWrite(LED_PIN, LOW);  // Turn LED ON
-          delay(50);                   // Wait 5 ms
-          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
-          delay(50);
-          digitalWrite(LED_PIN, LOW);  // Turn LED ON
-          delay(50);                   // Wait 5 ms
-          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
-          delay(50);
-          digitalWrite(LED_PIN, LOW);  // Turn LED ON
-          delay(50);                   // Wait 4 seconds
-          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
+          // digitalWrite(LED_PIN, HIGH); // Turn LED OFF
+          // delay(50);
+          // digitalWrite(LED_PIN, LOW);  // Turn LED ON
+          // delay(50);                   // Wait 5 ms
+          // digitalWrite(LED_PIN, HIGH); // Turn LED OFF
+          // delay(50);
+          // digitalWrite(LED_PIN, LOW);  // Turn LED ON
+          // delay(50);                   // Wait 5 ms
+          // digitalWrite(LED_PIN, HIGH); // Turn LED OFF
+          // delay(50);
+          // digitalWrite(LED_PIN, LOW);  // Turn LED ON
+          // delay(50);                   // Wait 4 seconds
+          // digitalWrite(LED_PIN, HIGH); // Turn LED OFF
         }
         else
         {
           Serial.println("Send failed.");
         }
+        return;
       }
 
       // TODO: Send payloadDoc via modem or BLE
@@ -772,8 +774,8 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
       if (lteDisconnect())
       {
         Serial.println("entering light sleep for 5 seconds...");
-        // delay(5000); // Wait 5 seconds before going to sleep
-        modem.sleep(10, true); // true = light sleep
+        delay(10000); // Wait 5 seconds before going to sleep
+        // modem.sleep(10, true); // true = light sleep
       }
     }
   }
