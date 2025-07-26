@@ -200,14 +200,12 @@ void setup()
   Serial.begin(115200);
   // Serial1.begin(9600, SERIAL_8N1, PMS_TX, PMS_RX); // Serial1 for PMS sensor, TX: GPIO10, RX: GPIO9
   //  Switch to passive mode
-  delay(5000);
 
-  // Set up the LED pin
+  // 1 Blink Set up the LED pin
   pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, LOW);  // Start LED off
-  digitalWrite(LED_PIN, HIGH); // Turn LED ON
-  delay(1000);                 // Wait 100 ms
-  digitalWrite(LED_PIN, LOW);  // Start LED off
+  digitalWrite(LED_PIN, HIGH); // Start LED off
+  delay(1000);
+  digitalWrite(LED_PIN, LOW); // Turn LED ON
 
   //------End of Modem Initialization------//
 
@@ -303,8 +301,6 @@ void setup()
   //  pms.passiveMode();
   //  End of PMS5003 sensor initialization
 
-  // Initialize the battery helper
-
   if (!powerReader.begin())
   {
     Serial.println("ERROR: INA219 init failed. Check wiring & addresses.");
@@ -349,7 +345,6 @@ void setup()
   {
     Serial.println("Modem initialization OK");
     disableWifiAndBluetooth();
-    delay(2000);
   }
   else
   {
@@ -362,24 +357,27 @@ void setup()
   //-------Start GPS-------//
 
   /* Check clock and assistance data, update if required */
-  // Serial.println("Initialize GPS");
-  // WalterModemGNSSFix gpsData = getGPSFix();
+  Serial.println("Initialize GPS");
+  WalterModemGNSSFix gpsData = getGPSFix();
+  // 5 - Blinks
 
   //-------Start GPS-------//
 
   // // Save the fix to RTC memory
-  // _lastGNSSFix = gpsData;
-  // savedLatitude = gpsData.latitude;
-  // savedLongitude = gpsData.longitude;
-  // savedAltitude = gpsData.height;
-  // savedSatCount = gpsData.satCount;
-  // Serial.printf("  retrieved Longitude: %.6f\n", gpsData.longitude);
-  // Serial.printf("  retrieved Satcount: %d\n", gpsData.satCount);
+  _lastGNSSFix = gpsData;
+  savedLatitude = gpsData.latitude;
+  savedLongitude = gpsData.longitude;
+  savedAltitude = gpsData.height;
+  savedSatCount = gpsData.satCount;
+  Serial.printf("  retrieved Longitude: %.6f\n", gpsData.longitude);
+  Serial.printf("  retrieved Satcount: %d\n", gpsData.satCount);
   disableWifiAndBluetooth();
 }
 
 void loop()
 {
+
+  // 2 - Blinks
 
   // Serial.println("Waking up, wait 30 seconds for stable readings...");
   // // pms.wakeUp();
@@ -390,17 +388,49 @@ void loop()
   // }
 
   bool isConnected = lteConnected();
+
+  // Wait 100 ms
+
   if (!isConnected)
   {
     Serial.println("Modem not connected, attempting to connect...");
     if (!lteConnect())
     {
+
       Serial.println("Failed to connect to LTE network.");
-      return;
+      // 7 - Blinks
+
+      digitalWrite(LED_PIN, HIGH);
+      delay(50);
+      digitalWrite(LED_PIN, LOW); // Turn LED ON
+      delay(50);
+      digitalWrite(LED_PIN, HIGH);
+      delay(50);
+      digitalWrite(LED_PIN, LOW); // Turn LED ON
+      delay(50);
+      digitalWrite(LED_PIN, HIGH);
+      delay(50);
+      digitalWrite(LED_PIN, LOW); // Turn LED ON
+      delay(50);
+      digitalWrite(LED_PIN, HIGH);
+      delay(50);
+      digitalWrite(LED_PIN, LOW); // Turn LED ON
+      delay(50);
+      digitalWrite(LED_PIN, HIGH);
+      delay(50);
+      digitalWrite(LED_PIN, LOW); // Turn LED ON
+      delay(50);
+      digitalWrite(LED_PIN, HIGH);
+      delay(50);
+      digitalWrite(LED_PIN, LOW); // Turn LED ON
+      delay(1000);
+      digitalWrite(LED_PIN, HIGH);
+      ESP.restart();
     }
     else
     {
       // Serial.println("connected to LTE network...");
+      // 8 - Blinks
     }
   }
 
@@ -561,6 +591,10 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
   JsonObject tempObj = tempDoc.to<JsonObject>();
 
   uint8_t runInStatus = -1;
+  // 1 - Blink
+  digitalWrite(LED_PIN, HIGH); // Turn LED ON
+  delay(100);                  // Wait 5 ms
+  digitalWrite(LED_PIN, LOW);  // Turn LED OFF
 
   // Collect BSEC outputs in tempObj
   for (uint8_t i = 0; i < outputs.nOutputs; i++)
@@ -605,6 +639,16 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
   // If runInStatus != 1, add collected data to currentSampleObj
   if (runInStatus != 1)
   {
+
+    // 2 - Blinks
+
+    digitalWrite(LED_PIN, HIGH);
+    delay(50);
+    digitalWrite(LED_PIN, LOW); // Turn LED ON
+    delay(50);
+    digitalWrite(LED_PIN, HIGH);
+    delay(50);
+    digitalWrite(LED_PIN, LOW); // Turn LED ON
     // Copy tempObj to currentSampleObj
     for (JsonPair kv : tempObj)
     {
@@ -619,10 +663,10 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
     currentSampleObj["batSV"] = powerData.battery.shuntVoltage;
     currentSampleObj["batC"] = powerData.battery.current_mA;
     currentSampleObj["batP"] = powerData.battery.power_mW;
-    // currentSampleObj["solV"] = powerData.solar.busVoltage;
-    // currentSampleObj["solSV"] = powerData.solar.shuntVoltage;
-    // currentSampleObj["solC"] = powerData.solar.current_mA;
-    // currentSampleObj["solP"] = powerData.solar.power_mW;
+    currentSampleObj["solV"] = powerData.solar.busVoltage;
+    currentSampleObj["solSV"] = powerData.solar.shuntVoltage;
+    currentSampleObj["solC"] = powerData.solar.current_mA;
+    currentSampleObj["solP"] = powerData.solar.power_mW;
 
     // Add PMS sensor data
     // Serial.println("Send PM read request...");
@@ -697,19 +741,19 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
         if (sendSensorData(jsonBuffer))
         {
           Serial.println("sending data to cloud...");
-          digitalWrite(LED_PIN, LOW); // Turn LED OFF
+          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
           delay(50);
-          digitalWrite(LED_PIN, HIGH); // Turn LED ON
+          digitalWrite(LED_PIN, LOW);  // Turn LED ON
           delay(50);                   // Wait 5 ms
-          digitalWrite(LED_PIN, LOW);  // Turn LED OFF
+          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
           delay(50);
-          digitalWrite(LED_PIN, HIGH); // Turn LED ON
+          digitalWrite(LED_PIN, LOW);  // Turn LED ON
           delay(50);                   // Wait 5 ms
-          digitalWrite(LED_PIN, LOW);  // Turn LED OFF
+          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
           delay(50);
-          digitalWrite(LED_PIN, HIGH); // Turn LED ON
+          digitalWrite(LED_PIN, LOW);  // Turn LED ON
           delay(50);                   // Wait 4 seconds
-          digitalWrite(LED_PIN, LOW);  // Turn LED OFF
+          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
         }
         else
         {

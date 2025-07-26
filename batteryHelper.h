@@ -17,7 +17,7 @@ struct PowerData
 struct DualPowerData
 {
     PowerData battery;
-    PowerData solarPanel;
+    PowerData solar;
 };
 
 class BatteryHelper

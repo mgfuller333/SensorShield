@@ -33,24 +33,25 @@ bool BatteryHelper::begin()
     }
     Serial.println("INA219 for battery initialized.");
 
-    // if (!inaSolar.begin(&Wire1))
-    // {
-    //     Serial.println("Failed to initialize INA219 for solar panel.");
-    //     return false;
-    // }
-    // Serial.println("INA219 for solar panel initialized.");
+    if (!inaSolar.begin(&Wire1))
+    {
+        Serial.println("Failed to initialize INA219 for solar panel.");
+        return false;
+    }
+    Serial.println("INA219 for solar panel initialized.");
 
     // Calibrate sensors
     Serial.println("Calibrating INA219 sensors...");
-    inaBattery.setCalibration_32V_1A();
+
+    inaBattery.setCalibration_32V_2A();
     Serial.println("Battery sensor calibrated for 32V, 1A.");
-    // inaSolar.setCalibration_32V_1A();
-    // Serial.println("Solar panel sensor calibrated for 32V, 1A.");
+    inaSolar.setCalibration_32V_2A();
+    Serial.println("Solar panel sensor calibrated for 32V, 1A.");
 
     // Disable power save
     Serial.println("Disabling power save mode for sensors...");
     inaBattery.powerSave(false);
-    // inaSolar.powerSave(false);
+    inaSolar.powerSave(false);
     Serial.println("Sensors power save disabled.");
 
     Serial.println("BatteryHelper initialization complete.");
@@ -67,27 +68,27 @@ DualPowerData BatteryHelper::readAllSensors()
     data.battery.current_mA = inaBattery.getCurrent_mA();
     data.battery.power_mW = inaBattery.getPower_mW();
 
-    // Serial.println("Battery Sensor Data:");
-    // Serial.printf("  Bus Voltage:   %.2f V\n", data.battery.busVoltage);
-    // Serial.printf("  Shunt Voltage: %.2f mV\n", data.battery.shuntVoltage);
-    // Serial.printf("  Current:       %.2f mA\n", data.battery.current_mA);
-    // Serial.printf("  Power:         %.2f mW\n\n", data.battery.power_mW);
+    Serial.println("Battery Sensor Data:");
+    Serial.printf("  Bus Voltage:   %.2f V\n", data.battery.busVoltage);
+    Serial.printf("  Shunt Voltage: %.2f mV\n", data.battery.shuntVoltage);
+    Serial.printf("  Current:       %.2f mA\n", data.battery.current_mA);
+    Serial.printf("  Power:         %.2f mW\n\n", data.battery.power_mW);
 
     // Read solar panel sensor data
-    // data.solarPanel.busVoltage = inaSolar.getBusVoltage_V();
-    // data.solarPanel.shuntVoltage = inaSolar.getShuntVoltage_mV();
-    // data.solarPanel.current_mA = inaSolar.getCurrent_mA();
-    // data.solarPanel.power_mW = inaSolar.getPower_mW();
+    data.solar.busVoltage = inaSolar.getBusVoltage_V();
+    data.solar.shuntVoltage = inaSolar.getShuntVoltage_mV();
+    data.solar.current_mA = inaSolar.getCurrent_mA();
+    data.solar.power_mW = inaSolar.getPower_mW();
 
-    // Serial.println("Solar Panel Sensor Data:");
-    // Serial.printf("  Bus Voltage:   %.2f V\n", data.solarPanel.busVoltage);
-    // Serial.printf("  Shunt Voltage: %.2f mV\n", data.solarPanel.shuntVoltage);
-    // Serial.printf("  Current:       %.2f mA\n", data.solarPanel.current_mA);
-    // Serial.printf("  Power:         %.2f mW\n", data.solarPanel.power_mW);
+    Serial.println("Solar Panel Sensor Data:");
+    Serial.printf("  Bus Voltage:   %.2f V\n", data.solar.busVoltage);
+    Serial.printf("  Shunt Voltage: %.2f mV\n", data.solar.shuntVoltage);
+    Serial.printf("  Current:       %.2f mA\n", data.solar.current_mA);
+    Serial.printf("  Power:         %.2f mW\n", data.solar.power_mW);
 
     // Optional: re-enable power save after reading
     inaBattery.powerSave(true);
-    // inaSolar.powerSave(true);
+    inaSolar.powerSave(true);
 
     return data;
 }

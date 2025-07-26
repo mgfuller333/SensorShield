@@ -92,23 +92,22 @@ bool updateGNSSAssistance()
         {
             // 4 blinks
             digitalWrite(LED_PIN, LOW); // Start LED off
-            delay(500);
+            delay(10);
             digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(500);                  // Wait 5 ms
+            delay(10);                   // Wait 5 ms
             digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-            delay(500);
+            delay(10);
             digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(500);                  // Wait 5 ms
+            delay(10);                   // Wait 5 ms
             digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-            delay(500);
+            delay(10);
             digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(500);                  // Wait 5 ms
+            delay(10);                   // Wait 5 ms
             digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-            delay(500);
+            delay(10);
             digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(500);
+            delay(10);
             digitalWrite(LED_PIN, LOW); // Turn LED OFF
-            delay(2000);
 
             Serial.print("Could not connect to LTE network\r\n");
             return false;
@@ -120,17 +119,7 @@ bool updateGNSSAssistance()
          * Wait for the modem to synchronize time with the LTE network, try 5 times
          * with a delay of 500ms.
          */
-        // 5 blinks
-        digitalWrite(LED_PIN, LOW); // Start LED off
-        delay(500);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(500);                  // Wait 5 ms
-        digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-        delay(500);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(500);                  // Wait 5 ms
-        digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-        delay(500);
+        // 3 blinks
         digitalWrite(LED_PIN, HIGH); // Turn LED ON
         delay(500);                  // Wait 5 ms
         digitalWrite(LED_PIN, LOW);  // Turn LED OFF
@@ -142,7 +131,6 @@ bool updateGNSSAssistance()
         digitalWrite(LED_PIN, HIGH); // Turn LED ON
         delay(500);
         digitalWrite(LED_PIN, LOW); // Turn LED OFF
-        delay(2000);
 
         for (int i = 0; i < 5; ++i)
         {
@@ -274,9 +262,7 @@ WalterModemGNSSFix getGPSFix()
 
     modem.gnssSetEventHandler(fixHandler);
 
-    // 2 blinks
-    digitalWrite(LED_PIN, LOW); // Start LED off
-    delay(500);
+    // 4 blinks
     digitalWrite(LED_PIN, HIGH); // Turn LED ON
     delay(500);                  // Wait 5 ms
     digitalWrite(LED_PIN, LOW);  // Turn LED OFF
@@ -284,8 +270,15 @@ WalterModemGNSSFix getGPSFix()
     digitalWrite(LED_PIN, HIGH); // Turn LED ON
     delay(500);                  // Wait 5 ms
     digitalWrite(LED_PIN, LOW);  // Turn LED OFF
+    delay(500);
+    digitalWrite(LED_PIN, HIGH); // Turn LED ON
+    delay(500);
+    digitalWrite(LED_PIN, LOW); // Turn LED OFF
+    delay(500);
+    digitalWrite(LED_PIN, HIGH); // Turn LED ON
+    delay(500);
+    digitalWrite(LED_PIN, LOW); // Turn LED OFF
 
-    delay(2000);
     // Serial.println("Set Fix Event Handler");
     if (!updateGNSSAssistance())
     {
@@ -294,29 +287,9 @@ WalterModemGNSSFix getGPSFix()
     // Serial.println("Updated GNSS Assistance");
 
     // Serial.println("Attempting GNSS fix...");
-    // 5 blinks
-    digitalWrite(LED_PIN, LOW); // Start LED off
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);                  // Wait 5 ms
-    digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(2000);
+    // 4 - Blinks
+    digitalWrite(LED_PIN, HIGH);
+
     // Try up to 5 times to get a good fix
     // for (int i = 0; i < 5; ++i)
     for (int i = 0; i < 1; ++i)
@@ -371,6 +344,7 @@ WalterModemGNSSFix getGPSFix()
             strongSats++;
         }
     }
+    digitalWrite(LED_PIN, LOW);
 
     Serial.printf(" Strong Sats: %.2f\n", strongSats);
 
@@ -390,8 +364,10 @@ WalterModemGNSSFix getGPSFix()
     Serial.printf("  Longitude: %.6f\n", posFix.longitude);
     Serial.printf("  Satcount: %d\n", posFix.satCount);
     Serial.printf("  Good sats (>=30): %d\n", strongSats);
-    // 3 blinks
-    digitalWrite(LED_PIN, LOW); // Start LED off
+    // 5 blinks
+    digitalWrite(LED_PIN, HIGH); // Turn LED ON
+    delay(500);                  // Wait 5 ms
+    digitalWrite(LED_PIN, LOW);  // Turn LED OFF
     delay(500);
     digitalWrite(LED_PIN, HIGH); // Turn LED ON
     delay(500);                  // Wait 5 ms
@@ -408,6 +384,5 @@ WalterModemGNSSFix getGPSFix()
     digitalWrite(LED_PIN, HIGH); // Turn LED ON
     delay(500);
     digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(2000);
     return posFix;
 }

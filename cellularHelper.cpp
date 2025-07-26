@@ -82,9 +82,7 @@ bool waitForNetwork()
     return false;
   }
 
-  Serial.printf("Attempting MQTT...");
-
-  return true;
+   return true;
 }
 
 /**
