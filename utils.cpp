@@ -33,10 +33,10 @@
  * @file	    utils.cpp
  * @date		03 Jan 2024
  * @version		2.1.5
- * 
+ *
  * @brief    	utils
  *
- * 
+ *
  */
 
 #define _GNU_SOURCE
@@ -45,20 +45,19 @@
 #include "utils.h"
 #include <ArduinoJson.h>
 #include <math.h>
+#include <Wire.h>
 
-uint64_t 	utils::_tick_ms;
-uint64_t 	utils::_tick_over_flow_cnt;
-SdFat		utils::_sd;
+uint64_t utils::_tick_ms;
+uint64_t utils::_tick_over_flow_cnt;
+SdFat utils::_sd;
 RTC_PCF8523 utils::_rtc;
-char 		utils::_file_seed[DATA_LOG_FILE_SEED_SIZE];
-uint32_t 	utils::_file_data_pos = 0;
-bool		utils::_is_conf_available;
+char utils::_file_seed[DATA_LOG_FILE_SEED_SIZE];
+uint32_t utils::_file_data_pos = 0;
+bool utils::_is_conf_available;
 
 /*!
  * @brief This function creates the random alphanumeric file seed for the log file
  */
-
-
 
 void utils::create_file_seed()
 {
@@ -76,7 +75,7 @@ void utils::create_file_seed()
 /*!
  * @brief This function is a callback function to set the correct date for modified SD-card files
  */
-void utils::date_time(uint16_t* date, uint16_t* time)
+void utils::date_time(uint16_t *date, uint16_t *time)
 {
 	DateTime now = _rtc.now();
 	/* return date using FAT_DATE macro to format fields */
@@ -87,30 +86,34 @@ void utils::date_time(uint16_t* date, uint16_t* time)
 
 /*!
  * @brief This function initializes the module
- */	
+ */
 demo_ret_code utils::begin()
 {
 	demo_ret_code ret_code = EDK_OK;
-	
+
 	if (!_sd.begin(PIN_SD_CS, SPI_EIGHTH_SPEED))
 	{
 		ret_code = EDK_SD_CARD_INIT_ERROR;
+		Serial.println(F("SD card initialization failed!"));
 	}
 	else if (!_rtc.begin())
 	{
 		ret_code = EDK_DATALOGGER_RTC_BEGIN_WARNING;
+		Serial.println("RTC initialization failed!");
 	}
+
 	else if (!_rtc.initialized() || _rtc.lostPower())
 	{
+		Serial.println("RTC initialization failed!");
 		_rtc.adjust(DateTime(F(__DATE__), F(__TIME__)) - TimeSpan((int32_t)(TIMEZONE * 3600)));
-		
+
 		ret_code = EDK_DATALOGGER_RTC_ADJUST_WARNING;
 	}
 
 	randomSeed(analogRead(0));
-	
+
 	create_file_seed();
-	
+
 	SdFile::dateTimeCallback(date_time);
 
 	return ret_code;
@@ -118,15 +121,15 @@ demo_ret_code utils::begin()
 
 /*!
  * @brief This function retrieves the rtc handle
- */	
-RTC_PCF8523& utils::get_rtc()
+ */
+RTC_PCF8523 &utils::get_rtc()
 {
 	return _rtc;
 }
 
 /*!
  * @brief This function retrieves the created file seed
- */	
+ */
 String utils::get_file_seed()
 {
 	return String(_file_seed);
@@ -138,11 +141,11 @@ String utils::get_file_seed()
 String utils::get_mac_address()
 {
 	uint64_t mac = ESP.getEfuseMac();
-	char *mac_ptr = (char*)&mac;
+	char *mac_ptr = (char *)&mac;
 	char mac_str[13];
-	
+
 	sprintf(mac_str, "%02X%02X%02X%02X%02X%02X", mac_ptr[0], mac_ptr[1], mac_ptr[2], mac_ptr[3], mac_ptr[4], mac_ptr[5]);
-	
+
 	return String(mac_str);
 }
 
@@ -153,21 +156,21 @@ String utils::get_date_time()
 {
 	char time_buffer[20];
 	DateTime date = _rtc.now();
-	
+
 	sprintf(time_buffer, "%d_%02d_%02d_%02d_%02d", date.year(), date.month(), date.day(), date.hour(), date.minute());
-	
+
 	return String(time_buffer);
 }
 
 /*!
  * @brief This function retrieves the first file with provided file extension
  */
-bool utils::get_file_with_extension(String& fName, const String& extension)
+bool utils::get_file_with_extension(String &fName, const String &extension)
 {
 	File root;
 	File file;
 	char file_name[90];
-	
+
 	if (root.open("/"))
 	{
 
@@ -194,7 +197,7 @@ bool utils::get_file_with_extension(String& fName, const String& extension)
 /*!
  * @brief This function retrieves the latest file with provided file extension
  */
-bool utils::get_latest_file_with_extension(String& fName, const String& extension)
+bool utils::get_latest_file_with_extension(String &fName, const String &extension)
 {
 	File root;
 	File file;
@@ -235,11 +238,11 @@ bool utils::get_latest_file_with_extension(String& fName, const String& extensio
 /*!
  * @brief This function retrives the bsec configuration string from the provided file
  */
-demo_ret_code utils::get_bsec_config(const String& file_name, uint8_t config_str[BSEC_MAX_PROPERTY_BLOB_SIZE])
+demo_ret_code utils::get_bsec_config(const String &file_name, uint8_t config_str[BSEC_MAX_PROPERTY_BLOB_SIZE])
 {
 	demo_ret_code ret_code = EDK_OK;
 	uint32_t config_str_len;
-	
+
 	File configFile;
 	if (!configFile.open(file_name.c_str(), O_RDWR))
 	{
@@ -268,7 +271,7 @@ uint64_t utils::get_tick_ms(void)
 	uint64_t time_ms = millis();
 
 	if (_tick_ms > time_ms) /* An overflow occurred */
-	{ 
+	{
 		_tick_over_flow_cnt++;
 	}
 	_tick_ms = time_ms;
@@ -278,17 +281,17 @@ uint64_t utils::get_tick_ms(void)
 /*!
  * @brief : This function reads the size of bytes from the file of given fileExtension
  */
-demo_ret_code utils::read_file(const String& file_extension, size_t size, char *file_data)
+demo_ret_code utils::read_file(const String &file_extension, size_t size, char *file_data)
 {
 	File file;
 	demo_ret_code ret_code;
 	static String file_name;
 	static bool first_time = true;
 	memset(file_data, 0, size); /* Clears the previous data if any */
-	ret_code = utils::begin(); /* Initializes the SD card module */
+	ret_code = utils::begin();	/* Initializes the SD card module */
 
 	size = size - 1;
-	
+
 	if (ret_code >= EDK_OK)
 	{
 
@@ -319,9 +322,9 @@ demo_ret_code utils::read_file(const String& file_extension, size_t size, char *
 
 			if (file.available())
 			{
-				file.read(file_data, size); /* reads the given number of bytes of data */
+				file.read(file_data, size);		  /* reads the given number of bytes of data */
 				_file_data_pos = file.position(); /* save the file position indicator for next read */
-				file.close(); /* closes the file */
+				file.close();					  /* closes the file */
 				return EDK_OK;
 			}
 			file.close();

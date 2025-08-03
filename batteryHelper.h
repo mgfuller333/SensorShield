@@ -2,8 +2,8 @@
 #include <Adafruit_INA219.h>
 
 // I2C pins (for the expander controlling chip‐select)
-#define PowerLevel_SDA_PIN 6
-#define PowerLevel_SCL_PIN 7
+#define PowerLevel_SDA_PIN 5
+#define PowerLevel_SCL_PIN 4
 
 struct PowerData
 {

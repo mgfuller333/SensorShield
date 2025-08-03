@@ -18,7 +18,7 @@
 #include <HardwareSerial.h>
 #include <Adafruit_MPL3115A2.h>
 #include <Wire.h>
-#include <ESP32Time.h>
+
 #include <esp_sleep.h>
 #include "esp_wifi.h"
 #include "esp_bt.h"
@@ -26,7 +26,7 @@
 #include <ArduinoJson.h>    // <-- new
 #include "cellularHelper.h" // <-- for lteConnect() + sendSensorData()
 #include "PMS.h"
-#define BUFFER_SIZE 4
+#define BUFFER_SIZE 20
 
 // Define UART1 pins (example: TX = GPIO17, RX = GPIO18)
 
@@ -47,9 +47,6 @@ constexpr uint8_t NUM_SENSORS = 8;
 static uint8_t sensorStepCount = 0; // how many sensor callbacks in current sample
 
 static JsonObject currentSampleObj; // points into `sensors`
-
-// e.g. A0 on many // ESP32Time rtc;
-ESP32Time rtc(-6 * 3600); // offset in seconds GMT+1ESP32 boards is ADC1_CHANNEL_6
 
 #define LED_PIN 42 // Use a free IO pin for LED (example IO2 or any other free)
 
@@ -155,7 +152,7 @@ void configureUltraLowPowerModem();
  * @return  void
  */
 void read_sys_time();
-
+bool pmsWakeStatus = false;
 uint8_t bsec_config[BSEC_MAX_PROPERTY_BLOB_SIZE];
 char config_file_data[FILE_DATA_READ_SIZE];
 Bsec2 bsec2[NUM_OF_SENS];
@@ -199,9 +196,10 @@ void setup()
 {
 
   Serial.begin(115200);
-  // Serial1.begin(9600, SERIAL_8N1, PMS_TX, PMS_RX); // Serial1 for PMS sensor, TX: GPIO10, RX: GPIO9
-  //  Switch to passive mode
-
+  Serial1.begin(9600, SERIAL_8N1, PMS_TX, PMS_RX); // Serial1 for PMS sensor, TX: GPIO10, RX: GPIO9
+                                                   //  Switch to passive mode
+  Serial.println("setting plantower to passive mode");
+  pms.passiveMode();
   // 1 Blink Set up the LED pin
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, HIGH); // Start LED off
@@ -298,8 +296,6 @@ void setup()
 
   // Initialize PMS5003 sensor
 
-  // Serial.println("setting plantower to passive mode");
-  //  pms.passiveMode();
   //  End of PMS5003 sensor initialization
 
   if (!powerReader.begin())
@@ -313,6 +309,10 @@ void setup()
   Serial.println("init SD ...");
   ret_code = utils::begin();
   Serial.println("SD init complete");
+
+  // Adjust Time
+
+  // read_sys_time();
 
   if (ret_code >= EDK_OK)
   {
@@ -373,22 +373,58 @@ void setup()
   Serial.printf("  retrieved Longitude: %.6f\n", gpsData.longitude);
   Serial.printf("  retrieved Satcount: %d\n", gpsData.satCount);
   // disableWifiAndBluetooth();
+  // 2 - Blinks
+
+  Serial.println("Waking up, wait 30 seconds for stable readings...");
+  pms.wakeUp();
+  pmsWakeStatus = true;
+  for (int i = 0; i < 30; i++)
+  {
+    Serial.print(".");
+    delay(1000);
+  }
+
+  Serial.println("Done Waking up!");
+  // 5 blinks
+  digitalWrite(LED_PIN, LOW); // Turn LED OFF
+  delay(100);
+  digitalWrite(LED_PIN, HIGH); // Turn LED ON
+  delay(100);                  // Wait 5 ms
+  digitalWrite(LED_PIN, LOW);  // Turn LED OFF
+  delay(100);
+  digitalWrite(LED_PIN, HIGH); // Turn LED ON
+  delay(100);                  // Wait 5 ms
+  digitalWrite(LED_PIN, LOW);  // Turn LED OFF
+  delay(100);
+  digitalWrite(LED_PIN, HIGH); // Turn LED ON
+  delay(100);
+  digitalWrite(LED_PIN, LOW); // Turn LED OFF
+  delay(100);
+  digitalWrite(LED_PIN, HIGH); // Turn LED ON
+  delay(100);
+  digitalWrite(LED_PIN, LOW); // Turn LED OFF
+  delay(100);
+  digitalWrite(LED_PIN, HIGH); // Turn LED ON
+  delay(100);
+  digitalWrite(LED_PIN, LOW); // Turn LED OFF
 }
 
 void loop()
 {
 
-  // 2 - Blinks
-
-  // Serial.println("Waking up, wait 30 seconds for stable readings...");
-  // // pms.wakeUp();
-  // for (int i = 0; i < 30; i++)
-  // {
-  //   Serial.print(".");
-  //   delay(1000);
-  // }
-
   bool isConnected = lteConnected();
+  if (!pmsWakeStatus)
+  {
+    Serial.println("pms is sleep, waking up sensor...");
+    pms.wakeUp();         // Ensure PMS is awake
+    pmsWakeStatus = true; // Set wake status to true
+    Serial.println("pms is awake and waiting for readings...");
+    for (int i = 0; i < 30; i++)
+    {
+      Serial.print(".");
+      delay(1000);
+    }
+  }
 
   // Wait 100 ms
 
@@ -670,29 +706,29 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
     currentSampleObj["solP"] = powerData.solar.power_mW;
 
     // Add PMS sensor data
-    // Serial.println("Send PM read request...");
-    // pms.requestRead();
-    // delay(10);
-    // Serial.println("Wait max. 1 second for read...");
-    // if (pms.readUntil(pmData))
-    // {
-    //   Serial.print("PM 1.0 (ug/m3): ");
-    //   Serial.println(pmData.PM_AE_UG_1_0);
-    //   Serial.print("PM 2.5 (ug/m3): ");
-    //   Serial.println(pmData.PM_AE_UG_2_5);
-    //   Serial.print("PM 10.0 (ug/m3): ");
-    //   Serial.println(pmData.PM_AE_UG_10_0);
-    //   currentSampleObj["pm10"] = pmData.PM_AE_UG_10_0;
-    //   currentSampleObj["pm2_5"] = pmData.PM_AE_UG_2_5;
-    //   currentSampleObj["pm1"] = pmData.PM_AE_UG_1_0;
-    // }
-    // else
-    // {
-    //   Serial.println("PMS read failed");
-    //   currentSampleObj["pm10"] = nullptr;
-    //   currentSampleObj["pm2_5"] = nullptr;
-    //   currentSampleObj["pm1"] = nullptr;
-    // }
+    Serial.println("Send PM read request...");
+    pms.requestRead();
+
+    Serial.println("Wait max. 1 second for read...");
+    if (pms.readUntil(pmData))
+    {
+      Serial.print("PM 1.0 (ug/m3): ");
+      Serial.println(pmData.PM_AE_UG_1_0);
+      Serial.print("PM 2.5 (ug/m3): ");
+      Serial.println(pmData.PM_AE_UG_2_5);
+      Serial.print("PM 10.0 (ug/m3): ");
+      Serial.println(pmData.PM_AE_UG_10_0);
+      currentSampleObj["pm10"] = pmData.PM_AE_UG_10_0;
+      currentSampleObj["pm2_5"] = pmData.PM_AE_UG_2_5;
+      currentSampleObj["pm1"] = pmData.PM_AE_UG_1_0;
+    }
+    else
+    {
+      Serial.println("PMS read failed");
+      currentSampleObj["pm10"] = nullptr;
+      currentSampleObj["pm2_5"] = nullptr;
+      currentSampleObj["pm1"] = nullptr;
+    }
 
     // Add metadata
     uint8_t mac[6];
@@ -700,7 +736,24 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
     char deviceId[13];
     snprintf(deviceId, sizeof(deviceId), "%02X%02X%02X%02X%02X%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     currentSampleObj["device"] = deviceId;
-    currentSampleObj["ts"] = rtc.getTime("%Y-%m-%dT%H:%M:%S.000Z");
+
+    DateTime now = utils::get_rtc().now();
+    unsigned long ms = millis() % 1000; // current millis within this second
+
+    // Format timestamp with milliseconds: "YYYY-MM-DDTHH:MM:SS.mmmZ"
+    char isoTimestamp[25]; // 24 chars + null terminator
+    snprintf(isoTimestamp, sizeof(isoTimestamp),
+             "%04d-%02d-%02dT%02d:%02d:%02d.%03luZ",
+             now.year(), now.month(), now.day(),
+             now.hour(), now.minute(), now.second(),
+             ms);
+
+    // Print the timestamp to Serial
+    Serial.print("Payload UTC time: ");
+    Serial.println(isoTimestamp);
+
+    // Assign to JSON object
+    currentSampleObj["ts"] = isoTimestamp;
     char wkt[50];
     snprintf(wkt, sizeof(wkt), "POINT(%f %f)", savedLongitude, savedLatitude);
     currentSampleObj["loc"] = wkt;
@@ -730,6 +783,8 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
       serializeJson(sensors, jsonBuffer);
       Serial.println();
 
+      sampleCount = 0;
+
       for (int i = 0; i < BUFFER_SIZE; ++i)
       {
 
@@ -739,44 +794,43 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
         testObj = sensors[i];
         serializeJson(testObj, jsonBuffer);
         Serial.println("serialize json parts...");
+        // TODO: Send payloadDoc via modem or BLE
+
         if (sendSensorData(jsonBuffer))
         {
           Serial.println("sending data to cloud...");
-          // digitalWrite(LED_PIN, HIGH); // Turn LED OFF
-          // delay(50);
-          // digitalWrite(LED_PIN, LOW);  // Turn LED ON
-          // delay(50);                   // Wait 5 ms
-          // digitalWrite(LED_PIN, HIGH); // Turn LED OFF
-          // delay(50);
-          // digitalWrite(LED_PIN, LOW);  // Turn LED ON
-          // delay(50);                   // Wait 5 ms
-          // digitalWrite(LED_PIN, HIGH); // Turn LED OFF
-          // delay(50);
-          // digitalWrite(LED_PIN, LOW);  // Turn LED ON
-          // delay(50);                   // Wait 4 seconds
-          // digitalWrite(LED_PIN, HIGH); // Turn LED OFF
+          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
+          delay(50);
+          digitalWrite(LED_PIN, LOW);  // Turn LED ON
+          delay(50);                   // Wait 5 ms
+          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
+          delay(50);
+          digitalWrite(LED_PIN, LOW);  // Turn LED ON
+          delay(50);                   // Wait 5 ms
+          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
+          delay(50);
+          digitalWrite(LED_PIN, LOW);  // Turn LED ON
+          delay(50);                   // Wait 4 seconds
+          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
         }
         else
         {
           Serial.println("Send failed.");
         }
-        return;
       }
-
-      // TODO: Send payloadDoc via modem or BLE
 
       // Clear for next round
       sensors.clear();
       payloadDoc.clear();
       sensors = payloadDoc.to<JsonArray>();
-      sampleCount = 0;
+
       // Serial.println("disconnecting from LTE...");
-      if (lteDisconnect())
-      {
-        Serial.println("entering light sleep for 5 seconds...");
-        delay(10000); // Wait 5 seconds before going to sleep
-        // modem.sleep(10, true); // true = light sleep
-      }
+
+      Serial.println("entering light sleep for 10 seconds...");
+      pms.sleep();
+      pmsWakeStatus = false;
+      delay(10000); // Wait 5 seconds before going to sleep
+                    // modem.sleep(10, true); // true = light sleep
     }
   }
 }

@@ -73,8 +73,8 @@
 #define JSON_DOC_SIZE UINT16_C(5000)
 
 // I2C pins (for the expander controlling chip‐select)
-#define I2C_SDA_PIN 4
-#define I2C_SCL_PIN 5
+#define I2C_SDA_PIN 5
+#define I2C_SCL_PIN 4
 
 // SPI pin assignments for sensor communication
 #define SPI_MISO_PIN 13

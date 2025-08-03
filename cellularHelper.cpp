@@ -82,7 +82,7 @@ bool waitForNetwork()
     return false;
   }
 
-   return true;
+  return true;
 }
 
 /**
@@ -324,20 +324,20 @@ bool sendSensorData(String dataPayload)
     }
   }
 
-  delay(1000);
+  // delay(1000);
 
-  while (modem.mqttDidRing("SireenTest", incomingBuf,
-                           sizeof(incomingBuf), &rsp))
-  {
-    Serial.printf("incoming: qos=%d msgid=%d len=%d:\r\n",
-                  rsp.data.mqttResponse.qos,
-                  rsp.data.mqttResponse.messageId,
-                  rsp.data.mqttResponse.length);
-    for (int i = 0; i < rsp.data.mqttResponse.length; i++)
-    {
-      Serial.printf("'%c' 0x%02x\r\n", incomingBuf[i], incomingBuf[i]);
-    }
-  }
+  // while (modem.mqttDidRing("SireenTest", incomingBuf,
+  //                          sizeof(incomingBuf), &rsp))
+  // {
+  //   Serial.printf("incoming: qos=%d msgid=%d len=%d:\r\n",
+  //                 rsp.data.mqttResponse.qos,
+  //                 rsp.data.mqttResponse.messageId,
+  //                 rsp.data.mqttResponse.length);
+  //   for (int i = 0; i < rsp.data.mqttResponse.length; i++)
+  //   {
+  //     Serial.printf("'%c' 0x%02x\r\n", incomingBuf[i], incomingBuf[i]);
+  //   }
+  // }
 
   // Attempt to send HTTP POST request
 

@@ -15,7 +15,7 @@ bool BatteryHelper::begin()
     static bool wireInitialized = false;
     if (!wireInitialized)
     {
-        Wire1.begin(PowerLevel_SDA_PIN, PowerLevel_SCL_PIN, 100000); // e.g., GPIO 6, 7
+        Wire.begin(PowerLevel_SDA_PIN, PowerLevel_SCL_PIN, 100000); // e.g., GPIO 6, 7
         wireInitialized = true;
         Serial.println("Wire1 initialized.");
     }
@@ -26,14 +26,14 @@ bool BatteryHelper::begin()
 
     // Initialize INA219 sensors
     Serial.println("Initializing INA219 sensors...");
-    if (!inaBattery.begin(&Wire1))
+    if (!inaBattery.begin(&Wire))
     {
         Serial.println("Failed to initialize INA219 for battery.");
         return false;
     }
     Serial.println("INA219 for battery initialized.");
 
-    if (!inaSolar.begin(&Wire1))
+    if (!inaSolar.begin(&Wire))
     {
         Serial.println("Failed to initialize INA219 for solar panel.");
         return false;

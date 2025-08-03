@@ -4,9 +4,7 @@
 #include "utils.h"
 #include <Wire.h>
 
-#include <ESP32Time.h>
-extern ESP32Time rtc; // this tells the compiler the variable is defined elsewhere
-// RTC_DATA_ATTR uint32_t lastGPSFixTime = 0;
+RTC_DATA_ATTR uint32_t lastGPSFixTime = 0;
 #define MAX_GNSS_CONFIDENCE 1000.0
 #define LED_PIN 42 // Use a free IO pin for LED (example IO2 or any other free)
 volatile bool fixRcvd = false;
@@ -76,8 +74,6 @@ bool updateGNSSAssistance()
 {
     bool lteConnected = false;
     WalterModemRsp rsp = {};
-    // Capture millis at moment of sync
-    uint32_t rtcMillisAtSync = millis();
 
     lteDisconnect();
 
@@ -141,28 +137,43 @@ bool updateGNSSAssistance()
                 continue;
             }
 
-            int64_t epochSec = rsp.data.clock.epochTime;
+            int64_t epochSec = -1;
 
-            if (epochSec > 4)
+            Serial.println("GNSS UTC time request succeeded");
+            if (rsp.data.clock.epochTime > 4)
             {
-                // Calculate milliseconds since RTC was set
-                uint32_t subsecondMs = (millis() - rtcMillisAtSync) % 1000;
+                int64_t epochSec = rsp.data.clock.epochTime;
 
-                uint16_t ms = millis() % 1000; // Get ms at time of sync
+                Serial.print("Epoch Time...");
+                Serial.println(epochSec);
 
-                rtc.setTime(epochSec, ms * 1000); // Convert ms → µs
+                // if (!utils::get_rtc().isrunning())
+                // {
+                //     Serial.println("RTC is not initialized or running!");
+                //     return false;
+                // }
 
-                Serial.printf("Set time with: %lu sec and %u ms\r\n", epochSec, ms);
+                // Serial.print("clock is running...");
 
-                String ts = rtc.getTime("%Y-%m-%dT%H:%M:%S");
+                Serial.println("GNSS UTC time adjusting...");
 
-                uint32_t msNow = rtc.getMillis();
+                utils::get_rtc().adjust(DateTime((uint32_t)epochSec));
 
-                char buf[40];
-                snprintf(buf, sizeof(buf), "%s.%03luZ", ts.c_str(), msNow);
+                Serial.println("GNSS UTC time adjusted");
+
+                Serial.println("GNSS UTC time now...");
+                DateTime now = utils::get_rtc().now();
+                Serial.println("GNSS UTC time now grabbed");
+                // Create a buffer for the timestamp
+                char buf[20];
+                // Format timestamp as YYYY-MM-DD hh:mm:ss (ISO 8601 format)
+                sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02d",
+                        now.year(), now.month(), now.day(),
+                        now.hour(), now.minute(), now.second());
+
+                // Print the timestamp to Serial
+                Serial.print("Current UTC time: ");
                 Serial.println(buf);
-
-                Serial.printf("Saved Time (ISO8601): %sZ\r\n", buf);
             }
 
             delay(500);
@@ -364,25 +375,6 @@ WalterModemGNSSFix getGPSFix()
     Serial.printf("  Longitude: %.6f\n", posFix.longitude);
     Serial.printf("  Satcount: %d\n", posFix.satCount);
     Serial.printf("  Good sats (>=30): %d\n", strongSats);
-    // 5 blinks
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);                  // Wait 5 ms
-    digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);                  // Wait 5 ms
-    digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
+
     return posFix;
 }
