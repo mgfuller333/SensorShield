@@ -91,12 +91,12 @@ demo_ret_code utils::begin()
 {
 	demo_ret_code ret_code = EDK_OK;
 
-	if (!_sd.begin(PIN_SD_CS, SPI_EIGHTH_SPEED))
-	{
-		ret_code = EDK_SD_CARD_INIT_ERROR;
-		Serial.println(F("SD card initialization failed!"));
-	}
-	else if (!_rtc.begin())
+	// if (!_sd.begin(PIN_SD_CS, SPI_EIGHTH_SPEED))
+	// {
+	// 	ret_code = EDK_SD_CARD_INIT_ERROR;
+	// 	Serial.println(F("SD card initialization failed!"));
+	// }
+	if (!_rtc.begin())
 	{
 		ret_code = EDK_DATALOGGER_RTC_BEGIN_WARNING;
 		Serial.println("RTC initialization failed!");
@@ -107,7 +107,7 @@ demo_ret_code utils::begin()
 		Serial.println("RTC initialization failed!");
 		_rtc.adjust(DateTime(F(__DATE__), F(__TIME__)) - TimeSpan((int32_t)(TIMEZONE * 3600)));
 
-		ret_code = EDK_DATALOGGER_RTC_ADJUST_WARNING;
+		// ret_code = EDK_DATALOGGER_RTC_ADJUST_WARNING;
 	}
 
 	randomSeed(analogRead(0));

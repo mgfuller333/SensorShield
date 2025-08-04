@@ -26,7 +26,7 @@
 #include <ArduinoJson.h>    // <-- new
 #include "cellularHelper.h" // <-- for lteConnect() + sendSensorData()
 #include "PMS.h"
-#define BUFFER_SIZE 20
+#define BUFFER_SIZE 4
 
 // Define UART1 pins (example: TX = GPIO17, RX = GPIO18)
 
@@ -38,6 +38,7 @@ PMS pms(Serial1); // Use Serial1 for PMS sensor
 PMS::DATA pmData;
 
 uint8_t sampleCount = 0;
+uint8_t payloadCounter = 0;
 DynamicJsonDocument payloadDoc(8192); // 16 KB on heap
 JsonArray sensors = payloadDoc.to<JsonArray>();
 
@@ -178,6 +179,15 @@ uint32_t ground_truth;
 static uint8_t buff_count = 0;
 static bsecDataLogger::sensor_io_data buff[NUM_OF_SENS];
 
+String deviceSetupStatus = "---";
+String modemStatus = "---";
+String gpsFixStatus = "---";
+String payloadStatus = "---";
+String packetsSent = "---";
+String powerSensorStatus = "---";
+String sd_clock_status = "---";
+String BMEStatus = "---";
+
 uint32_t received_sys_time = 0;
 
 WalterModemGNSSFix gpsData;
@@ -191,20 +201,47 @@ WalterModemGNSSFix gpsData;
  *
  * @return None.
  */
-
+int packetsSenTotal = 0;
 void setup()
 {
-
+  deviceSetupStatus = "setup";
   Serial.begin(115200);
   Serial1.begin(9600, SERIAL_8N1, PMS_TX, PMS_RX); // Serial1 for PMS sensor, TX: GPIO10, RX: GPIO9
-                                                   //  Switch to passive mode
+                                                   // Initialize I2C bus for the expander (commMux)
+  Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
+
+  // Initialize SPI bus with custom pin assignments
+  SPI.begin(SPI_SCK_PIN, SPI_MISO_PIN, SPI_MOSI_PIN);
+  Serial.println("Wire and SPI set");
+
+  commMuxBegin(Wire, SPI); //  Switch to passive mode
+  if (!sensorMgr.initializeOLED())
+  {
+    Serial.println("OLED initialization failed");
+  }
+  else
+  {
+    Serial.println("OLED initialized successfully");
+  }
+
   Serial.println("setting plantower to passive mode");
   pms.passiveMode();
+  Serial.println("Waking up, wait 30 seconds for stable readings...");
+  pms.wakeUp();
+  pmsWakeStatus = true;
+
+  sensorMgr.printDeviceStatus(
+      deviceSetupStatus,
+      modemStatus,
+      gpsFixStatus,
+      payloadStatus,
+      packetsSent,
+      sd_clock_status,
+      powerSensorStatus,
+      BMEStatus);
+  delay(4000); // Wait for a second to stabilize the system
   // 1 Blink Set up the LED pin
   pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, HIGH); // Start LED off
-  delay(1000);
-  digitalWrite(LED_PIN, LOW); // Turn LED ON
 
   //------End of Modem Initialization------//
 
@@ -225,15 +262,6 @@ void setup()
       BSEC_OUTPUT_BREATH_VOC_EQUIVALENT,
       BSEC_OUTPUT_GAS_PERCENTAGE,
       BSEC_OUTPUT_COMPENSATED_GAS};
-
-  // Initialize I2C bus for the expander (commMux)
-  Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
-
-  // Initialize SPI bus with custom pin assignments
-  SPI.begin(SPI_SCK_PIN, SPI_MISO_PIN, SPI_MOSI_PIN);
-  Serial.println("Wire and SPI set");
-
-  commMuxBegin(Wire, SPI);
 
   Serial.println("Wire and SPI initialized");
   delay(100);
@@ -258,10 +286,27 @@ void setup()
     {
       Serial.println("Failed to init comms to sensor outputs");
       checkBsecStatus(envSensor[i]);
+
+      BMEStatus = String(i) + "-Bad";
+    }
+    else
+    {
+      BMEStatus = String(i) + "-Good";
     }
 
     Serial.println("beginning sensor comm:");
     Serial.println(i);
+
+    sensorMgr.printDeviceStatus(
+        deviceSetupStatus,
+        modemStatus,
+        gpsFixStatus,
+        payloadStatus,
+        packetsSent,
+        sd_clock_status,
+        powerSensorStatus,
+        BMEStatus);
+
     /*
      *	The default offset provided has been determined by testing the sensor in LP and ULP mode on application board 3.0
      *	Please update the offset value after testing this on your product
@@ -300,15 +345,59 @@ void setup()
 
   if (!powerReader.begin())
   {
+    powerSensorStatus = "unhealthy";
     Serial.println("ERROR: INA219 init failed. Check wiring & addresses.");
+
     delay(10);
   }
-  Serial.println("batteryHelper: sensors ready.");
+  else
+  {
+    powerSensorStatus = "Healthy";
+    Serial.println("batteryHelper: sensors ready.");
+  }
+
+  sensorMgr.printDeviceStatus(
+      deviceSetupStatus,
+      modemStatus,
+      gpsFixStatus,
+      payloadStatus,
+      packetsSent,
+      sd_clock_status,
+      powerSensorStatus,
+      BMEStatus);
 
   /* Initializes the SD and RTC module */
   Serial.println("init SD ...");
   ret_code = utils::begin();
   Serial.println("SD init complete");
+  if (ret_code == EDK_OK)
+  {
+    sd_clock_status = "Healthy";
+    sensorMgr.printDeviceStatus(
+        deviceSetupStatus,
+        modemStatus,
+        gpsFixStatus,
+        payloadStatus,
+        packetsSent,
+        sd_clock_status,
+        powerSensorStatus,
+        BMEStatus);
+  }
+  else
+  {
+    sd_clock_status = "Unhealthy";
+    sensorMgr.printDeviceStatus(
+        deviceSetupStatus,
+        modemStatus,
+        gpsFixStatus,
+        payloadStatus,
+        packetsSent,
+        sd_clock_status,
+        powerSensorStatus,
+        BMEStatus
+
+    );
+  }
 
   // Adjust Time
 
@@ -345,13 +434,36 @@ void setup()
   if (modemSetup())
   {
     Serial.println("Modem initialization OK");
+    modemStatus = "Healthy";
+    sensorMgr.printDeviceStatus(
+        deviceSetupStatus,
+        modemStatus,
+        gpsFixStatus,
+        payloadStatus,
+        packetsSent,
+        sd_clock_status,
+        powerSensorStatus,
+        BMEStatus
+
+    );
     // disableWifiAndBluetooth();
   }
   else
   {
 
     Serial.println("Modem initialization ERROR");
+    modemStatus = "Bad";
+    sensorMgr.printDeviceStatus(
+        deviceSetupStatus,
+        modemStatus,
+        gpsFixStatus,
+        payloadStatus,
+        packetsSent,
+        sd_clock_status,
+        powerSensorStatus,
+        BMEStatus
 
+    );
     return;
   }
 
@@ -359,8 +471,23 @@ void setup()
 
   /* Check clock and assistance data, update if required */
   Serial.println("Initialize GPS");
+
+  gpsFixStatus = "trying...";
+
+  sensorMgr.printDeviceStatus(
+      deviceSetupStatus,
+      modemStatus,
+      gpsFixStatus,
+      payloadStatus,
+      packetsSent,
+      sd_clock_status,
+      powerSensorStatus,
+      BMEStatus
+
+  );
+
   WalterModemGNSSFix gpsData = getGPSFix();
-  // 5 - Blinks
+  //  5 - Blinks
 
   //-------Start GPS-------//
 
@@ -370,47 +497,62 @@ void setup()
   savedLongitude = gpsData.longitude;
   savedAltitude = gpsData.height;
   savedSatCount = gpsData.satCount;
+
   Serial.printf("  retrieved Longitude: %.6f\n", gpsData.longitude);
   Serial.printf("  retrieved Satcount: %d\n", gpsData.satCount);
-  // disableWifiAndBluetooth();
-  // 2 - Blinks
 
-  Serial.println("Waking up, wait 30 seconds for stable readings...");
-  pms.wakeUp();
-  pmsWakeStatus = true;
-  for (int i = 0; i < 30; i++)
+  gpsFixStatus = "bad";
+  if (gpsData.satCount > 1)
   {
-    Serial.print(".");
-    delay(1000);
+    modemStatus = "Not Connected";
+    gpsFixStatus = "Healthy";
+    sensorMgr.printDeviceStatus(
+        deviceSetupStatus,
+        modemStatus,
+        gpsFixStatus,
+        payloadStatus,
+        packetsSent,
+        sd_clock_status,
+        powerSensorStatus,
+        BMEStatus
+
+    );
+  }
+  else
+  {
+    gpsFixStatus = "Bad";
+    sensorMgr.printDeviceStatus(
+        deviceSetupStatus,
+        modemStatus,
+        gpsFixStatus,
+        payloadStatus,
+        packetsSent,
+        sd_clock_status,
+        powerSensorStatus,
+        BMEStatus
+
+    );
   }
 
-  Serial.println("Done Waking up!");
-  // 5 blinks
-  digitalWrite(LED_PIN, LOW); // Turn LED OFF
-  delay(100);
-  digitalWrite(LED_PIN, HIGH); // Turn LED ON
-  delay(100);                  // Wait 5 ms
-  digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-  delay(100);
-  digitalWrite(LED_PIN, HIGH); // Turn LED ON
-  delay(100);                  // Wait 5 ms
-  digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-  delay(100);
-  digitalWrite(LED_PIN, HIGH); // Turn LED ON
-  delay(100);
-  digitalWrite(LED_PIN, LOW); // Turn LED OFF
-  delay(100);
-  digitalWrite(LED_PIN, HIGH); // Turn LED ON
-  delay(100);
-  digitalWrite(LED_PIN, LOW); // Turn LED OFF
-  delay(100);
-  digitalWrite(LED_PIN, HIGH); // Turn LED ON
-  delay(100);
-  digitalWrite(LED_PIN, LOW); // Turn LED OFF
+  deviceSetupStatus = "Good";
+
+  sensorMgr.printDeviceStatus(
+      deviceSetupStatus,
+      modemStatus,
+      gpsFixStatus,
+      payloadStatus,
+      packetsSent,
+      sd_clock_status,
+      powerSensorStatus,
+      BMEStatus
+
+  );
 }
 
 void loop()
 {
+
+  deviceSetupStatus = "In Loop...";
 
   bool isConnected = lteConnected();
   if (!pmsWakeStatus)
@@ -435,39 +577,13 @@ void loop()
     {
 
       Serial.println("Failed to connect to LTE network.");
-      // 7 - Blinks
+      modemStatus = "Failed to reconnect";
 
-      digitalWrite(LED_PIN, HIGH);
-      delay(50);
-      digitalWrite(LED_PIN, LOW); // Turn LED ON
-      delay(50);
-      digitalWrite(LED_PIN, HIGH);
-      delay(50);
-      digitalWrite(LED_PIN, LOW); // Turn LED ON
-      delay(50);
-      digitalWrite(LED_PIN, HIGH);
-      delay(50);
-      digitalWrite(LED_PIN, LOW); // Turn LED ON
-      delay(50);
-      digitalWrite(LED_PIN, HIGH);
-      delay(50);
-      digitalWrite(LED_PIN, LOW); // Turn LED ON
-      delay(50);
-      digitalWrite(LED_PIN, HIGH);
-      delay(50);
-      digitalWrite(LED_PIN, LOW); // Turn LED ON
-      delay(50);
-      digitalWrite(LED_PIN, HIGH);
-      delay(50);
-      digitalWrite(LED_PIN, LOW); // Turn LED ON
-      delay(1000);
-      digitalWrite(LED_PIN, HIGH);
       ESP.restart();
     }
     else
     {
-      // Serial.println("connected to LTE network...");
-      // 8 - Blinks
+      modemStatus = "good";
     }
   }
 
@@ -480,11 +596,12 @@ void loop()
       checkBsecStatus(envSensor[sensor]);
       Serial.printf("Sensor %d failed to run\n", sensor);
     }
-    else
-    {
-      // Serial.printf("Sensor %d is running\n", sensor);
-    }
+    // else
+    // {
+    //   Serial.printf("Sensor %d is running\n", sensor);
+    // }
   }
+  // Send data in batches of 4
 }
 
 demo_ret_code log_sensor_data(uint8_t sens_num)
@@ -622,16 +739,12 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
   {
     currentSampleObj = sensors.createNestedObject();
   }
-
+  deviceSetupStatus = "Data...";
   // Temporary JsonObject to collect BSEC outputs
   DynamicJsonDocument tempDoc(4096); // 4 KB on heap
   JsonObject tempObj = tempDoc.to<JsonObject>();
 
   uint8_t runInStatus = -1;
-  // 1 - Blink
-  digitalWrite(LED_PIN, HIGH); // Turn LED ON
-  delay(100);                  // Wait 5 ms
-  digitalWrite(LED_PIN, LOW);  // Turn LED OFF
 
   // Collect BSEC outputs in tempObj
   for (uint8_t i = 0; i < outputs.nOutputs; i++)
@@ -677,15 +790,6 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
   if (runInStatus != 1)
   {
 
-    // 2 - Blinks
-
-    digitalWrite(LED_PIN, HIGH);
-    delay(50);
-    digitalWrite(LED_PIN, LOW); // Turn LED ON
-    delay(50);
-    digitalWrite(LED_PIN, HIGH);
-    delay(50);
-    digitalWrite(LED_PIN, LOW); // Turn LED ON
     // Copy tempObj to currentSampleObj
     for (JsonPair kv : tempObj)
     {
@@ -705,38 +809,12 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
     currentSampleObj["solC"] = powerData.solar.current_mA;
     currentSampleObj["solP"] = powerData.solar.power_mW;
 
-    // Add PMS sensor data
-    Serial.println("Send PM read request...");
-    pms.requestRead();
-
-    Serial.println("Wait max. 1 second for read...");
-    if (pms.readUntil(pmData))
-    {
-      Serial.print("PM 1.0 (ug/m3): ");
-      Serial.println(pmData.PM_AE_UG_1_0);
-      Serial.print("PM 2.5 (ug/m3): ");
-      Serial.println(pmData.PM_AE_UG_2_5);
-      Serial.print("PM 10.0 (ug/m3): ");
-      Serial.println(pmData.PM_AE_UG_10_0);
-      currentSampleObj["pm10"] = pmData.PM_AE_UG_10_0;
-      currentSampleObj["pm2_5"] = pmData.PM_AE_UG_2_5;
-      currentSampleObj["pm1"] = pmData.PM_AE_UG_1_0;
-    }
-    else
-    {
-      Serial.println("PMS read failed");
-      currentSampleObj["pm10"] = nullptr;
-      currentSampleObj["pm2_5"] = nullptr;
-      currentSampleObj["pm1"] = nullptr;
-    }
-
     // Add metadata
     uint8_t mac[6];
     esp_read_mac(mac, ESP_MAC_WIFI_STA);
     char deviceId[13];
     snprintf(deviceId, sizeof(deviceId), "%02X%02X%02X%02X%02X%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     currentSampleObj["device"] = deviceId;
-
     DateTime now = utils::get_rtc().now();
     unsigned long ms = millis() % 1000; // current millis within this second
 
@@ -777,41 +855,75 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
     // If buffer full, serialize & clear everything
     if (sampleCount >= BUFFER_SIZE)
     {
+      // Add PMS sensor data
+      Serial.println("Send PM read request...");
+      pms.requestRead();
+      delay(10);
+      Serial.println("Wait max. 1 second for read...");
+      if (pms.readUntil(pmData))
+      {
+        Serial.print("PM 1.0 (ug/m3): ");
+        Serial.println(pmData.PM_AE_UG_1_0);
+        Serial.print("PM 2.5 (ug/m3): ");
+        Serial.println(pmData.PM_AE_UG_2_5);
+        Serial.print("PM 10.0 (ug/m3): ");
+        Serial.println(pmData.PM_AE_UG_10_0);
+        sensors[0]["pm10"] = pmData.PM_AE_UG_10_0;
+        sensors[0]["pm2_5"] = pmData.PM_AE_UG_2_5;
+        sensors[0]["pm1"] = pmData.PM_AE_UG_1_0;
+      }
+      else
+      {
+        Serial.println("PMS read failed");
+        sensors[0]["pm10"] = nullptr;
+        sensors[0]["pm2_5"] = nullptr;
+        sensors[0]["pm1"] = nullptr;
+      }
+
       char jsonBuffer[6000];
       Serial.println("=== SENDING BATCH ===");
       serializeJsonPretty(sensors, Serial);
       serializeJson(sensors, jsonBuffer);
       Serial.println();
 
-      sampleCount = 0;
+      payloadStatus = "" + String(sampleCount);
+      sensorMgr.printDeviceStatus(
+          deviceSetupStatus,
+          modemStatus,
+          gpsFixStatus,
+          payloadStatus,
+          packetsSent,
+          sd_clock_status,
+          powerSensorStatus,
+          BMEStatus
+
+      );
 
       for (int i = 0; i < BUFFER_SIZE; ++i)
       {
 
         JsonObject testObj;
+
         Serial.println(String("sending parts... ") + String(i));
         char jsonBuffer[12000];
         testObj = sensors[i];
         serializeJson(testObj, jsonBuffer);
         Serial.println("serialize json parts...");
-        // TODO: Send payloadDoc via modem or BLE
-
         if (sendSensorData(jsonBuffer))
         {
           Serial.println("sending data to cloud...");
-          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
-          delay(50);
-          digitalWrite(LED_PIN, LOW);  // Turn LED ON
-          delay(50);                   // Wait 5 ms
-          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
-          delay(50);
-          digitalWrite(LED_PIN, LOW);  // Turn LED ON
-          delay(50);                   // Wait 5 ms
-          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
-          delay(50);
-          digitalWrite(LED_PIN, LOW);  // Turn LED ON
-          delay(50);                   // Wait 4 seconds
-          digitalWrite(LED_PIN, HIGH); // Turn LED OFF
+          payloadStatus = "0";
+          payloadCounter += 1;
+          packetsSent = "" + String(payloadCounter);
+          sensorMgr.printDeviceStatus(
+              deviceSetupStatus,
+              modemStatus,
+              gpsFixStatus,
+              payloadStatus,
+              packetsSent,
+              sd_clock_status,
+              powerSensorStatus,
+              BMEStatus);
         }
         else
         {
@@ -819,18 +931,20 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
         }
       }
 
+      // TODO: Send payloadDoc via modem or BLE
+
       // Clear for next round
       sensors.clear();
       payloadDoc.clear();
       sensors = payloadDoc.to<JsonArray>();
-
+      sampleCount = 0;
       // Serial.println("disconnecting from LTE...");
-
-      Serial.println("entering light sleep for 10 seconds...");
-      pms.sleep();
-      pmsWakeStatus = false;
+      //  if (lteDisconnect())
+      // {
+      Serial.println("entering light sleep for 5 seconds...");
       delay(10000); // Wait 5 seconds before going to sleep
                     // modem.sleep(10, true); // true = light sleep
+                    // }
     }
   }
 }

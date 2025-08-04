@@ -254,6 +254,41 @@ public:
 	 *
 	 * @return  BMV return boolean
 	 */
+
+	bool initializeOLED();
+	/*!
+	 * @brief : This function intializes the OLED display
+	 *
+	 * @return  OLED return boolean
+	 */
+
+	/*!
+	 * @brief : This function prints the current state on the OLED display
+	 *
+	 * @param[in] line1 : First line to display
+	 * @param[in] line2 : Second line to display
+	 * @param[in] line3 : Third line to display
+	 * @param[in] line4 : Fourth line to display
+	 * @param[in] line5 : Fifth line to display
+	 * @return  OLED return boolean
+	 */
+	bool printDeviceStatus(
+		const String deviceSetupStatus,
+		const String modemStatus,
+		const String gpsFixStatus,
+		const String payloadStatus,
+		const String packetsSent,
+		const String sd_clock_status,
+		const String powerSensorStatus,
+		const String BMEStatus
+
+	);
+
+	/*!
+	 * @brief : This function prints the current state on the OLED display
+	 *
+	 * @return  OLED return boolean
+	 */
 };
 
 #endif

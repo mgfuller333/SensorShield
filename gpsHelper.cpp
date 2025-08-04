@@ -86,47 +86,12 @@ bool updateGNSSAssistance()
         /* The system clock is invalid, connect to LTE network to sync time */
         if (!lteConnect())
         {
-            // 4 blinks
-            digitalWrite(LED_PIN, LOW); // Start LED off
-            delay(10);
-            digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(10);                   // Wait 5 ms
-            digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-            delay(10);
-            digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(10);                   // Wait 5 ms
-            digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-            delay(10);
-            digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(10);                   // Wait 5 ms
-            digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-            delay(10);
-            digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(10);
-            digitalWrite(LED_PIN, LOW); // Turn LED OFF
 
             Serial.print("Could not connect to LTE network\r\n");
             return false;
         }
 
         lteConnected = true;
-
-        /*
-         * Wait for the modem to synchronize time with the LTE network, try 5 times
-         * with a delay of 500ms.
-         */
-        // 3 blinks
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(500);                  // Wait 5 ms
-        digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-        delay(500);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(500);                  // Wait 5 ms
-        digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-        delay(500);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(500);
-        digitalWrite(LED_PIN, LOW); // Turn LED OFF
 
         for (int i = 0; i < 5; ++i)
         {
@@ -146,14 +111,6 @@ bool updateGNSSAssistance()
 
                 Serial.print("Epoch Time...");
                 Serial.println(epochSec);
-
-                // if (!utils::get_rtc().isrunning())
-                // {
-                //     Serial.println("RTC is not initialized or running!");
-                //     return false;
-                // }
-
-                // Serial.print("clock is running...");
 
                 Serial.println("GNSS UTC time adjusting...");
 
@@ -273,23 +230,6 @@ WalterModemGNSSFix getGPSFix()
 
     modem.gnssSetEventHandler(fixHandler);
 
-    // 4 blinks
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);                  // Wait 5 ms
-    digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);                  // Wait 5 ms
-    digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-
     // Serial.println("Set Fix Event Handler");
     if (!updateGNSSAssistance())
     {
@@ -297,7 +237,7 @@ WalterModemGNSSFix getGPSFix()
     }
     // Serial.println("Updated GNSS Assistance");
 
-    // Serial.println("Attempting GNSS fix...");
+    Serial.println("Attempting GNSS fix...");
     // 4 - Blinks
     digitalWrite(LED_PIN, HIGH);
 

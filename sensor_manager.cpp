@@ -52,12 +52,26 @@ SET_LOOP_TASK_STACK_SIZE(60 * 1024); // 60KB
 #include "sensor_manager.h"
 #include "SparkFun_BMV080_Arduino_Library.h" // CTRL+Click here to get the library: http://librarymanager/All#SparkFun_BMV080
 #include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+// The pins for I2C are defined by the Wire-library.
+// On an arduino UNO:       A4(SDA), A5(SCL)
+// On an arduino MEGA 2560: 20(SDA), 21(SCL)
+// On an arduino LEONARDO:   2(SDA),  3(SCL), ...
+#define OLED_RESET -1		// Reset pin # (or -1 if sharing Arduino reset pin)
+#define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 
 SparkFunBMV080 bmv080;	 // Create an instance of the BMV080 class
 #define BMV080_ADDR 0x57 // SparkFun BMV080 Breakout defaults to 0x57
 
 bme68x_sensor sensorManager::_sensors[NUM_BME68X_UNITS];
 commMux commSetup[NUM_BME68X_UNITS];
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 /*!
  * @brief The constructor of the sensorManager class
@@ -454,4 +468,79 @@ SparkFunBMV080 sensorManager::get_pm_data()
 
 		return bmv080;
 	}
+}
+
+bool sensorManager::initializeOLED()
+{
+
+	if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS))
+	{
+		Serial.println(F("SSD1306 allocation failed"));
+		// return false;
+	}
+
+	// Show initial display buffer contents on the screen --
+	// the library initializes this with an Adafruit splash screen.
+	display.display();
+
+	// delay(2000); // Pause for 2 seconds
+
+	// Clear the buffer
+	display.clearDisplay();
+
+	// Draw a single pixel in white
+	display.drawPixel(10, 10, SSD1306_WHITE);
+
+	// Show the display buffer on the screen. You MUST call display() after
+	// drawing commands to make them visible on screen!
+	display.display();
+
+	return true;
+}
+
+bool sensorManager::printDeviceStatus(
+	const String deviceSetupStatus,
+	const String modemStatus,
+	const String gpsFixStatus,
+	const String payloadStatus,
+	const String packetsSent,
+	const String sd_clock_status,
+	const String powerSensorStatus,
+	const String BMEStatus)
+{
+
+	display.clearDisplay();
+
+	display.setTextSize(1);				 // Normal 1:1 pixel scale
+	display.setTextColor(SSD1306_WHITE); // Draw white text
+	display.setCursor(0, 0);			 // Start at top-left corner
+
+	display.print(F("Status: "));
+	display.println(deviceSetupStatus);
+
+	display.print(F("Modem: "));
+	display.println(modemStatus);
+
+	display.print(F("GPS Fix: "));
+	display.println(gpsFixStatus);
+
+	display.print(F("samples: "));
+	display.println(payloadStatus);
+
+	display.print(F("payloads: "));
+	display.println(packetsSent);
+
+	display.print(F("SD Clock: "));
+	display.println(sd_clock_status);
+
+	display.print(F("Power Sensor: "));
+	display.println(powerSensorStatus);
+
+	display.print(F("BME Status: "));
+	display.println(BMEStatus);
+
+	display.display();
+	delay(2000);
+
+	return true;
 }
