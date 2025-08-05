@@ -26,7 +26,7 @@
 #include <ArduinoJson.h>    // <-- new
 #include "cellularHelper.h" // <-- for lteConnect() + sendSensorData()
 #include "PMS.h"
-#define BUFFER_SIZE 4
+#define BUFFER_SIZE 20
 
 // Define UART1 pins (example: TX = GPIO17, RX = GPIO18)
 
@@ -39,7 +39,7 @@ PMS::DATA pmData;
 
 uint8_t sampleCount = 0;
 uint8_t payloadCounter = 0;
-DynamicJsonDocument payloadDoc(8192); // 16 KB on heap
+DynamicJsonDocument payloadDoc(6144); // 16 KB on heap
 JsonArray sensors = payloadDoc.to<JsonArray>();
 
 // adjust these to your needs
@@ -191,6 +191,21 @@ String BMEStatus = "---";
 uint32_t received_sys_time = 0;
 
 WalterModemGNSSFix gpsData;
+bsecSensor sensorList[] = {
+    BSEC_OUTPUT_IAQ,
+    BSEC_OUTPUT_RAW_TEMPERATURE,
+    BSEC_OUTPUT_RAW_PRESSURE,
+    BSEC_OUTPUT_RAW_HUMIDITY,
+    BSEC_OUTPUT_RAW_GAS,
+    BSEC_OUTPUT_STABILIZATION_STATUS,
+    BSEC_OUTPUT_RUN_IN_STATUS,
+    BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
+    BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
+    BSEC_OUTPUT_STATIC_IAQ,
+    BSEC_OUTPUT_CO2_EQUIVALENT,
+    BSEC_OUTPUT_BREATH_VOC_EQUIVALENT,
+    BSEC_OUTPUT_GAS_PERCENTAGE,
+    BSEC_OUTPUT_COMPENSATED_GAS};
 
 //--End of BME Initialization--//
 
@@ -247,21 +262,6 @@ void setup()
 
   //---------BME 688 Setup-----------------//
   /* Desired subscription list of BSEC2 outputs */
-  bsecSensor sensorList[] = {
-      BSEC_OUTPUT_IAQ,
-      BSEC_OUTPUT_RAW_TEMPERATURE,
-      BSEC_OUTPUT_RAW_PRESSURE,
-      BSEC_OUTPUT_RAW_HUMIDITY,
-      BSEC_OUTPUT_RAW_GAS,
-      BSEC_OUTPUT_STABILIZATION_STATUS,
-      BSEC_OUTPUT_RUN_IN_STATUS,
-      BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
-      BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
-      BSEC_OUTPUT_STATIC_IAQ,
-      BSEC_OUTPUT_CO2_EQUIVALENT,
-      BSEC_OUTPUT_BREATH_VOC_EQUIVALENT,
-      BSEC_OUTPUT_GAS_PERCENTAGE,
-      BSEC_OUTPUT_COMPENSATED_GAS};
 
   Serial.println("Wire and SPI initialized");
   delay(100);
@@ -403,7 +403,7 @@ void setup()
 
   // read_sys_time();
 
-  if (ret_code >= EDK_OK)
+  if (ret_code == EDK_OK)
   {
     is_bme68x_conf_available = utils::get_file_with_extension(bme68x_conf_file_name, BME68X_CONFIG_FILE_EXT);
 
@@ -583,24 +583,144 @@ void loop()
     }
     else
     {
-      modemStatus = "good";
+      modemStatus = "connected";
     }
   }
 
+  bool anySensorActive = false;
   for (sensor = 0; sensor < NUM_OF_SENS; sensor++)
   {
-
+    // Serial.print("Running sensor ");
+    // Serial.println(sensor);
     if (!envSensor[sensor].run())
     {
-
       checkBsecStatus(envSensor[sensor]);
       Serial.printf("Sensor %d failed to run\n", sensor);
+      BMEStatus = String(sensor) + "-Bad";
+      Serial.print("Free heap: ");
+      Serial.println(esp_get_free_heap_size());
+      continue;
     }
-    // else
-    // {
-    //   Serial.printf("Sensor %d is running\n", sensor);
-    // }
+    anySensorActive = true;
   }
+
+  // if (!anySensorActive)
+  // {
+  //   ESP.restart(); // Restart the ESP32
+  // }
+
+  // If buffer full, serialize & clear everything
+  if (sampleCount >= BUFFER_SIZE)
+  {
+    // Add PMS sensor data
+    Serial.println("Send PM read request...");
+    pms.requestRead();
+    delay(10);
+    Serial.println("Wait max. 1 second for read...");
+    if (pms.readUntil(pmData))
+    {
+      Serial.print("PM 1.0 (ug/m3): ");
+      Serial.println(pmData.PM_AE_UG_1_0);
+      Serial.print("PM 2.5 (ug/m3): ");
+      Serial.println(pmData.PM_AE_UG_2_5);
+      Serial.print("PM 10.0 (ug/m3): ");
+      Serial.println(pmData.PM_AE_UG_10_0);
+      sensors[0]["pm10"] = pmData.PM_AE_UG_10_0;
+      sensors[0]["pm2_5"] = pmData.PM_AE_UG_2_5;
+      sensors[0]["pm1"] = pmData.PM_AE_UG_1_0;
+    }
+    else
+    {
+      Serial.println("PMS read failed");
+      sensors[0]["pm10"] = nullptr;
+      sensors[0]["pm2_5"] = nullptr;
+      sensors[0]["pm1"] = nullptr;
+    }
+
+    char jsonBuffer[6000];
+    Serial.println("=== SENDING BATCH ===");
+    serializeJson(sensors, Serial); // This prints the JSON array to Serial
+    Serial.println();               // This prints a newline after the JSON
+
+    payloadStatus = "" + String(sampleCount);
+    sensorMgr.printDeviceStatus(
+        deviceSetupStatus,
+        modemStatus,
+        gpsFixStatus,
+        payloadStatus,
+        packetsSent,
+        sd_clock_status,
+        powerSensorStatus,
+        BMEStatus
+
+    );
+
+    for (int i = 0; i < BUFFER_SIZE; ++i)
+    {
+
+      JsonObject testObj;
+
+      Serial.println(String("sending parts... ") + String(i));
+      char jsonBuffer[12000];
+      testObj = sensors[i];
+      serializeJson(testObj, jsonBuffer);
+      Serial.println("serialize json parts...");
+      if (sendSensorData(jsonBuffer))
+      {
+        Serial.println("sending data to cloud...");
+        payloadStatus = "0";
+        payloadCounter += 1;
+        packetsSent = "" + String(payloadCounter);
+        sensorMgr.printDeviceStatus(
+            deviceSetupStatus,
+            modemStatus,
+            gpsFixStatus,
+            payloadStatus,
+            packetsSent,
+            sd_clock_status,
+            powerSensorStatus,
+            BMEStatus);
+      }
+      else
+      {
+        Serial.println("Send failed.");
+      }
+    }
+
+    // TODO: Send payloadDoc via modem or BLE
+
+    // Clear for next round
+    sensors.clear();
+    payloadDoc.clear();
+    sensors = payloadDoc.to<JsonArray>();
+    sampleCount = 0;
+    // Serial.println("disconnecting from LTE...");
+    //  if (lteDisconnect())
+    // {
+    Serial.println("entering light sleep for 5 seconds...");
+    deviceSetupStatus = "Sleep...";
+    sensorMgr.printDeviceStatus(
+        deviceSetupStatus,
+        modemStatus,
+        gpsFixStatus,
+        payloadStatus,
+        packetsSent,
+        sd_clock_status,
+        powerSensorStatus,
+        BMEStatus);
+    // Reinitialize SPI and I2C
+    Serial.println("PM sensor going into passive mode...");
+    pms.passiveMode();
+    delay(10000); // Wait 5 seconds before going to sleep
+
+    if (payloadCounter >= 115)
+    {
+      ESP.restart(); // modem.sleep(10, true); // true = light sleep
+
+      // }
+    }
+  }
+
   // Send data in batches of 4
 }
 
@@ -851,101 +971,6 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
   {
     sampleCount++;
     sensorStepCount = 0; // Reset for next sample
-
-    // If buffer full, serialize & clear everything
-    if (sampleCount >= BUFFER_SIZE)
-    {
-      // Add PMS sensor data
-      Serial.println("Send PM read request...");
-      pms.requestRead();
-      delay(10);
-      Serial.println("Wait max. 1 second for read...");
-      if (pms.readUntil(pmData))
-      {
-        Serial.print("PM 1.0 (ug/m3): ");
-        Serial.println(pmData.PM_AE_UG_1_0);
-        Serial.print("PM 2.5 (ug/m3): ");
-        Serial.println(pmData.PM_AE_UG_2_5);
-        Serial.print("PM 10.0 (ug/m3): ");
-        Serial.println(pmData.PM_AE_UG_10_0);
-        sensors[0]["pm10"] = pmData.PM_AE_UG_10_0;
-        sensors[0]["pm2_5"] = pmData.PM_AE_UG_2_5;
-        sensors[0]["pm1"] = pmData.PM_AE_UG_1_0;
-      }
-      else
-      {
-        Serial.println("PMS read failed");
-        sensors[0]["pm10"] = nullptr;
-        sensors[0]["pm2_5"] = nullptr;
-        sensors[0]["pm1"] = nullptr;
-      }
-
-      char jsonBuffer[6000];
-      Serial.println("=== SENDING BATCH ===");
-      serializeJsonPretty(sensors, Serial);
-      serializeJson(sensors, jsonBuffer);
-      Serial.println();
-
-      payloadStatus = "" + String(sampleCount);
-      sensorMgr.printDeviceStatus(
-          deviceSetupStatus,
-          modemStatus,
-          gpsFixStatus,
-          payloadStatus,
-          packetsSent,
-          sd_clock_status,
-          powerSensorStatus,
-          BMEStatus
-
-      );
-
-      for (int i = 0; i < BUFFER_SIZE; ++i)
-      {
-
-        JsonObject testObj;
-
-        Serial.println(String("sending parts... ") + String(i));
-        char jsonBuffer[12000];
-        testObj = sensors[i];
-        serializeJson(testObj, jsonBuffer);
-        Serial.println("serialize json parts...");
-        if (sendSensorData(jsonBuffer))
-        {
-          Serial.println("sending data to cloud...");
-          payloadStatus = "0";
-          payloadCounter += 1;
-          packetsSent = "" + String(payloadCounter);
-          sensorMgr.printDeviceStatus(
-              deviceSetupStatus,
-              modemStatus,
-              gpsFixStatus,
-              payloadStatus,
-              packetsSent,
-              sd_clock_status,
-              powerSensorStatus,
-              BMEStatus);
-        }
-        else
-        {
-          Serial.println("Send failed.");
-        }
-      }
-
-      // TODO: Send payloadDoc via modem or BLE
-
-      // Clear for next round
-      sensors.clear();
-      payloadDoc.clear();
-      sensors = payloadDoc.to<JsonArray>();
-      sampleCount = 0;
-      // Serial.println("disconnecting from LTE...");
-      //  if (lteDisconnect())
-      // {
-      Serial.println("entering light sleep for 5 seconds...");
-      delay(10000); // Wait 5 seconds before going to sleep
-                    // modem.sleep(10, true); // true = light sleep
-                    // }
-    }
   }
 }
 demo_ret_code configure_sensor_logging(const String &bme_config_file)
