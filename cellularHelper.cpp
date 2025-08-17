@@ -84,7 +84,6 @@ bool waitForNetwork()
 
   return true;
 }
-
 /**
  * @brief This function tries to connect the modem to the cellular network.
  * @return true if the connection attempt is successful, else false.
@@ -145,6 +144,7 @@ bool lteConnect()
   else
   {
     Serial.println("could not connect to network");
+
     return false;
   }
 

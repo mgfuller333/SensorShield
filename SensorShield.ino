@@ -216,6 +216,7 @@ bsecSensor sensorList[] = {
  *
  * @return None.
  */
+int sensorInactiveCount = 0;
 int packetsSenTotal = 0;
 void setup()
 {
@@ -534,7 +535,7 @@ void setup()
     );
   }
 
-  deviceSetupStatus = "Good";
+  deviceSetupStatus = "Setup good";
 
   sensorMgr.printDeviceStatus(
       deviceSetupStatus,
@@ -548,6 +549,8 @@ void setup()
 
   );
 }
+
+int badSensorCounter = 0; // Reset bad sensor counter
 
 void loop()
 {
@@ -587,31 +590,33 @@ void loop()
     }
   }
 
-  bool anySensorActive = false;
   for (sensor = 0; sensor < NUM_OF_SENS; sensor++)
   {
     // Serial.print("Running sensor ");
     // Serial.println(sensor);
+
     if (!envSensor[sensor].run())
     {
       checkBsecStatus(envSensor[sensor]);
-      Serial.printf("Sensor %d failed to run\n", sensor);
+      badSensorCounter++;
+      Serial.printf("Sensor %d failed to run, count: %d\n", sensor, badSensorCounter);
+
       BMEStatus = String(sensor) + "-Bad";
       Serial.print("Free heap: ");
       Serial.println(esp_get_free_heap_size());
-      continue;
     }
-    anySensorActive = true;
-  }
 
-  // if (!anySensorActive)
-  // {
-  //   ESP.restart(); // Restart the ESP32
-  // }
+    if (badSensorCounter > 32)
+    {
+      Serial.println("Too many bad sensors, restarting...");
+      ESP.restart();
+    }
+  }
 
   // If buffer full, serialize & clear everything
   if (sampleCount >= BUFFER_SIZE)
   {
+    BMEStatus = "full data";
     // Add PMS sensor data
     Serial.println("Send PM read request...");
     pms.requestRead();
@@ -684,6 +689,7 @@ void loop()
       else
       {
         Serial.println("Send failed.");
+        ESP.restart();
       }
     }
 
@@ -697,7 +703,7 @@ void loop()
     // Serial.println("disconnecting from LTE...");
     //  if (lteDisconnect())
     // {
-    Serial.println("entering light sleep for 5 seconds...");
+    Serial.println("entering light sleep for 10 min...");
     deviceSetupStatus = "Sleep...";
     sensorMgr.printDeviceStatus(
         deviceSetupStatus,
@@ -711,14 +717,14 @@ void loop()
     // Reinitialize SPI and I2C
     Serial.println("PM sensor going into passive mode...");
     pms.passiveMode();
-    delay(10000); // Wait 5 seconds before going to sleep
-
     if (payloadCounter >= 115)
     {
-      ESP.restart(); // modem.sleep(10, true); // true = light sleep
-
-      // }
+      modem.sleep(60 * 10); // Sleep for 10 seconds
+      ESP.restart();
     }
+
+    // modem.sleep(10, true); // true = light sleep
+    delay(10000); // Wait 10 seconds before going to sleep
   }
 
   // Send data in batches of 4
@@ -798,7 +804,7 @@ bme68x_data bsecCallBack(uint8_t sens_num)
 
   if (ret < EDK_OK)
   {
-    StaticJsonDocument<1024> jsonDoc;
+    DynamicJsonDocument jsonDoc(1024);
     JsonObject errorObj = jsonDoc.createNestedObject("errorCode");
 
     errorObj["sensor_number"] = sens_num;
@@ -909,7 +915,7 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
   // If runInStatus != 1, add collected data to currentSampleObj
   if (runInStatus != 1)
   {
-
+    badSensorCounter = 0;
     // Copy tempObj to currentSampleObj
     for (JsonPair kv : tempObj)
     {
@@ -988,7 +994,7 @@ demo_ret_code config_file_read(const String &config_file)
 {
   demo_ret_code ret;
   static bool first_time = true;
-  StaticJsonDocument<1024> jsonDoc;
+  DynamicJsonDocument jsonDoc(1024);
 
   while ((ret = utils::read_file(config_file, FILE_DATA_READ_SIZE, config_file_data)) == EDK_OK)
   {

@@ -114,6 +114,8 @@ bool updateGNSSAssistance()
 
                 Serial.println("GNSS UTC time adjusting...");
 
+                // int CDT_OFFSET_SECONDS = 0; // Adjust for Central Daylight Time (CDT) offset
+
                 utils::get_rtc().adjust(DateTime((uint32_t)epochSec));
 
                 Serial.println("GNSS UTC time adjusted");
@@ -243,7 +245,7 @@ WalterModemGNSSFix getGPSFix()
 
     // Try up to 5 times to get a good fix
     // for (int i = 0; i < 5; ++i)
-    for (int i = 0; i < 1; ++i)
+    for (int i = 0; i < 5; ++i)
     {
         fixRcvd = false;
         if (!modem.gnssPerformAction())
