@@ -14,15 +14,11 @@
 #include <inttypes.h>
 #include <WalterModem.h>
 #include <esp_mac.h>
-#include <Adafruit_LTR329_LTR303.h>
 #include <HardwareSerial.h>
-#include <Adafruit_MPL3115A2.h>
 #include <Wire.h>
 
 #include <esp_sleep.h>
-#include "esp_wifi.h"
-#include "esp_bt.h"
-#include "SparkFun_BMV080_Arduino_Library.h"
+
 #include <ArduinoJson.h>    // <-- new
 #include "cellularHelper.h" // <-- for lteConnect() + sendSensorData()
 #include "PMS.h"
@@ -36,6 +32,7 @@ const int PMS_TX = 10; // sensor RX ← ESP32 TX (must be an output-capable pin)
 // Use hardware UART2
 PMS pms(Serial1); // Use Serial1 for PMS sensor
 PMS::DATA pmData;
+bool pmsWakeStatus = false;
 
 uint8_t sampleCount = 0;
 uint8_t payloadCounter = 0;
@@ -153,13 +150,15 @@ void configureUltraLowPowerModem();
  * @return  void
  */
 void read_sys_time();
-bool pmsWakeStatus = false;
+
 uint8_t bsec_config[BSEC_MAX_PROPERTY_BLOB_SIZE];
 char config_file_data[FILE_DATA_READ_SIZE];
 Bsec2 bsec2[NUM_OF_SENS];
 // bleController  			bleCtlr(bleMessageReceived);
 labelProvider labelPvr;
 ledController ledCtlr;
+
+DualPowerData powerData = {};
 
 bme68xDataLogger bme68xDlog;
 bsecDataLogger bsecDlog;
@@ -182,8 +181,8 @@ static bsecDataLogger::sensor_io_data buff[NUM_OF_SENS];
 String deviceSetupStatus = "---";
 String modemStatus = "---";
 String gpsFixStatus = "---";
-String payloadStatus = "---";
-String packetsSent = "---";
+String batStatus = "---";
+String solStatus = "---";
 String powerSensorStatus = "---";
 String sd_clock_status = "---";
 String BMEStatus = "---";
@@ -224,6 +223,10 @@ void setup()
   Serial.begin(115200);
   Serial1.begin(9600, SERIAL_8N1, PMS_TX, PMS_RX); // Serial1 for PMS sensor, TX: GPIO10, RX: GPIO9
                                                    // Initialize I2C bus for the expander (commMux)
+
+  Serial.println("setting plantower to passive mode");
+  pms.passiveMode();
+  pmsWakeStatus = false;
   Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
 
   // Initialize SPI bus with custom pin assignments
@@ -240,22 +243,16 @@ void setup()
     Serial.println("OLED initialized successfully");
   }
 
-  Serial.println("setting plantower to passive mode");
-  pms.passiveMode();
-  Serial.println("Waking up, wait 30 seconds for stable readings...");
-  pms.wakeUp();
-  pmsWakeStatus = true;
-
   sensorMgr.printDeviceStatus(
       deviceSetupStatus,
       modemStatus,
       gpsFixStatus,
-      payloadStatus,
-      packetsSent,
+      batStatus,
+      solStatus,
       sd_clock_status,
       powerSensorStatus,
       BMEStatus);
-  delay(4000); // Wait for a second to stabilize the system
+
   // 1 Blink Set up the LED pin
   pinMode(LED_PIN, OUTPUT);
 
@@ -297,13 +294,12 @@ void setup()
 
     Serial.println("beginning sensor comm:");
     Serial.println(i);
-
     sensorMgr.printDeviceStatus(
         deviceSetupStatus,
         modemStatus,
         gpsFixStatus,
-        payloadStatus,
-        packetsSent,
+        batStatus,
+        solStatus,
         sd_clock_status,
         powerSensorStatus,
         BMEStatus);
@@ -337,12 +333,7 @@ void setup()
     Serial.println(i);
   }
 
-  Serial.println("BSEC library version " +
-                 String(envSensor[0].version.major) + "." + String(envSensor[0].version.minor) + "." + String(envSensor[0].version.major_bugfix) + "." + String(envSensor[0].version.minor_bugfix));
-
-  // Initialize PMS5003 sensor
-
-  //  End of PMS5003 sensor initialization
+  Serial.println("BSEC library version " + String(envSensor[0].version.major) + "." + String(envSensor[0].version.minor) + "." + String(envSensor[0].version.major_bugfix) + "." + String(envSensor[0].version.minor_bugfix));
 
   if (!powerReader.begin())
   {
@@ -354,15 +345,18 @@ void setup()
   else
   {
     powerSensorStatus = "Healthy";
+
     Serial.println("batteryHelper: sensors ready.");
   }
-
+  powerData = powerReader.readAllSensors();
+  solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+  batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
   sensorMgr.printDeviceStatus(
       deviceSetupStatus,
       modemStatus,
       gpsFixStatus,
-      payloadStatus,
-      packetsSent,
+      batStatus,
+      solStatus,
       sd_clock_status,
       powerSensorStatus,
       BMEStatus);
@@ -374,12 +368,15 @@ void setup()
   if (ret_code == EDK_OK)
   {
     sd_clock_status = "Healthy";
+    powerData = powerReader.readAllSensors();
+    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
     sensorMgr.printDeviceStatus(
         deviceSetupStatus,
         modemStatus,
         gpsFixStatus,
-        payloadStatus,
-        packetsSent,
+        batStatus,
+        solStatus,
         sd_clock_status,
         powerSensorStatus,
         BMEStatus);
@@ -387,17 +384,18 @@ void setup()
   else
   {
     sd_clock_status = "Unhealthy";
+    powerData = powerReader.readAllSensors();
+    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
     sensorMgr.printDeviceStatus(
         deviceSetupStatus,
         modemStatus,
         gpsFixStatus,
-        payloadStatus,
-        packetsSent,
+        batStatus,
+        solStatus,
         sd_clock_status,
         powerSensorStatus,
-        BMEStatus
-
-    );
+        BMEStatus);
   }
 
   // Adjust Time
@@ -436,17 +434,18 @@ void setup()
   {
     Serial.println("Modem initialization OK");
     modemStatus = "Healthy";
+    powerData = powerReader.readAllSensors();
+    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
     sensorMgr.printDeviceStatus(
         deviceSetupStatus,
         modemStatus,
         gpsFixStatus,
-        payloadStatus,
-        packetsSent,
+        batStatus,
+        solStatus,
         sd_clock_status,
         powerSensorStatus,
-        BMEStatus
-
-    );
+        BMEStatus);
     // disableWifiAndBluetooth();
   }
   else
@@ -454,17 +453,18 @@ void setup()
 
     Serial.println("Modem initialization ERROR");
     modemStatus = "Bad";
+    powerData = powerReader.readAllSensors();
+    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
     sensorMgr.printDeviceStatus(
         deviceSetupStatus,
         modemStatus,
         gpsFixStatus,
-        payloadStatus,
-        packetsSent,
+        batStatus,
+        solStatus,
         sd_clock_status,
         powerSensorStatus,
-        BMEStatus
-
-    );
+        BMEStatus);
     return;
   }
 
@@ -474,18 +474,18 @@ void setup()
   Serial.println("Initialize GPS");
 
   gpsFixStatus = "trying...";
-
+  powerData = powerReader.readAllSensors();
+  solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+  batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
   sensorMgr.printDeviceStatus(
       deviceSetupStatus,
       modemStatus,
       gpsFixStatus,
-      payloadStatus,
-      packetsSent,
+      batStatus,
+      solStatus,
       sd_clock_status,
       powerSensorStatus,
-      BMEStatus
-
-  );
+      BMEStatus);
 
   WalterModemGNSSFix gpsData = getGPSFix();
   //  5 - Blinks
@@ -507,47 +507,50 @@ void setup()
   {
     modemStatus = "Not Connected";
     gpsFixStatus = "Healthy";
+    powerData = powerReader.readAllSensors();
+    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
     sensorMgr.printDeviceStatus(
         deviceSetupStatus,
         modemStatus,
         gpsFixStatus,
-        payloadStatus,
-        packetsSent,
+        batStatus,
+        solStatus,
         sd_clock_status,
         powerSensorStatus,
-        BMEStatus
-
-    );
+        BMEStatus);
   }
   else
   {
     gpsFixStatus = "Bad";
+    powerData = powerReader.readAllSensors();
+    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
     sensorMgr.printDeviceStatus(
         deviceSetupStatus,
         modemStatus,
         gpsFixStatus,
-        payloadStatus,
-        packetsSent,
+        batStatus,
+        solStatus,
         sd_clock_status,
         powerSensorStatus,
-        BMEStatus
-
-    );
+        BMEStatus);
   }
 
   deviceSetupStatus = "Setup good";
 
+  powerData = powerReader.readAllSensors();
+  solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+  batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
   sensorMgr.printDeviceStatus(
       deviceSetupStatus,
       modemStatus,
       gpsFixStatus,
-      payloadStatus,
-      packetsSent,
+      batStatus,
+      solStatus,
       sd_clock_status,
       powerSensorStatus,
-      BMEStatus
-
-  );
+      BMEStatus);
 }
 
 int badSensorCounter = 0; // Reset bad sensor counter
@@ -556,39 +559,6 @@ void loop()
 {
 
   deviceSetupStatus = "In Loop...";
-
-  bool isConnected = lteConnected();
-  if (!pmsWakeStatus)
-  {
-    Serial.println("pms is sleep, waking up sensor...");
-    pms.wakeUp();         // Ensure PMS is awake
-    pmsWakeStatus = true; // Set wake status to true
-    Serial.println("pms is awake and waiting for readings...");
-    for (int i = 0; i < 30; i++)
-    {
-      Serial.print(".");
-      delay(1000);
-    }
-  }
-
-  // Wait 100 ms
-
-  if (!isConnected)
-  {
-    Serial.println("Modem not connected, attempting to connect...");
-    if (!lteConnect())
-    {
-
-      Serial.println("Failed to connect to LTE network.");
-      modemStatus = "Failed to reconnect";
-
-      ESP.restart();
-    }
-    else
-    {
-      modemStatus = "connected";
-    }
-  }
 
   for (sensor = 0; sensor < NUM_OF_SENS; sensor++)
   {
@@ -617,11 +587,45 @@ void loop()
   if (sampleCount >= BUFFER_SIZE)
   {
     BMEStatus = "full data";
+
+    bool isConnected = lteConnected();
+
+    if (!isConnected)
+    {
+      Serial.println("Modem not connected, attempting to connect...");
+      if (!lteConnect())
+      {
+
+        Serial.println("Failed to connect to LTE network.");
+        modemStatus = "Failed to reconnect";
+
+        ESP.restart();
+      }
+      else
+      {
+        modemStatus = "connected";
+      }
+    }
+
+    if (!pmsWakeStatus)
+    {
+      Serial.println("pms is sleep, waking up sensor...");
+      pms.wakeUp();         // Ensure PMS is awake
+      pmsWakeStatus = true; // Set wake status to true
+      Serial.println("pms is awake and waiting for readings...");
+    }
+
+    for (int i = 0; i < 40; i++)
+    {
+      Serial.print(".");
+      delay(1000);
+    }
     // Add PMS sensor data
     Serial.println("Send PM read request...");
     pms.requestRead();
-    delay(10);
     Serial.println("Wait max. 1 second for read...");
+    Serial.println("PMS sensor reading...");
+
     if (pms.readUntil(pmData))
     {
       Serial.print("PM 1.0 (ug/m3): ");
@@ -642,55 +646,54 @@ void loop()
       sensors[0]["pm1"] = nullptr;
     }
 
-    char jsonBuffer[6000];
+    pms.sleep();
+    pmsWakeStatus = false; // Set wake status to true
+
+    // Wait 100 ms
+
     Serial.println("=== SENDING BATCH ===");
     serializeJson(sensors, Serial); // This prints the JSON array to Serial
     Serial.println();               // This prints a newline after the JSON
 
-    payloadStatus = "" + String(sampleCount);
+    powerData = powerReader.readAllSensors();
+    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
     sensorMgr.printDeviceStatus(
         deviceSetupStatus,
         modemStatus,
         gpsFixStatus,
-        payloadStatus,
-        packetsSent,
+        batStatus,
+        solStatus,
         sd_clock_status,
         powerSensorStatus,
-        BMEStatus
+        BMEStatus);
 
-    );
+    char jsonBuffer[40000];
 
-    for (int i = 0; i < BUFFER_SIZE; ++i)
+    serializeJson(sensors, jsonBuffer); // This prints the JSON array to Serial
+
+    Serial.println("serialize json parts...");
+    if (sendSensorData(jsonBuffer))
     {
+      Serial.println("sending data to cloud...");
 
-      JsonObject testObj;
-
-      Serial.println(String("sending parts... ") + String(i));
-      char jsonBuffer[12000];
-      testObj = sensors[i];
-      serializeJson(testObj, jsonBuffer);
-      Serial.println("serialize json parts...");
-      if (sendSensorData(jsonBuffer))
-      {
-        Serial.println("sending data to cloud...");
-        payloadStatus = "0";
-        payloadCounter += 1;
-        packetsSent = "" + String(payloadCounter);
-        sensorMgr.printDeviceStatus(
-            deviceSetupStatus,
-            modemStatus,
-            gpsFixStatus,
-            payloadStatus,
-            packetsSent,
-            sd_clock_status,
-            powerSensorStatus,
-            BMEStatus);
-      }
-      else
-      {
-        Serial.println("Send failed.");
-        ESP.restart();
-      }
+      powerData = powerReader.readAllSensors();
+      solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+      batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
+      sensorMgr.printDeviceStatus(
+          deviceSetupStatus,
+          modemStatus,
+          gpsFixStatus,
+          batStatus,
+          solStatus,
+          sd_clock_status,
+          powerSensorStatus,
+          BMEStatus);
+    }
+    else
+    {
+      Serial.println("Send failed.");
+      ESP.restart();
     }
 
     // TODO: Send payloadDoc via modem or BLE
@@ -701,30 +704,47 @@ void loop()
     sensors = payloadDoc.to<JsonArray>();
     sampleCount = 0;
     // Serial.println("disconnecting from LTE...");
-    //  if (lteDisconnect())
+
     // {
     Serial.println("entering light sleep for 10 min...");
+
+    modemStatus = "Disconnected";
+    if (lteDisconnect())
+    {
+      powerData = powerReader.readAllSensors();
+      solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+      batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
+      sensorMgr.printDeviceStatus(
+          deviceSetupStatus,
+          modemStatus,
+          gpsFixStatus,
+          batStatus,
+          solStatus,
+          sd_clock_status,
+          powerSensorStatus,
+          BMEStatus);
+    }
+    else
+    {
+      ESP.restart();
+    }
     deviceSetupStatus = "Sleep...";
+    // Reinitialize SPI and I2C
+    powerData = powerReader.readAllSensors();
+    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
+    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
     sensorMgr.printDeviceStatus(
         deviceSetupStatus,
         modemStatus,
         gpsFixStatus,
-        payloadStatus,
-        packetsSent,
+        batStatus,
+        solStatus,
         sd_clock_status,
         powerSensorStatus,
         BMEStatus);
-    // Reinitialize SPI and I2C
-    Serial.println("PM sensor going into passive mode...");
-    pms.passiveMode();
-    if (payloadCounter >= 115)
-    {
-      modem.sleep(60 * 10); // Sleep for 10 seconds
-      ESP.restart();
-    }
 
-    // modem.sleep(10, true); // true = light sleep
-    delay(10000); // Wait 10 seconds before going to sleep
+    modem.sleep(60 * 15); // true = light sleep, sleep for 12 min
+    ESP.restart();
   }
 
   // Send data in batches of 4
@@ -925,14 +945,14 @@ void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bse
     // Add power data
     Serial.println("Configuring communication for INA219...");
     Serial.println("Reading battery and solar sensors...");
-    DualPowerData powerData = powerReader.readAllSensors();
+    powerData = powerReader.readAllSensors();
     currentSampleObj["batV"] = powerData.battery.busVoltage;
     currentSampleObj["batSV"] = powerData.battery.shuntVoltage;
     currentSampleObj["batC"] = powerData.battery.current_mA;
     currentSampleObj["batP"] = powerData.battery.power_mW;
     currentSampleObj["solV"] = powerData.solar.busVoltage;
     currentSampleObj["solSV"] = powerData.solar.shuntVoltage;
-    currentSampleObj["solC"] = powerData.solar.current_mA;
+    currentSampleObj["solC"] = powerData.solar.power_mW;
     currentSampleObj["solP"] = powerData.solar.power_mW;
 
     // Add metadata
@@ -1037,11 +1057,11 @@ void read_sys_time()
   return;
 }
 
-void disableWifiAndBluetooth()
-{
-  esp_wifi_stop();
-  esp_bt_controller_disable();
-}
+// void disableWifiAndBluetooth()
+// {
+//   esp_wifi_stop();
+//   esp_bt_controller_disable();
+// }
 
 void configureUltraLowPowerModem()
 {

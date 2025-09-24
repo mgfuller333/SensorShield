@@ -68,6 +68,8 @@ void checkAssistanceData(
             *updateEphemeris = true;
         }
     }
+
+    // Reinitialize SPI and I2C
 }
 
 bool updateGNSSAssistance()
@@ -135,7 +137,7 @@ bool updateGNSSAssistance()
                 Serial.println(buf);
             }
 
-            delay(500);
+            delay(50);
         }
     }
     else
@@ -245,7 +247,7 @@ WalterModemGNSSFix getGPSFix()
 
     // Try up to 5 times to get a good fix
     // for (int i = 0; i < 5; ++i)
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         fixRcvd = false;
         if (!modem.gnssPerformAction())

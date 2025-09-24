@@ -69,10 +69,10 @@ DualPowerData BatteryHelper::readAllSensors()
     data.battery.power_mW = inaBattery.getPower_mW();
 
     Serial.println("Battery Sensor Data:");
-    Serial.printf("  Bus Voltage:   %.2f V\n", data.battery.busVoltage);
-    Serial.printf("  Shunt Voltage: %.2f mV\n", data.battery.shuntVoltage);
-    Serial.printf("  Current:       %.2f mA\n", data.battery.current_mA);
-    Serial.printf("  Power:         %.2f mW\n\n", data.battery.power_mW);
+    Serial.printf("Bus Voltage:   %.2f V\n", data.battery.busVoltage);
+    Serial.printf("Shunt Voltage: %.2f mV\n", data.battery.shuntVoltage);
+    Serial.printf("Current:       %.2f mA\n", data.battery.current_mA);
+    Serial.printf("Power:         %.2f mW\n\n", data.battery.power_mW);
 
     // Read solar panel sensor data
     data.solar.busVoltage = inaSolar.getBusVoltage_V();

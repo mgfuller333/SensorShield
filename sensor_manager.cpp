@@ -50,7 +50,7 @@ SET_LOOP_TASK_STACK_SIZE(60 * 1024); // 60KB
 #endif
 
 #include "sensor_manager.h"
-#include "SparkFun_BMV080_Arduino_Library.h" // CTRL+Click here to get the library: http://librarymanager/All#SparkFun_BMV080
+// #include "SparkFun_BMV080_Arduino_Library.h" // CTRL+Click here to get the library: http://librarymanager/All#SparkFun_BMV080
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
@@ -66,8 +66,8 @@ SET_LOOP_TASK_STACK_SIZE(60 * 1024); // 60KB
 #define OLED_RESET -1		// Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 
-SparkFunBMV080 bmv080;	 // Create an instance of the BMV080 class
-#define BMV080_ADDR 0x57 // SparkFun BMV080 Breakout defaults to 0x57
+// SparkFunBMV080 bmv080;	 // Create an instance of the BMV080 class
+// #define BMV080_ADDR 0x57 // SparkFun BMV080 Breakout defaults to 0x57
 
 bme68x_sensor sensorManager::_sensors[NUM_BME68X_UNITS];
 commMux commSetup[NUM_BME68X_UNITS];
@@ -103,18 +103,18 @@ int8_t sensorManager::initialize_mox_sensor(uint8_t sensor_number, uint32_t &sen
 
 bool sensorManager::initialize_pm_sensor()
 {
-	if (bmv080.begin(BMV080_ADDR, Wire1) == false)
-	{
-		Serial.println("BMV080 not detected at default I2C address. Check your jumpers and the hookup guide. Freezing...");
-		while (1)
-			;
-	}
-	Serial.println("BMV080 found!");
+	// if (bmv080.begin(BMV080_ADDR, Wire1) == false)
+	// {
+	// 	Serial.println("BMV080 not detected at default I2C address. Check your jumpers and the hookup guide. Freezing...");
+	// 	while (1)
+	// 		;
+	// }
+	// Serial.println("BMV080 found!");
 
 	// wirePort.setClock(400000); //Increase I2C data rate to 400kHz
 
 	/* Initialize the Sensor (read driver, open, reset, id etc.)*/
-	bmv080.init();
+	// bmv080.init();
 
 	// /* Set the sensor Duty Cycling Period (seconds)*/
 	// uint16_t duty_cycling_period = 20;
@@ -138,15 +138,15 @@ bool sensorManager::initialize_pm_sensor()
 	// 	Serial.println("Error setting BMV080 mode");
 	// }
 	/* Set the sensor mode to continuous mode */
-	if (bmv080.setMode(SF_BMV080_MODE_CONTINUOUS) == true)
-	{
-		Serial.println("BMV080 set to continuous mode");
-		return true;
-	}
-	else
-	{
-		Serial.println("Error setting BMV080 mode");
-	}
+	// if (bmv080.setMode(SF_BMV080_MODE_CONTINUOUS) == true)
+	// {
+	// 	Serial.println("BMV080 set to continuous mode");
+	// 	return true;
+	// }
+	// else
+	// {
+	// 	Serial.println("Error setting BMV080 mode");
+	// }
 	return false;
 }
 
@@ -252,13 +252,13 @@ demo_ret_code sensorManager::initialize_all_sensors()
 				return EDK_BME68X_DRIVER_ERROR;
 			}
 
-			bool bmv_rslt = initialize_pm_sensor();
-			if (bmv_rslt != true)
-			{
-				Serial.println("PM sensor initialization failed");
+			// bool bmv_rslt = initialize_pm_sensor();
+			// if (bmv_rslt != true)
+			// {
+			// 	Serial.println("PM sensor initialization failed");
 
-				return EDK_BME68X_DRIVER_ERROR;
-			}
+			// 	return EDK_BME68X_DRIVER_ERROR;
+			// }
 		}
 	}
 	return EDK_OK;
@@ -441,34 +441,34 @@ demo_ret_code sensorManager::collect_data(uint8_t num, bme68x_data *data[3])
 	return ret_code;
 }
 
-SparkFunBMV080 sensorManager::get_pm_data()
-{
-	Serial.print("starting to read: ");
-	if (bmv080.readSensor())
-	{
-		float pm10 = bmv080.PM10();
-		float pm25 = bmv080.PM25();
-		float pm1 = bmv080.PM1();
+// SparkFunBMV080 sensorManager::get_pm_data()
+// {
+// 	Serial.print("starting to read: ");
+// 	if (bmv080.readSensor())
+// 	{
+// 		float pm10 = bmv080.PM10();
+// 		float pm25 = bmv080.PM25();
+// 		float pm1 = bmv080.PM1();
 
-		Serial.print("PM10: ");
-		Serial.print(pm10);
-		Serial.print("\t");
-		Serial.print("PM2.5: ");
-		Serial.print(pm25);
-		Serial.print("\t");
-		Serial.print("PM1: ");
-		Serial.print(pm1);
+// 		Serial.print("PM10: ");
+// 		Serial.print(pm10);
+// 		Serial.print("\t");
+// 		Serial.print("PM2.5: ");
+// 		Serial.print(pm25);
+// 		Serial.print("\t");
+// 		Serial.print("PM1: ");
+// 		Serial.print(pm1);
 
-		if (bmv080.isObstructed() == true)
-		{
-			Serial.print("\tObstructed");
-		}
+// 		if (bmv080.isObstructed() == true)
+// 		{
+// 			Serial.print("\tObstructed");
+// 		}
 
-		Serial.println();
+// 		Serial.println();
 
-		return bmv080;
-	}
-}
+// 		return bmv080;
+// 	}
+// }
 
 bool sensorManager::initializeOLED()
 {
@@ -502,8 +502,8 @@ bool sensorManager::printDeviceStatus(
 	const String deviceSetupStatus,
 	const String modemStatus,
 	const String gpsFixStatus,
-	const String payloadStatus,
-	const String packetsSent,
+	const String batPower,
+	const String solPower,
 	const String sd_clock_status,
 	const String powerSensorStatus,
 	const String BMEStatus)
@@ -524,11 +524,11 @@ bool sensorManager::printDeviceStatus(
 	display.print(F("GPS Fix: "));
 	display.println(gpsFixStatus);
 
-	display.print(F("samples: "));
-	display.println(payloadStatus);
+	display.print(F("B: "));
+	display.println(batPower);
 
-	display.print(F("payloads: "));
-	display.println(packetsSent);
+	display.print(F("S: "));
+	display.println(solPower);
 
 	display.print(F("SD Clock: "));
 	display.println(sd_clock_status);
@@ -540,7 +540,6 @@ bool sensorManager::printDeviceStatus(
 	display.println(BMEStatus);
 
 	display.display();
-	delay(2000);
 
 	return true;
 }

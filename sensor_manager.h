@@ -53,11 +53,11 @@
 #include "demo_app.h"
 #include <bme68xLibrary.h>
 #include <commMux.h>
-#include "SparkFun_BMV080_Arduino_Library.h" // CTRL+Click here to get the library: http://librarymanager/All#SparkFun_BMV080
+// #include "SparkFun_BMV080_Arduino_Library.h" // CTRL+Click here to get the library: http://librarymanager/All#SparkFun_BMV080
 #include <Wire.h>
 #include "sensor_manager.h"
-#include "SparkFun_BMV080_Arduino_Library.h" // CTRL+Click here to get the library: http://librarymanager/All#SparkFun_BMV080
-#include "cellularHelper.h"					 // <-- for lteConnect() + sendSensorData()
+// #include "SparkFun_BMV080_Arduino_Library.h" // CTRL+Click here to get the library: http://librarymanager/All#SparkFun_BMV080
+#include "cellularHelper.h" // <-- for lteConnect() + sendSensorData()
 #include <Wire.h>
 /* I2C-Expander masks */
 #define I2C_EXPANDER_ADDR 0x20
@@ -246,7 +246,7 @@ public:
 	 */
 	demo_ret_code collect_data(uint8_t num, bme68x_data *data[3]);
 
-	SparkFunBMV080 get_pm_data();
+	// SparkFunBMV080 get_pm_data();
 
 	bool initialize_pm_sensor();
 	/*!
@@ -276,8 +276,8 @@ public:
 		const String deviceSetupStatus,
 		const String modemStatus,
 		const String gpsFixStatus,
-		const String payloadStatus,
-		const String packetsSent,
+		const String batPower,
+		const String solPower,
 		const String sd_clock_status,
 		const String powerSensorStatus,
 		const String BMEStatus
