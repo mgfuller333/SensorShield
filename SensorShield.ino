@@ -22,7 +22,7 @@
 #include <ArduinoJson.h>    // <-- new
 #include "cellularHelper.h" // <-- for lteConnect() + sendSensorData()
 #include "PMS.h"
-#define BUFFER_SIZE 20
+#define BUFFER_SIZE 8
 
 // Define UART1 pins (example: TX = GPIO17, RX = GPIO18)
 
@@ -219,6 +219,7 @@ int sensorInactiveCount = 0;
 int packetsSenTotal = 0;
 void setup()
 {
+  delay(4000); // wait for serial monitor to open
   deviceSetupStatus = "setup";
   Serial.begin(115200);
   Serial1.begin(9600, SERIAL_8N1, PMS_TX, PMS_RX); // Serial1 for PMS sensor, TX: GPIO10, RX: GPIO9
@@ -615,6 +616,15 @@ void loop()
       Serial.println("pms is awake and waiting for readings...");
     }
 
+    // if (!sensorMgr.initialize_pm_sensor())
+    // {
+    //   Serial.println("BMV080 initialization failed");
+    // }
+    // else
+    // {
+    //   Serial.println("BMV080 initialized successfully");
+    // }
+
     for (int i = 0; i < 40; i++)
     {
       Serial.print(".");
@@ -641,15 +651,32 @@ void loop()
     else
     {
       Serial.println("PMS read failed");
-      sensors[0]["pm10"] = nullptr;
-      sensors[0]["pm2_5"] = nullptr;
-      sensors[0]["pm1"] = nullptr;
+      sensors[0]["pm10"] = -1;
+      sensors[0]["pm2_5"] = -1;
+      sensors[0]["pm1"] = -1;
     }
 
     pms.sleep();
     pmsWakeStatus = false; // Set wake status to true
 
     // Wait 100 ms
+    // SparkFunBMV080 bmvPMData = sensorMgr.get_pm_data();
+    // if (!bmvPMData.isObstructed() && bmvPMData.PM25())
+    // {
+    //   Serial.println("BMV080 could not fetch data");
+    //   sensors[1]["pm10"] = -1;
+    //   sensors[1]["pm2_5"] = -1;
+    //   sensors[1]["pm1"] = -1;
+    // }
+    // else
+    // {
+    //   Serial.println("BMV080 fetched data successfully");
+
+    //   Serial.println("PMS read failed");
+    //   sensors[1]["pm10"] = bmvPMData.PM10();
+    //   sensors[1]["pm2_5"] = bmvPMData.PM25();
+    //   sensors[1]["pm1"] = bmvPMData.PM1();
+    // }
 
     Serial.println("=== SENDING BATCH ===");
     serializeJson(sensors, Serial); // This prints the JSON array to Serial
