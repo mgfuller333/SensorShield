@@ -2,8 +2,8 @@
 #include <Adafruit_INA219.h>
 
 // I2C pins (for the expander controlling chip‐select)
-#define PowerLevel_SDA_PIN 6
-#define PowerLevel_SCL_PIN 7
+#define PowerLevel_SDA_PIN 5
+#define PowerLevel_SCL_PIN 4
 
 struct PowerData
 {
@@ -17,14 +17,14 @@ struct PowerData
 struct DualPowerData
 {
     PowerData battery;
-    PowerData solarPanel;
+    PowerData solar;
 };
 
 class BatteryHelper
 {
 public:
     // addrBattery = battery sensor address, addrSolar = solar panel sensor address
-    BatteryHelper(uint8_t addrBattery = 0x40, uint8_t addrSolar = 0x41);
+    BatteryHelper(uint8_t addrBattery = 0x41, uint8_t addrSolar = 0x40);
 
     // Initialize both INA219 sensors
     bool begin();

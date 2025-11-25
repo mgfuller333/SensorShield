@@ -37,6 +37,7 @@ uint8_t dataBuf[PACKET_SIZE] = {0};
 
 bool lteConnected()
 {
+
   WalterModemNetworkRegState regState = modem.getNetworkRegState();
   return (regState == WALTER_MODEM_NETWORK_REG_REGISTERED_HOME ||
           regState == WALTER_MODEM_NETWORK_REG_REGISTERED_ROAMING);
@@ -56,36 +57,8 @@ bool waitForNetwork()
   }
   Serial.println("Connected to the network");
 
-  if (modem.mqttConfig("Sharingan1", "sireenUser", "sireenPass333", 0))
-  {
-    Serial.println("MQTT configuration succeeded");
-  }
-  else
-  {
-    Serial.println("Error: MQTT configuration failed");
-    ESP.restart();
-    return false;
-  }
-
-  Serial.println("attempting mqtt connection....");
-
-  if (modem.mqttConnect("broker.hivemq.com", 1883))
-  {
-    Serial.println("MQTT connection succeeded");
-  }
-  else
-  {
-
-    Serial.println("Error: MQTT connection failed");
-    ESP.restart();
-    return false;
-  }
-
-  Serial.printf("Attempting MQTT...");
-
   return true;
 }
-
 /**
  * @brief This function tries to connect the modem to the cellular network.
  * @return true if the connection attempt is successful, else false.
@@ -146,6 +119,7 @@ bool lteConnect()
   else
   {
     Serial.println("could not connect to network");
+
     return false;
   }
 
@@ -229,7 +203,7 @@ bool modemSetup()
   }
 
   /* Configure http profile for a simple test */
-  if (modem.httpConfigProfile(HTTP_PROFILE, "api.datacake.co", 443, 1))
+  if (modem.httpConfigProfile(HTTP_PROFILE, "gemini-ai-chatbot-swart-tau.vercel.app", 443, 1))
   {
     Serial.println("Successfully configured the http profile");
     return true;
@@ -237,17 +211,6 @@ bool modemSetup()
   else
   {
     Serial.println("Error: Failed to configure HTTP profile");
-    return false;
-  }
-
-  if (modem.mqttSubscribe("SireenTest"))
-  {
-    Serial.println("MQTT subscribed to topic 'SireenTest'");
-  }
-  else
-  {
-    Serial.println("Error: MQTT subscribe failed");
-    ESP.restart();
     return false;
   }
 
@@ -310,101 +273,36 @@ bool sendSensorData(String dataPayload)
   /* other public mqtt broker with web client: mqtthq.com */
   /* configure the mqtt client */
 
-  if (modem.mqttPublish("SireenTest",
-                        (uint8_t *)dataPayload.c_str(), // Pass jsonString directly
-                        dataPayload.length()            // Size of the JSON data
-                        ))
+  if (modem.httpSend(
+          HTTP_PROFILE,
+          "/api/data",
+          (uint8_t *)dataPayload.c_str(), // Pass jsonString directly
+          dataPayload.length(),           // Size of the JSON data
+          WALTER_MODEM_HTTP_SEND_CMD_POST,
+          WALTER_MODEM_HTTP_POST_PARAM_JSON,
+          ctbuf,
+          sizeof(ctbuf)))
   {
-    Serial.printf("published  on topic 'SireenTest'\r\n");
+    Serial.println("HTTP query performed");
+    // if (modem.httpDidRing(HTTP_PROFILE, inBuf, sizeof(inBuf), &rsp))
+    // {
+
+    //   Serial.printf("http status code: %d\r\n", rsp.data.httpResponse.httpStatus);
+    //   Serial.printf("content type: %s\r\n", ctbuf);
+    //   Serial.printf("[%s]\r\n", inBuf);
+    // }
+    // else
+    // {
+    //   Serial.print("HTTP response not yet received\r\n");
+    // }
+    return true;
   }
   else
   {
-    {
-      Serial.print("MQTT publish failed\r\n");
-      return false;
-    }
+    Serial.println("HTTP query failed");
+    delay(1000);
+    return false;
   }
-
-  delay(1000);
-
-  while (modem.mqttDidRing("SireenTest", incomingBuf,
-                           sizeof(incomingBuf), &rsp))
-  {
-    Serial.printf("incoming: qos=%d msgid=%d len=%d:\r\n",
-                  rsp.data.mqttResponse.qos,
-                  rsp.data.mqttResponse.messageId,
-                  rsp.data.mqttResponse.length);
-    for (int i = 0; i < rsp.data.mqttResponse.length; i++)
-    {
-      Serial.printf("'%c' 0x%02x\r\n", incomingBuf[i], incomingBuf[i]);
-    }
-  }
-
-  // Attempt to send HTTP POST request
-
-  // if (!httpReceiveAttemptsLeft)
-  // {
-
-  //   if (modem.httpSend(
-  //           HTTP_PROFILE,
-  //           "/integrations/api/b2f660a9-c735-463b-ba46-1396a60d4319/",
-  //           (uint8_t *)dataPayload.c_str(), // Pass jsonString directly
-  //           dataPayload.length(),           // Size of the JSON data
-  //           WALTER_MODEM_HTTP_SEND_CMD_POST,
-  //           WALTER_MODEM_HTTP_POST_PARAM_JSON,
-  //           ctbuf,
-  //           sizeof(ctbuf)))
-  //   {
-  //     Serial.println("HTTP query performed");
-  //     httpReceiveAttemptsLeft = MAX_HTTP_ATTEMPTS;
-  //     return true;
-  //   }
-  //   else
-  //   {
-  //     Serial.println("HTTP query failed");
-  //     delay(1000);
-  //     return false;
-  //   }
-
-  //   // confirmation
-  //   digitalWrite(LED_PIN, LOW); // Turn LED OFF
-  //   delay(50);
-  //   digitalWrite(LED_PIN, HIGH); // Turn LED ON
-  //   delay(50);                   // Wait 5 ms
-  //   digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-  //   delay(50);
-  //   digitalWrite(LED_PIN, HIGH); // Turn LED ON
-  //   delay(50);                   // Wait 5 ms
-  //   digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-  //   delay(50);
-  //   digitalWrite(LED_PIN, HIGH); // Turn LED ON
-  //   delay(50);                   // Wait 4 seconds
-  //   digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-
-  //   delay(1000);
-
-  //   return true;
-  // }
-  // else
-  // {
-  //   httpReceiveAttemptsLeft--;
-
-  //   if (modem.httpDidRing(HTTP_PROFILE, inBuf, sizeof(inBuf), &rsp))
-  //   {
-  //     httpReceiveAttemptsLeft = 1;
-
-  //     Serial.printf("HTTP status code: %d\n", rsp.data.httpResponse.httpStatus);
-  //     Serial.printf("Content type: %s\n", ctbuf);
-  //     Serial.printf("Response: [%s]\n", inBuf);
-  //     return true;
-  //   }
-  //   else
-  //   {
-  //     Serial.println("HTTP response not yet received");
-  //   }
-  // }
-
-  delay(5000);
 
   return true;
 }

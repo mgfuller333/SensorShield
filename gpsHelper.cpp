@@ -4,9 +4,7 @@
 #include "utils.h"
 #include <Wire.h>
 
-#include <ESP32Time.h>
-extern ESP32Time rtc; // this tells the compiler the variable is defined elsewhere
-// RTC_DATA_ATTR uint32_t lastGPSFixTime = 0;
+RTC_DATA_ATTR uint32_t lastGPSFixTime = 0;
 #define MAX_GNSS_CONFIDENCE 1000.0
 #define LED_PIN 42 // Use a free IO pin for LED (example IO2 or any other free)
 volatile bool fixRcvd = false;
@@ -70,14 +68,14 @@ void checkAssistanceData(
             *updateEphemeris = true;
         }
     }
+
+    // Reinitialize SPI and I2C
 }
 
 bool updateGNSSAssistance()
 {
     bool lteConnected = false;
     WalterModemRsp rsp = {};
-    // Capture millis at moment of sync
-    uint32_t rtcMillisAtSync = millis();
 
     lteDisconnect();
 
@@ -90,59 +88,12 @@ bool updateGNSSAssistance()
         /* The system clock is invalid, connect to LTE network to sync time */
         if (!lteConnect())
         {
-            // 4 blinks
-            digitalWrite(LED_PIN, LOW); // Start LED off
-            delay(500);
-            digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(500);                  // Wait 5 ms
-            digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-            delay(500);
-            digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(500);                  // Wait 5 ms
-            digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-            delay(500);
-            digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(500);                  // Wait 5 ms
-            digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-            delay(500);
-            digitalWrite(LED_PIN, HIGH); // Turn LED ON
-            delay(500);
-            digitalWrite(LED_PIN, LOW); // Turn LED OFF
-            delay(2000);
 
             Serial.print("Could not connect to LTE network\r\n");
             return false;
         }
 
         lteConnected = true;
-
-        /*
-         * Wait for the modem to synchronize time with the LTE network, try 5 times
-         * with a delay of 500ms.
-         */
-        // 5 blinks
-        digitalWrite(LED_PIN, LOW); // Start LED off
-        delay(500);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(500);                  // Wait 5 ms
-        digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-        delay(500);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(500);                  // Wait 5 ms
-        digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-        delay(500);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(500);                  // Wait 5 ms
-        digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-        delay(500);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(500);                  // Wait 5 ms
-        digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-        delay(500);
-        digitalWrite(LED_PIN, HIGH); // Turn LED ON
-        delay(500);
-        digitalWrite(LED_PIN, LOW); // Turn LED OFF
-        delay(2000);
 
         for (int i = 0; i < 5; ++i)
         {
@@ -153,31 +104,40 @@ bool updateGNSSAssistance()
                 continue;
             }
 
-            int64_t epochSec = rsp.data.clock.epochTime;
+            int64_t epochSec = -1;
 
-            if (epochSec > 4)
+            Serial.println("GNSS UTC time request succeeded");
+            if (rsp.data.clock.epochTime > 4)
             {
-                // Calculate milliseconds since RTC was set
-                uint32_t subsecondMs = (millis() - rtcMillisAtSync) % 1000;
+                int64_t epochSec = rsp.data.clock.epochTime;
 
-                uint16_t ms = millis() % 1000; // Get ms at time of sync
+                Serial.print("Epoch Time...");
+                Serial.println(epochSec);
 
-                rtc.setTime(epochSec, ms * 1000); // Convert ms → µs
+                Serial.println("GNSS UTC time adjusting...");
 
-                Serial.printf("Set time with: %lu sec and %u ms\r\n", epochSec, ms);
+                // int CDT_OFFSET_SECONDS = 0; // Adjust for Central Daylight Time (CDT) offset
 
-                String ts = rtc.getTime("%Y-%m-%dT%H:%M:%S");
+                utils::get_rtc().adjust(DateTime((uint32_t)epochSec));
 
-                uint32_t msNow = rtc.getMillis();
+                Serial.println("GNSS UTC time adjusted");
 
-                char buf[40];
-                snprintf(buf, sizeof(buf), "%s.%03luZ", ts.c_str(), msNow);
+                Serial.println("GNSS UTC time now...");
+                DateTime now = utils::get_rtc().now();
+                Serial.println("GNSS UTC time now grabbed");
+                // Create a buffer for the timestamp
+                char buf[20];
+                // Format timestamp as YYYY-MM-DD hh:mm:ss (ISO 8601 format)
+                sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02d",
+                        now.year(), now.month(), now.day(),
+                        now.hour(), now.minute(), now.second());
+
+                // Print the timestamp to Serial
+                Serial.print("Current UTC time: ");
                 Serial.println(buf);
-
-                Serial.printf("Saved Time (ISO8601): %sZ\r\n", buf);
             }
 
-            delay(500);
+            delay(50);
         }
     }
     else
@@ -274,18 +234,6 @@ WalterModemGNSSFix getGPSFix()
 
     modem.gnssSetEventHandler(fixHandler);
 
-    // 2 blinks
-    digitalWrite(LED_PIN, LOW); // Start LED off
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);                  // Wait 5 ms
-    digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);                  // Wait 5 ms
-    digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-
-    delay(2000);
     // Serial.println("Set Fix Event Handler");
     if (!updateGNSSAssistance())
     {
@@ -293,33 +241,13 @@ WalterModemGNSSFix getGPSFix()
     }
     // Serial.println("Updated GNSS Assistance");
 
-    // Serial.println("Attempting GNSS fix...");
-    // 5 blinks
-    digitalWrite(LED_PIN, LOW); // Start LED off
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);                  // Wait 5 ms
-    digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(2000);
+    Serial.println("Attempting GNSS fix...");
+    // 4 - Blinks
+    digitalWrite(LED_PIN, HIGH);
+
     // Try up to 5 times to get a good fix
     // for (int i = 0; i < 5; ++i)
-    for (int i = 0; i < 1; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         fixRcvd = false;
         if (!modem.gnssPerformAction())
@@ -371,6 +299,7 @@ WalterModemGNSSFix getGPSFix()
             strongSats++;
         }
     }
+    digitalWrite(LED_PIN, LOW);
 
     Serial.printf(" Strong Sats: %.2f\n", strongSats);
 
@@ -390,24 +319,6 @@ WalterModemGNSSFix getGPSFix()
     Serial.printf("  Longitude: %.6f\n", posFix.longitude);
     Serial.printf("  Satcount: %d\n", posFix.satCount);
     Serial.printf("  Good sats (>=30): %d\n", strongSats);
-    // 3 blinks
-    digitalWrite(LED_PIN, LOW); // Start LED off
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);                  // Wait 5 ms
-    digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(500);
-    digitalWrite(LED_PIN, HIGH); // Turn LED ON
-    delay(500);
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    delay(2000);
+
     return posFix;
 }

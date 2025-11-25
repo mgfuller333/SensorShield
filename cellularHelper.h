@@ -51,6 +51,16 @@ extern uint8_t dataBuf[PACKET_SIZE];
 bool lteConnect();
 
 /**
+ * @brief Connect to the LTE network.
+ *
+ * This function will return the connection status of the LTE network.
+ *
+ * @return True on success, false on error.
+ */
+
+bool lteConnected();
+
+/**
  * @brief Disconnect from the LTE network.
  *
  * This function will disconnect the modem from the LTE network and block until
