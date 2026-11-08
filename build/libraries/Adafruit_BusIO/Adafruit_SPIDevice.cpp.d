@@ -1,4 +1,4 @@
-/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/libraries/Adafruit_BusIO/Adafruit_SPIDevice.cpp.o: \
+/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/libraries/Adafruit_BusIO/Adafruit_SPIDevice.cpp.o: \
  /Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_SPIDevice.cpp \
  /Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_SPIDevice.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/Arduino.h \

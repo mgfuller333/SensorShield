@@ -1,0 +1,913 @@
+#line 1 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/BigQuery_schema.json"
+[
+  {
+    "name": "iaq_0",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 0: BSEC air quality index"
+  },
+  {
+    "name": "iaqAcc_0",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 0: BSEC accuracy 0-3"
+  },
+  {
+    "name": "co2_0",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 0: BSEC CO2 equivalent, ppm; not a direct CO2 measurement"
+  },
+  {
+    "name": "bvoc_0",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 0: BSEC breath VOC equivalent, ppm"
+  },
+  {
+    "name": "pres_0",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 0: Raw pressure, hPa"
+  },
+  {
+    "name": "gasR_0",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 0: Raw gas resistance, ohms; null unless gas valid and heater stable"
+  },
+  {
+    "name": "temp_0",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 0: BSEC raw temperature, degrees C"
+  },
+  {
+    "name": "hum_0",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 0: Relative humidity, percent"
+  },
+  {
+    "name": "com_gas0",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 0: Legacy field; null until meaning and calculation are confirmed"
+  },
+  {
+    "name": "iaq_1",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 1: BSEC air quality index"
+  },
+  {
+    "name": "iaqAcc_1",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 1: BSEC accuracy 0-3"
+  },
+  {
+    "name": "co2_1",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 1: BSEC CO2 equivalent, ppm; not a direct CO2 measurement"
+  },
+  {
+    "name": "bvoc_1",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 1: BSEC breath VOC equivalent, ppm"
+  },
+  {
+    "name": "pres_1",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 1: Raw pressure, hPa"
+  },
+  {
+    "name": "gasR_1",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 1: Raw gas resistance, ohms; null unless gas valid and heater stable"
+  },
+  {
+    "name": "temp_1",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 1: BSEC raw temperature, degrees C"
+  },
+  {
+    "name": "hum_1",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 1: Relative humidity, percent"
+  },
+  {
+    "name": "com_gas1",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 1: Legacy field; null until meaning and calculation are confirmed"
+  },
+  {
+    "name": "iaq_2",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 2: BSEC air quality index"
+  },
+  {
+    "name": "iaqAcc_2",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 2: BSEC accuracy 0-3"
+  },
+  {
+    "name": "co2_2",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 2: BSEC CO2 equivalent, ppm; not a direct CO2 measurement"
+  },
+  {
+    "name": "bvoc_2",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 2: BSEC breath VOC equivalent, ppm"
+  },
+  {
+    "name": "pres_2",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 2: Raw pressure, hPa"
+  },
+  {
+    "name": "gasR_2",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 2: Raw gas resistance, ohms; null unless gas valid and heater stable"
+  },
+  {
+    "name": "temp_2",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 2: BSEC raw temperature, degrees C"
+  },
+  {
+    "name": "hum_2",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 2: Relative humidity, percent"
+  },
+  {
+    "name": "com_gas2",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 2: Legacy field; null until meaning and calculation are confirmed"
+  },
+  {
+    "name": "iaq_3",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 3: BSEC air quality index"
+  },
+  {
+    "name": "iaqAcc_3",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 3: BSEC accuracy 0-3"
+  },
+  {
+    "name": "co2_3",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 3: BSEC CO2 equivalent, ppm; not a direct CO2 measurement"
+  },
+  {
+    "name": "bvoc_3",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 3: BSEC breath VOC equivalent, ppm"
+  },
+  {
+    "name": "pres_3",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 3: Raw pressure, hPa"
+  },
+  {
+    "name": "gasR_3",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 3: Raw gas resistance, ohms; null unless gas valid and heater stable"
+  },
+  {
+    "name": "temp_3",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 3: BSEC raw temperature, degrees C"
+  },
+  {
+    "name": "hum_3",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 3: Relative humidity, percent"
+  },
+  {
+    "name": "com_gas3",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 3: Legacy field; null until meaning and calculation are confirmed"
+  },
+  {
+    "name": "iaq_4",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 4: BSEC air quality index"
+  },
+  {
+    "name": "iaqAcc_4",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 4: BSEC accuracy 0-3"
+  },
+  {
+    "name": "co2_4",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 4: BSEC CO2 equivalent, ppm; not a direct CO2 measurement"
+  },
+  {
+    "name": "bvoc_4",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 4: BSEC breath VOC equivalent, ppm"
+  },
+  {
+    "name": "pres_4",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 4: Raw pressure, hPa"
+  },
+  {
+    "name": "gasR_4",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 4: Raw gas resistance, ohms; null unless gas valid and heater stable"
+  },
+  {
+    "name": "temp_4",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 4: BSEC raw temperature, degrees C"
+  },
+  {
+    "name": "hum_4",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 4: Relative humidity, percent"
+  },
+  {
+    "name": "com_gas4",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 4: Legacy field; null until meaning and calculation are confirmed"
+  },
+  {
+    "name": "iaq_5",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 5: BSEC air quality index"
+  },
+  {
+    "name": "iaqAcc_5",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 5: BSEC accuracy 0-3"
+  },
+  {
+    "name": "co2_5",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 5: BSEC CO2 equivalent, ppm; not a direct CO2 measurement"
+  },
+  {
+    "name": "bvoc_5",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 5: BSEC breath VOC equivalent, ppm"
+  },
+  {
+    "name": "pres_5",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 5: Raw pressure, hPa"
+  },
+  {
+    "name": "gasR_5",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 5: Raw gas resistance, ohms; null unless gas valid and heater stable"
+  },
+  {
+    "name": "temp_5",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 5: BSEC raw temperature, degrees C"
+  },
+  {
+    "name": "hum_5",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 5: Relative humidity, percent"
+  },
+  {
+    "name": "com_gas5",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 5: Legacy field; null until meaning and calculation are confirmed"
+  },
+  {
+    "name": "iaq_6",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 6: BSEC air quality index"
+  },
+  {
+    "name": "iaqAcc_6",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 6: BSEC accuracy 0-3"
+  },
+  {
+    "name": "co2_6",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 6: BSEC CO2 equivalent, ppm; not a direct CO2 measurement"
+  },
+  {
+    "name": "bvoc_6",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 6: BSEC breath VOC equivalent, ppm"
+  },
+  {
+    "name": "pres_6",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 6: Raw pressure, hPa"
+  },
+  {
+    "name": "gasR_6",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 6: Raw gas resistance, ohms; null unless gas valid and heater stable"
+  },
+  {
+    "name": "temp_6",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 6: BSEC raw temperature, degrees C"
+  },
+  {
+    "name": "hum_6",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 6: Relative humidity, percent"
+  },
+  {
+    "name": "com_gas6",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 6: Legacy field; null until meaning and calculation are confirmed"
+  },
+  {
+    "name": "iaq_7",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 7: BSEC air quality index"
+  },
+  {
+    "name": "iaqAcc_7",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 7: BSEC accuracy 0-3"
+  },
+  {
+    "name": "co2_7",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 7: BSEC CO2 equivalent, ppm; not a direct CO2 measurement"
+  },
+  {
+    "name": "bvoc_7",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 7: BSEC breath VOC equivalent, ppm"
+  },
+  {
+    "name": "pres_7",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 7: Raw pressure, hPa"
+  },
+  {
+    "name": "gasR_7",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 7: Raw gas resistance, ohms; null unless gas valid and heater stable"
+  },
+  {
+    "name": "temp_7",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 7: BSEC raw temperature, degrees C"
+  },
+  {
+    "name": "hum_7",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 7: Relative humidity, percent"
+  },
+  {
+    "name": "com_gas7",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Sensor 7: Legacy field; null until meaning and calculation are confirmed"
+  },
+  {
+    "name": "batV",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "bat: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "batC",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "bat: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "batP",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "bat: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "solV",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "sol: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "solC",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "sol: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "solP",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "sol: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "usbcV",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "usbc: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "usbcC",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "usbc: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "usbcP",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "usbc: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v12V",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v12: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v12C",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v12: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v12P",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v12: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v5V",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v5: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v5C",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v5: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v5P",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v5: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v3_3V",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v3_3: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v3_3C",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v3_3: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v3_3P",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v3_3: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "extV",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "ext: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "extC",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "ext: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "extP",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "ext: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "batSV",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Unavailable battery shunt voltage; null"
+  },
+  {
+    "name": "solSV",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Solar shunt voltage, millivolts"
+  },
+  {
+    "name": "device",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Device MAC identifier"
+  },
+  {
+    "name": "ts",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE",
+    "description": "Measurement UTC time; null without valid device clock"
+  },
+  {
+    "name": "bID",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Legacy batch identifier; currently null. Persistent queue identity uses device and seq."
+  },
+  {
+    "name": "loc",
+    "type": "GEOGRAPHY",
+    "mode": "NULLABLE",
+    "description": "Last valid GNSS location; WKT POINT(longitude latitude)"
+  },
+  {
+    "name": "alt",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "GNSS altitude, meters"
+  },
+  {
+    "name": "satCnt",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Satellites in stored fix; zero if no location"
+  },
+  {
+    "name": "epoch",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Measurement Unix timestamp, seconds"
+  },
+  {
+    "name": "timestampValid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Whether measurement time is valid"
+  },
+  {
+    "name": "timestampSource",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Source of device clock"
+  },
+  {
+    "name": "locationValid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Whether a stored GNSS fix is available"
+  },
+  {
+    "name": "locationFresh",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Whether location meets refresh policy"
+  },
+  {
+    "name": "locationFixEpoch",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Unix seconds of last valid fix"
+  },
+  {
+    "name": "locationAgeSeconds",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Age of last fix at measurement"
+  },
+  {
+    "name": "measurementComplete",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "All eight BME readings and particle reading received"
+  },
+  {
+    "name": "measurementDurationMs",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Sensor collection duration, milliseconds"
+  },
+  {
+    "name": "pm1",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Particle mass concentration, micrograms per cubic meter"
+  },
+  {
+    "name": "pm2_5",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Particle mass concentration, micrograms per cubic meter"
+  },
+  {
+    "name": "pm10",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "Particle mass concentration, micrograms per cubic meter"
+  },
+  {
+    "name": "particleAvailable",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "particleValid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "pmObs",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "pmOor",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "chargerValid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "batteryReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ina40Valid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ina41Valid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "particleState",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Particle driver status text"
+  },
+  {
+    "name": "particleAgeMs",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Age of particle reading, milliseconds"
+  },
+  {
+    "name": "solReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "usbcReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "v12ReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "v5ReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "v3_3ReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "extReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "ina40Flags",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Raw diagnostic/status flags; null when unavailable"
+  },
+  {
+    "name": "ina41Flags",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Raw diagnostic/status flags; null when unavailable"
+  },
+  {
+    "name": "bmsVreg",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Charge voltage setting, mV"
+  },
+  {
+    "name": "bmsIchg",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Charge current setting, mA"
+  },
+  {
+    "name": "batMv",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Battery voltage, mV"
+  },
+  {
+    "name": "sysMv",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "System voltage, mV"
+  },
+  {
+    "name": "ibatMa",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Signed battery current, mA"
+  },
+  {
+    "name": "chgState",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Raw diagnostic/status flags; null when unavailable"
+  },
+  {
+    "name": "bmsF0",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Raw diagnostic/status flags; null when unavailable"
+  },
+  {
+    "name": "bmsF1",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Raw diagnostic/status flags; null when unavailable"
+  },
+  {
+    "name": "bmeHealth",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      {
+        "name": "index",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "cs",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "initialized",
+        "type": "BOOLEAN",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "subscriptionStatus",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "configurationMatched",
+        "type": "BOOLEAN",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "bsecStatus",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "sensorStatus",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "readingValid",
+        "type": "BOOLEAN",
+        "mode": "NULLABLE"
+      }
+    ],
+    "description": "One health entry per BME sensor, index 0-7"
+  },
+  {
+    "name": "seq",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Record sequence ID; unique with device"
+  },
+  {
+    "name": "day",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Record day: Unix days; zero means unknown date"
+  },
+  {
+    "name": "crc32",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "SD record integrity checksum"
+  },
+  {
+    "name": "uploadVersion",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "From batch.version"
+  },
+  {
+    "name": "uploadFirstSeq",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "From batch.firstSeq"
+  },
+  {
+    "name": "uploadLastSeq",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "From batch.lastSeq"
+  }
+]

@@ -1,927 +1,366 @@
 #include <Arduino.h>
-#line 1 "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/SensorShield.ino"
+#line 1 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+// Odrade: wake, measure, save locally, upload when eligible, then sleep.
+#include "AirSensors.h"
+#include "Charger.h"
+#include "DataLogger.h"
+#include "Display.h"
+#include "GpsClock.h"
+#include "LoggerConfig.h"
+#include "Modem.h"
+#include "ParticleSensor.h"
+#include "PowerSensors.h"
+#include "board_pins.h"
+#include "sketch_types.h"
 #include <Wire.h>
 #include <SPI.h>
-#include "cellularHelper.h"
-#include "gpsHelper.h"
-#include "bsec2.h" // Bosch BSEC2 library for BME688
-#include "bme68x_datalogger.h"
-#include "bsec_datalogger.h"
-#include "label_provider.h"
-#include "led_controller.h"
-#include "batteryHelper.h"
-#include "utils.h"
-#include "sensor_manager.h"
-#include "commMux.h" // Communication multiplexer for SPI/I2C
-#include <ArduinoJson.h>
-#include <inttypes.h>
-#include <WalterModem.h>
 #include <esp_mac.h>
-#include <Adafruit_LTR329_LTR303.h>
-#include <HardwareSerial.h>
-#include <Adafruit_MPL3115A2.h>
-#include <Wire.h>
-
+#include <esp_system.h>
 #include <esp_sleep.h>
-#include "esp_wifi.h"
-#include "esp_bt.h"
+#include <driver/gpio.h>
 
-// e.g. A0 on many ESP32 boards is ADC1_CHANNEL_6
+JsonDocument payloadDoc;
+JsonObject currentSample;
+bool bmeSampleReceived[BME_COUNT] = {};
+uint8_t sensorStepCount = 0;
+uint32_t measurementStartedMs = 0;
+bool storageAvailable = false;
+bool cycleFinished = false;
+bool devicesStopped = false;
+String deviceId;
+DeviceStatus status;
 
-#define LED_PIN 42 // Use a free IO pin for LED (example IO2 or any other free)
-
-// --- these retain GPS Values across deep sleep! ---
-// RTC_DATA_ATTR double savedLatitude = 0.0;
-// RTC_DATA_ATTR double savedLongitude = 0.0;
-// RTC_DATA_ATTR double savedAltitude = 0.0;
-// RTC_DATA_ATTR uint8_t savedSatCount = 0;
-// RTC_DATA_ATTR WalterModemGNSSFix _lastGNSSFix;
-
-//--INA Comm Pin Definitions--//
-constexpr uint8_t CHAN_INA = 0; // same as whichever port the INA219s are wired to
-
-//--End of INA Comm Pin Definitions--//
-
-/**
- * @brief The serial interface to talk to the modem.
- */
-#define ModemSerial Serial2
-
-//------Start of BME Initialization-------------//
-
-/* Macros used */
-/*! FILE_DATA_READ_SIZE determines the size of the data to be read from the file */
-#define FILE_DATA_READ_SIZE UINT16_C(400)
-
-/*!
- * @brief : This function is called by the BSEC library when a new output is available
- *
- * @param[in] input 	: BME68X data
- * @param[in] outputs	: BSEC output data
- */
-void bsecCallBack(const bme68x_data input, const bsecOutputs outputs);
-
-BatteryHelper powerReader; // defaults: 0x40 for battery, 0x41 for solar panel
-
-Bsec2 bsec; // BSEC2 instance for the BME688
-
-// Communication multiplexer configuration for the sensor (use sensor index 0)
-commMux commConfig;
-
-// Memory for the BSEC instance (size defined in bsec2.h)
-uint8_t bsecInstanceMem[BSEC_INSTANCE_SIZE];
-
-/* Helper functions declarations */
-/**
-   @brief : This function toggles the led when a fault was detected
-*/
-void errLeds(void);
-
-/**
-   @brief : This function is called by the BSEC library when a new output is available
-   @param[in] input     : BME68X sensor data before processing
-   @param[in] outputs   : Processed BSEC BSEC output data
-   @param[in] bsec      : Instance of BSEC2 calling the callback
-*/
-void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bsec);
-
-/* Create an array of objects of the class Bsec2 */
-Bsec2 envSensor[NUM_OF_SENS];
-commMux communicationSetup[NUM_OF_SENS];
-uint8_t bsecMemBlock[NUM_OF_SENS][BSEC_INSTANCE_SIZE];
-uint8_t sensor = 0;
-
-/*!
- * @brief : This function handles sensor manager and BME68X datalogger configuration
- *
- * @param[in] bmeExtension : reference to the bmeconfig file extension
- *
- * @return  Application return code
- */
-demo_ret_code configure_sensor_logging(const String &bme_extension);
-
-/*!
- * @brief : This function handles the read configuration File
- *
- * @param[in] configFile	: reference to the config File Name
- *
- * @return  Application return code
- */
-demo_ret_code config_file_read(const String &config_file);
-
-/*!
- * @brief : This function handles BSEC datalogger configuration
- *
- * @param[in] aiConfigFile		: reference to the AI configuration file extension
- *
- * @param[in] bsecConfigFile	: reference to the BSEC configuration string file extension
- *
- * @param[inout] bsecConfigStr	: pointer to the BSEC configuration string
- *
- * @param[in] sensorNum			: selected sensor number
- *
- * @return  Application return code
- */
-demo_ret_code configure_bsec_logging(const String &ai_config_file, const String &bsec_config_file,
-                                     uint8_t bsec_config_str[BSEC_MAX_PROPERTY_BLOB_SIZE], uint8_t sensor_num);
-
-/*!
- * @brief : This function handles collecting, sending sensor raw data via ble and data logging
- *
- * @param[in] sensNum :	sensor number to collect and log the data
- *
- * @return  a Bosch return code
- */
-demo_ret_code log_sensor_data(uint8_t sens_num);
-
-/*!
- * @brief : This function receive the system time (in unix epoch time format) from serial port and update into RTC time
- *
- * @return  void
- */
-void read_sys_time();
-
-uint8_t bsec_config[BSEC_MAX_PROPERTY_BLOB_SIZE];
-char config_file_data[FILE_DATA_READ_SIZE];
-Bsec2 bsec2[NUM_OF_SENS];
-// bleController  			bleCtlr(bleMessageReceived);
-labelProvider labelPvr;
-ledController ledCtlr;
-sensorManager sensorMgr;
-bme68xDataLogger bme68xDlog;
-bsecDataLogger bsecDlog;
-demo_ret_code ret_code;
-uint8_t selected_sensor;
-String bme68x_conf_file_name, bsec_conf_file_name, ai_conf_file_name, config_file_name, label_file_name;
-demo_app_mode app_mode, current_app_mode;
-gas_label label;
-bool is_bme68x_conf_available, is_bsec_conf_available, is_ai_conf_available, is_label_info_available;
-commMux comm[NUM_OF_SENS];
-uint8_t bsec_mem_block[NUM_OF_SENS][BSEC_INSTANCE_SIZE];
-
-uint8_t sensor_num;
-uint32_t ground_truth;
-static uint8_t buff_count = 0;
-static bsecDataLogger::sensor_io_data buff[NUM_OF_SENS];
-
-uint32_t received_sys_time = 0;
-
-//--End of BME Initialization--//
-
-/**
- * @brief Set up the system.
- *
- * This function will set up the system and initialize the modem.
- *
- * @return None.
- */
-
-#line 177 "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/SensorShield.ino"
+// These messages distinguish a processor reset from a disconnected USB monitor.
+#line 32 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+const char * resetDescription();
+#line 59 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+void printStartupStep(const char *message);
+#line 64 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+void printResetReason();
+#line 70 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
 void setup();
-#line 354 "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/SensorShield.ino"
+#line 174 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
 void loop();
-#line 626 "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/SensorShield.ino"
-bme68x_data bsecCallBack(uint8_t sens_num);
-#line 755 "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/SensorShield.ino"
-demo_ret_code configure_sensor_logging(const String &bme_config_file);
-#line 822 "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/SensorShield.ino"
-JsonObject serialPrintEnvSensorJson(const bme68xData data, const bsecOutputs outputs, Bsec2 bsec);
-#line 887 "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/SensorShield.ino"
-void disableWifiAndBluetooth();
-#line 893 "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/SensorShield.ino"
-void configureLowPowerModem();
-#line 901 "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/SensorShield.ino"
-void enterLightSleep(uint32_t seconds);
-#line 177 "/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/SensorShield.ino"
+#line 257 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+void finishAndSleep();
+#line 296 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+void newBsecData(const bme68xData data, const bsecOutputs outputs, Bsec2 sensor);
+#line 32 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+const char *resetDescription()
+{
+  switch (esp_reset_reason())
+  {
+  case ESP_RST_POWERON:
+    return "power-on";
+  case ESP_RST_DEEPSLEEP:
+    return "scheduled wake from sleep";
+  case ESP_RST_BROWNOUT:
+    return "brownout: supply voltage dropped";
+  case ESP_RST_PWR_GLITCH:
+    return "power glitch detected";
+  case ESP_RST_SW:
+    return "software restart";
+  case ESP_RST_PANIC:
+    return "software crash";
+  case ESP_RST_TASK_WDT:
+  case ESP_RST_INT_WDT:
+  case ESP_RST_WDT:
+    return "watchdog: software stopped responding";
+  case ESP_RST_USB:
+    return "USB reset";
+  default:
+    return "other reset; see diagnostic code";
+  }
+}
+
+void printStartupStep(const char *message)
+{
+  Serial.printf("[Startup %lu ms] %s\n", (unsigned long)millis(), message);
+}
+
+void printResetReason()
+{
+  Serial.printf("[Startup %lu ms] Boot reason: %s (code %d).\n",
+                (unsigned long)millis(), resetDescription(), (int)esp_reset_reason());
+}
+
 void setup()
 {
-
   Serial.begin(115200);
-  delay(300);
+  // Keep time to open Serial after a manual start; timer wakes measure immediately.
+  if (esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_TIMER)
+    delay(2000);
+  Serial.println("\nODRADE | Environmental monitoring");
+  Serial.println("Starting: measure once, save to SD, attempt upload, then sleep until the next 15-minute cycle.");
+  printResetReason();
+  printStartupStep("Enabling external 3.3 V; allowing sensors to settle.");
 
-  // if(!modem.configGNSS()) {
-  //   Serial.print("Could not configure the GNSS subsystem\r\n");
-  //   delay(1000);
-  //   ESP.restart();
-  //   return;
-  // }
+  // pinMode(48, OUTPUT);
+  // printStartupStep("Test 0");
+  // digitalWrite(48, 1);
+  // printStartupStep("Test 1");
+  // delay(200);
+  // printStartupStep("Test 2");
+  // digitalWrite(48, 0);
+  // printStartupStep("Test 3");
+  // gpio_hold_dis((gpio_num_t)WALTER_3V3_EN);
+  // #define WALTER_3V3_EN 0 // Active LOW, matching the working INA3221 test.
 
-  // Set up the LED pin
-  pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, LOW);  // Start LED off
-  digitalWrite(LED_PIN, HIGH); // Turn LED ON
+  // printStartupStep("Test 4");
+  // pinMode(WALTER_3V3_EN, OUTPUT);
+  // printStartupStep("Test 5");
+  // digitalWrite(WALTER_3V3_EN, 0);
+  // printStartupStep("Test 6");
 
-  //------End of Modem Initialization------//
+  delay(200); // Retain the power settling time from the working hardware test.
+  printStartupStep("Power settling wait finished; voltage has not been verified.");
+  printResetReason(); // Repeat in case the monitor disconnected during power-up.
+  uint8_t mac[6];
+  esp_read_mac(mac, ESP_MAC_WIFI_STA);
+  char id[13];
+  snprintf(id, sizeof(id), "%02X%02X%02X%02X%02X%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  deviceId = id;
+  Serial.printf("Device: %s\n", id);
 
-  //---------BME 688 Setup-----------------//
-  /* Desired subscription list of BSEC2 outputs */
-  bsecSensor sensorList[] = {
-      BSEC_OUTPUT_IAQ,
-      BSEC_OUTPUT_RAW_TEMPERATURE,
-      BSEC_OUTPUT_RAW_PRESSURE,
-      BSEC_OUTPUT_RAW_HUMIDITY,
-      BSEC_OUTPUT_RAW_GAS,
-      BSEC_OUTPUT_STABILIZATION_STATUS,
-      BSEC_OUTPUT_RUN_IN_STATUS,
-      BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
-      BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
-      BSEC_OUTPUT_STATIC_IAQ,
-      BSEC_OUTPUT_CO2_EQUIVALENT,
-      BSEC_OUTPUT_BREATH_VOC_EQUIVALENT,
-      BSEC_OUTPUT_GAS_PERCENTAGE,
-      BSEC_OUTPUT_COMPENSATED_GAS};
-
-  // Initialize I2C bus for the expander (commMux)
-  Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
-
-  // Initialize SPI bus with custom pin assignments
-  SPI.begin(SPI_SCK_PIN, SPI_MISO_PIN, SPI_MOSI_PIN);
-  Serial.println("Wire and SPI set");
-
-  delay(50);
-
-  commMuxBegin(Wire, SPI);
-
-  Serial.println("Wire and SPI initialized");
-  delay(100);
-
-  while (!Serial)
-    delay(10);
-
-  for (uint8_t i = 0; i < NUM_OF_SENS; i++)
+  // All chip selects must be high before any device uses the shared bus.
+  for (uint8_t cs : BME_CS)
   {
-    /* Sets the Communication interface for the sensors */
-    Serial.println("Setting up sensor:");
-    Serial.println(i);
+    pinMode(cs, OUTPUT);
+    digitalWrite(cs, HIGH);
+  }
+  pinMode(BMV080_CS, OUTPUT);
+  digitalWrite(BMV080_CS, HIGH);
+  pinMode(SD_CS, OUTPUT);
+  digitalWrite(SD_CS, HIGH);
+  SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
+  printStartupStep("Allowing the SD card to settle before its first initialization attempt.");
+  Serial.flush();
+  delay(SD_STARTUP_DELAY_MS);
+  printStartupStep("Starting SD card initialization.");
+  storageAvailable = beginDataLogger();
+  printStartupStep(storageAvailable ? "SD storage ready." : "SD initialization/recovery failed; continuing sensor checks.");
+  if (!storageAvailable)
+    Serial.println("Storage needs attention: this cycle cannot be saved until the card is working.");
 
-    communicationSetup[i] = commMuxSetConfig(Wire, SPI, i, communicationSetup[i]);
+  printStartupStep("Test 4");
+  pinMode(WALTER_3V3_EN, OUTPUT);
+  printStartupStep("Test 5");
+  digitalWrite(WALTER_3V3_EN, 0);
+  printStartupStep("Test 6");
 
-    //   /* Assigning a chunk of memory block to the bsecInstance */
-    envSensor[i].allocateMemory(bsecMemBlock[i]);
-    Serial.println("allocating memory:");
-    Serial.println(i);
-
-    //   /* Initialize the library and interfaces */
-    if (!envSensor[i].begin(BME68X_SPI_INTF, commMuxRead, commMuxWrite, commMuxDelay, &communicationSetup[i]))
-    {
-      Serial.println("Failed to init comms to sensor outputs");
+  setupGpsClock();
+  // Get time/location before measuring, so this cycle saves the new fix too.
+  // Mobile platform: the configured zero refresh interval requests a fix every wake.
+  if (GPS_FIX_ENABLED && locationRefreshDue()) {
+    Serial.println("Location: starting GPS before this measurement.");
+    if (setupModem()) {
+      if (!refreshLocationIfDue())
+        Serial.println("Location: radio standby was not confirmed; sensor checks continue, and upload remains blocked while GPS is active.");
+    } else {
+      Serial.println("Location: modem unavailable; this mobile measurement will have no new GPS position.");
     }
-
-    Serial.println("beginning sensor comm:");
-    Serial.println(i);
-    /*
-     *	The default offset provided has been determined by testing the sensor in LP and ULP mode on application board 3.0
-     *	Please update the offset value after testing this on your product
-     */
-    if (SAMPLE_RATE == BSEC_SAMPLE_RATE_ULP)
-    {
-      envSensor[i].setTemperatureOffset(TEMP_OFFSET_ULP);
-    }
-    else if (SAMPLE_RATE == BSEC_SAMPLE_RATE_LP)
-    {
-      envSensor[i].setTemperatureOffset(TEMP_OFFSET_LP);
-    }
-
-    //     /* Subscribe to the desired BSEC2 outputs */
-    if (!envSensor[i].updateSubscription(sensorList, ARRAY_LEN(sensorList), SAMPLE_RATE))
-    {
-      Serial.println("Failed to sub to sensor outputs");
-    }
-
-    Serial.println("subscribing to sensor:");
-    Serial.println(i);
-
-    //     /* Whenever new data is available call the newDataCallback function */
-    envSensor[i].attachCallback(newDataCallback);
-
-    Serial.println("adding callback to sensor:");
-    Serial.println(i);
+  } else if (GPS_FIX_ENABLED) {
+    Serial.println("Location: using saved position and GPS-synchronized clock; no new fix needed.");
   }
 
-  Serial.println("BSEC library version " +
-                 String(envSensor[0].version.major) + "." + String(envSensor[0].version.minor) + "." + String(envSensor[0].version.major_bugfix) + "." + String(envSensor[0].version.minor_bugfix));
+  Wire.begin(I2C_SDA, I2C_SCL);
+  Wire.setClock(100000);
+  Serial.println("Checking power sensors and battery...");
+  printStartupStep("Starting power monitor checks.");
 
-  app_mode = DEMO_RECORDING_MODE;
-  // current_app_mode = DEMO_RECORDING_MODE;
-
-  label = BSEC_NO_CLASS;
-
-  /* Setting default sensor as sensor 0 to collect data */
-  selected_sensor = NUM_BME68X_UNITS;
-
-  // Initialize the battery helper
-  // communicationSetup[CHAN_INA] = commMuxSetConfig(Wire, SPI, CHAN_INA, communicationSetup[CHAN_INA]);
-  if (!powerReader.begin())
-  {
-    Serial.println(F("ERROR: INA219 init failed. Check wiring & addresses."));
-    while (1)
-      delay(10);
+  setupPowerSensors();
+  printPowerReadings();
+  setupCharger();
+  printChargerReadings();
+  setupDisplay();
+  Serial.println("Checking air-quality and particle sensors...");
+  currentSample = payloadDoc.to<JsonObject>();
+  currentSample["bID"] = nullptr; // Legacy batch ID is not assigned; queue identity uses device + seq.
+  // Missing readings stay null, including sensors that never call back.
+  for (uint8_t i = 0; i < BME_COUNT; ++i) {
+    String suffix = String(i);
+    for (const char *key : {"iaq_", "iaqAcc_", "co2_", "bvoc_", "pres_", "gasR_", "temp_", "hum_", "com_gas"})
+      currentSample[String(key) + suffix] = nullptr;
   }
-  Serial.println(F("batteryHelper: sensors ready."));
-
-  /* Initializes the SD and RTC module */
-  Serial.println("init SD and RTC...");
-  ret_code = utils::begin();
-  Serial.println("SD and RTC init complete");
-
-  if (ret_code >= EDK_OK)
-  {
-    is_bme68x_conf_available = utils::get_file_with_extension(bme68x_conf_file_name, BME68X_CONFIG_FILE_EXT);
-
-    /* checks the availability of BME board configuration file */
-    Serial.println("is_bme68x_conf_available...");
-    if (is_bme68x_conf_available)
-    {
-
-      if (configure_sensor_logging(bme68x_conf_file_name) < EDK_OK)
-      {
-        Serial.println("EDK_SENSOR_INITIALIZATION_FAILED");
-        ret_code = EDK_SENSOR_INITIALIZATION_FAILED;
-      }
-    }
-    else
-    {
-      Serial.println("EDK_SENSOR_CONFIG_MISSING_ERROR");
-      ret_code = EDK_SENSOR_CONFIG_MISSING_ERROR;
-    }
-  }
-
-  if (ret_code < EDK_OK)
-  {
-    Serial.println("ret_code Good: Setting to DEMO_IDLE_MODE");
-    current_app_mode = DEMO_IDLE_MODE;
-    app_mode = DEMO_IDLE_MODE;
-  }
-  delay(5000);
-  /* Modem initialization */
-  if (modem.begin(&Serial2))
-  {
-    Serial.println("Modem initialization OK");
-
-    Serial.println("Configured low power mode");
-    // Wait 5 seconds
-    digitalWrite(LED_PIN, LOW); // Turn LED OFF
-    return;
-  }
-  else
-  {
-    Serial.println("Modem initialization ERROR");
-    return;
-  }
+  printStartupStep("Starting air and particle sensor checks.");
+  setupAirSensors();
+  measurementStartedMs = millis();
+  Serial.println("Measuring: readings appear as each sensor becomes ready.");
 }
 
 void loop()
 {
-  Serial.println("Entering loop...");
-  /* Transmit the packet */
-
-  //-----End Fetch Call-----//
-  //-------Start GPS-------//
-
-  /* Check clock and assistance data, update if required */
-
-  // WalterModemGNSSFix gpsData = getGPSFix();
-
-  // Save the fix to RTC memory
-  // _lastGNSSFix = gpsData;
-  // savedLatitude = gpsData.latitude;
-  // savedLongitude = gpsData.longitude;
-  // savedAltitude = gpsData.height;
-  // savedSatCount = gpsData.satCount;
-
-  // -------End GPS-------//
-
-  // ledCtlr.update(ret_code);
-  Serial.println("test1");
-  WalterModemRsp rsp = {};
-  Serial.println("test2");
-  read_sys_time();
-  Serial.println("test3");
-
-  // Create a JSON document with the expected format as a single object
-  DynamicJsonDocument jsonDoc(768);
-  Serial.println("test4");                                    // Adjust size as needed
-  jsonDoc["device"] = "ca108a0d-01be-4487-9866-94d5887a801b"; // Add device ID
-  // jsonDoc["Timestamp"] = utils::get_rtc().now().timestamp() + "+00:00"; // Add global timestamp
-
-  // Format location as "(lat,lon)" string
-  Serial.println("test5");
-  char locationStr[40];
-  Serial.println("test6");
-  // snprintf(locationStr, sizeof(locationStr), "(%.6f,%.6f)", savedLatitude, savedLongitude);
-
-  // Insert formatted location string into JSON
-  // jsonDoc["location"] = locationStr;
-  // jsonDoc["altitude"] = savedAltitude;
-  // jsonDoc["satelliteCount"] = savedSatCount;
-
-  // grab battery voltage
-  // Add battery readings
-  Serial.println("test7");
-  communicationSetup[0] = commMuxSetConfig(Wire, SPI, 0, communicationSetup[0]);
-  Serial.println("test8");
-  DualPowerData data = powerReader.readAllSensors();
-  Serial.println("test  9");
-  // jsonDoc["Battery BusVoltage"] = data.battery.busVoltage;
-  // jsonDoc["Battery ShuntVoltage"] = data.battery.shuntVoltage;
-  // jsonDoc["Battery Current_mA"] = data.battery.current_mA;
-  // jsonDoc["Battery Power_mW"] = data.battery.power_mW;
-
-  // // Add solar readings
-  // jsonDoc["Solar BusVoltage"] = data.solarPanel.busVoltage;
-  // jsonDoc["Solar ShuntVoltage"] = data.solarPanel.shuntVoltage;
-  // jsonDoc["Solar Current_mA"] = data.solarPanel.current_mA;
-  // jsonDoc["Solar Power_mW"] = data.solarPanel.power_mW;
-
-  if (!envSensor[0].run())
+  if (!cycleFinished)
   {
-    Serial.println("Failed to run sensor");
+    readAirSensors();
+    readCharger();
+    bool complete = sensorStepCount == BME_COUNT && hasParticleReading();
+    bool timedOut = millis() - measurementStartedMs >= MEASUREMENT_TIMEOUT_MS;
+    if (!complete && !timedOut)
+    {
+      delay(10);
+      return;
+    }
+    // Stop the particle worker cooperatively before SD or modem operations.
+    if (!stopParticleSensor())
+    {
+      Serial.println("Waiting: the particle sensor is finishing its current operation.");
+      delay(1000);
+      return;
+    }
+    stopAirSensors();
+    currentSample["device"] = deviceId;
+    currentSample["measurementComplete"] = complete;
+    currentSample["measurementDurationMs"] = millis() - measurementStartedMs;
+    addAirSensorHealth(currentSample);
+    JsonArray health = currentSample["bmeHealth"];
+    for (uint8_t i = 0; i < BME_COUNT; ++i)
+      health[i]["readingValid"] = bmeSampleReceived[i];
+    addPowerToPayload(currentSample);
+    stopPowerSensors();
+    addParticlesToPayload(currentSample);
+    addChargerToPayload(currentSample);
+    addLocationMetadata(currentSample);
+    Serial.printf("Measurement: %u of %u air sensors supplied data. Particle reading: %s.\n",
+                  sensorStepCount, BME_COUNT, hasParticleReading() ? "available" : "unavailable");
+    Serial.printf("Timing: sensor collection took %lu ms.\n", (unsigned long)(millis() - measurementStartedMs));
+    if (!complete)
+      Serial.println("Some readings are unavailable; the saved record will identify them.");
+    if (PRINT_PAYLOAD_JSON)
+    {
+      serializeJsonPretty(currentSample, Serial);
+      Serial.println();
+    }
+    if (payloadDoc.overflowed())
+      Serial.println("Measurement: not enough memory to assemble the full record; this reading will not be marked saved.");
+    // A late/slow card gets one final chance, with BME and particle SPI activity stopped.
+    if (!storageAvailable)
+      storageAvailable = retryDataLoggerAfterMeasurements();
+    uint32_t saveStartedMs = millis();
+    bool saved = !payloadDoc.overflowed() && storageAvailable && saveSample(currentSample);
+    Serial.printf("Timing: saving the reading took %lu ms.\n", (unsigned long)(millis() - saveStartedMs));
+    if (!saved)
+      Serial.println("Not saved: storage needs attention. Existing queued readings have not been discarded.");
+
+    // Only start the modem after the current sample is durably stored.
+    if (saved)
+    {
+      if (!httpsEndpointConfigured())
+        Serial.println("Upload paused: the server address is not configured. Readings stay on SD.");
+      else
+      {
+        // Faulty/missing battery readings are diagnostic data, not an upload veto.
+        Serial.println("Upload: sending readings with their health flags, including any battery faults.");
+        String body, response;
+        uint64_t first = 0, last = 0;
+        int httpStatus = 0;
+        uint32_t uploadStartedMs = millis();
+        bool uploaded = false;
+        if (prepareUpload(deviceId, body, first, last) && setupModem())
+        {
+          if (sendStoredPayload(body, httpStatus, response))
+            uploaded = acknowledgeUpload(deviceId, first, last, httpStatus, response);
+        }
+        Serial.printf("Timing: upload attempt took %lu ms.\n", (unsigned long)(millis() - uploadStartedMs));
+        if (!uploaded)
+          Serial.println("Upload incomplete: readings stay on SD. Trying again next measurement cycle.");
+      }
+    }
+    cycleFinished = true;
+  }
+  finishAndSleep();
+}
+
+void finishAndSleep()
+{
+  if (!devicesStopped)
+  {
+    if (!stopChargerTelemetry())
+    {
+      Serial.println("Waiting: battery monitor has not confirmed standby. Sleep postponed.");
+      delay(5000);
+      return;
+    }
+    stopDisplay();
+    closeDataLogger();
+    SPI.end();
+    Wire.end();
+    // Prevent signal pins from feeding the switched-off sensor supply.
+    for (uint8_t cs : BME_CS)
+      pinMode(cs, INPUT);
+    for (uint8_t pin : {BMV080_CS, SD_CS, SPI_SCK, SPI_MISO, SPI_MOSI, I2C_SDA, I2C_SCL})
+      pinMode(pin, INPUT);
+    digitalWrite(WALTER_3V3_EN, HIGH);
+    gpio_hold_en((gpio_num_t)WALTER_3V3_EN);
+    gpio_deep_sleep_hold_en();
+    devicesStopped = true;
+  }
+  if (!shutdownModem())
+  {
+    Serial.println("Sleep postponed: the cellular radio has not confirmed standby. Checking again in five seconds.");
+    delay(5000);
     return;
   }
-  Serial.println("sensor 0 running");
-
-  // Retrieve sensor outputs
-  const bsecOutputs *outputs = envSensor[0].getOutputs();
-  if (outputs)
-  {
-    Serial.println("outputs true");
-    for (uint8_t i = 0; i < outputs->nOutputs; i++)
-    {
-      switch (outputs->output[i].sensor_id)
-      {
-      case BSEC_OUTPUT_RAW_PRESSURE:
-        jsonDoc["pressure"] = (float)outputs->output[i].signal;
-        Serial.printf("Pressure: %.2f hPa\n", (float)outputs->output[i].signal);
-        // jsonDoc["RawPressure"] = (float)outputs->output[i].signal;
-        break;
-      case BSEC_OUTPUT_RAW_TEMPERATURE:
-        // jsonDoc["temperature"] = (float)outputs->output[i].signal;
-        Serial.printf("Temperature: %.2f °C\n", (float)outputs->output[i].signal);
-        // jsonDoc["RawTemperature"] = (float)outputs->output[i].signal;
-        break;
-      case BSEC_OUTPUT_RAW_HUMIDITY:
-        // jsonDoc["humidity"] = (float)outputs->output[i].signal;
-        Serial.printf("Humidity: %.2f %%\n", (float)outputs->output[i].signal);
-        // jsonDoc["RawHumidity"] = (float)outputs->output[i].signal;
-        break;
-      case BSEC_OUTPUT_RAW_GAS:
-        // jsonDoc["RawGasResistance"] = (float)outputs->output[i].signal;
-        Serial.printf("Gas Resistance: %.2f Ohms\n", (float)outputs->output[i].signal);
-        break;
-      case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
-        jsonDoc["SensorCompensatedTemperature"] = (float)outputs->output[i].signal;
-        break;
-      case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
-        jsonDoc["SensorCompensatedHumidity"] = (float)outputs->output[i].signal;
-        break;
-      case BSEC_OUTPUT_COMPENSATED_GAS:
-        jsonDoc["SensorCompensatedGasResistance"] = (float)outputs->output[i].signal;
-        break;
-      case BSEC_OUTPUT_IAQ:
-        jsonDoc["IAQ"] = (float)outputs->output[i].signal;
-        jsonDoc["IAQAccuracy"] = (int)outputs->output[i].accuracy;
-        break;
-      case BSEC_OUTPUT_STATIC_IAQ:
-        jsonDoc["StaticIAQ"] = (float)outputs->output[i].signal;
-        break;
-      case BSEC_OUTPUT_CO2_EQUIVALENT:
-        jsonDoc["CO2Equivalents"] = (float)outputs->output[i].signal;
-        break;
-      case BSEC_OUTPUT_BREATH_VOC_EQUIVALENT:
-        jsonDoc["BVOCEquivalents"] = (float)outputs->output[i].signal;
-        break;
-      case BSEC_OUTPUT_STABILIZATION_STATUS:
-        // jsonDoc["StabilizationTimeStatus"] = (int)outputs->output[i].signal;
-        break;
-      case BSEC_OUTPUT_RUN_IN_STATUS:
-        // jsonDoc["RunInStatus"] = (int)outputs->output[i].signal;
-        break;
-      // case BSEC_OUTPUT_GAS_PERCENTAGE:
-      //   jsonDoc["GasPercentage"] = (float)outputs->output[i].signal;
-      //   break;
-      // case BSEC_OUTPUT_GAS_ESTIMATE_1:
-      //   jsonDoc["GasScanResult1"] = (float)outputs->output[i].signal;
-      //   break;
-      // case BSEC_OUTPUT_GAS_ESTIMATE_2:
-      //   jsonDoc["GasScanResult2"] = (float)outputs->output[i].signal;
-      //   break;
-      // case BSEC_OUTPUT_GAS_ESTIMATE_3:
-      //   jsonDoc["GasScanResult3"] = (float)outputs->output[i].signal;
-      //   break;
-      // case BSEC_OUTPUT_GAS_ESTIMATE_4:
-      //   jsonDoc["GasScanResult4"] = (float)outputs->output[i].signal;
-      //   break;
-      case BSEC_OUTPUT_RAW_GAS_INDEX:
-        jsonDoc["RawGasIndex"] = (int)outputs->output[i].signal;
-        break;
-      // case BSEC_OUTPUT_REGRESSION_ESTIMATE_1:
-      //   jsonDoc["RegressionEstimate1"] = (float)outputs->output[i].signal;
-      //   break;
-      // case BSEC_OUTPUT_REGRESSION_ESTIMATE_2:
-      //   jsonDoc["RegressionEstimate2"] = (float)outputs->output[i].signal;
-      //   break;
-      // case BSEC_OUTPUT_REGRESSION_ESTIMATE_3:
-      //   jsonDoc["RegressionEstimate3"] = (float)outputs->output[i].signal;
-      //   break;
-      // case BSEC_OUTPUT_REGRESSION_ESTIMATE_4:
-      //   jsonDoc["RegressionEstimate4"] = (float)outputs->output[i].signal;
-      //   break;
-      default:
-        Serial.printf("Unknown sensor output ID: %d\n", outputs->output[i].sensor_id);
-        break;
-      }
-    }
-  }
-  if (!lteConnect())
-  {
-    Serial.printf("failed and restarting....");
-    ESP.restart();
-  }
-  else
-  {
-    configureLowPowerModem();
-    Serial.println("Configured Lower Power mode...");
-  }
-
-  Serial.println("Trying to send data...");
-
-  char jsonBuffer[512];
-  serializeJson(jsonDoc, jsonBuffer);
-  if (jsonDoc.containsKey("SensorCompensatedTemperature") && !jsonDoc["SensorCompensatedTemperature"].isNull() && jsonDoc["SensorCompensatedTemperature"].as<float>() != 0.0)
-  {
-    Serial.printf("sending...");
-    if (sendSensorData(jsonBuffer))
-    {
-      Serial.printf("sent and waiting....");
-      digitalWrite(LED_PIN, HIGH); // Turn LED ON
-      delay(5);                    // Wait 5 seconds
-      digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-      digitalWrite(LED_PIN, HIGH); // Turn LED ON
-      delay(5);                    // Wait 5 seconds
-      digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-      digitalWrite(LED_PIN, HIGH); // Turn LED ON
-      delay(4000);                 // Wait 5 seconds
-      digitalWrite(LED_PIN, LOW);  // Turn LED OFF
-      if (!lteDisconnect())
-      {
-        Serial.printf("LTE disconneting.... and waiting...");
-        ESP.restart();
-      }
-      delay(1000); // 5 minutes
-    }
-    else
-    {
-      Serial.println("Failed to send sensor data");
-    }
-    Serial.println("Going to deep sleep...");
-
-    disableWifiAndBluetooth();
-    enterLightSleep(800);
-  }
-  else
-  {
-    Serial.println("No valid SensorCompensatedTemperature data - skipping send");
-  }
-}
-demo_ret_code log_sensor_data(uint8_t sens_num)
-{
-
-  demo_ret_code ret;
-  bme68x_data *sensor_data[3];
-
-  /* Returns the selected sensor address */
-  bme68x_sensor *sensor = sensorMgr.get_sensor(sens_num);
-
-  /* Retrieves the selected sensor data */
-  ret = sensorMgr.collect_data(sens_num, sensor_data);
-
-  if (ret < EDK_OK)
-  {
-    StaticJsonDocument<1024> jsonDoc;
-    JsonObject errorObj = jsonDoc.createNestedObject("errorCode");
-
-    errorObj["sensor_number"] = sens_num;
-    // errorObj["error_code"] = bleController::SENSOR_READ_ERROR;
-
-    // bleCtlr.send_notification(jsonDoc);
-  }
-  else
-  {
-
-    for (const auto data : sensor_data)
-    {
-
-      if (data != nullptr)
-      {
-        bme68x_data raw_data;
-        raw_data.temperature = data->temperature;
-        raw_data.pressure = (data->pressure * 0.01f);
-        raw_data.humidity = data->humidity;
-        raw_data.gas_resistance = data->gas_resistance;
-        raw_data.gas_index = data->gas_index;
-
-        /* sends the sensor raw data via ble */
-        // ble_notify_bme68x_data(raw_data, sens_num);
-        /* Writes the sensor data to the current log file */
-        ret = bme68xDlog.write_sensor_data(&sens_num, &sensor->id, &sensor->mode, data,
-                                           &sensor->scan_cycle_index, label, ret);
-
-        /* Increments scanCycleIndex by one, if cycle completes */
-        if (raw_data.gas_index == sensor->heater_profile.length - 1)
-        {
-          sensor->scan_cycle_index += 1;
-
-          if (sensor->scan_cycle_index > sensor->heater_profile.nb_repetitions)
-          {
-            sensor->scan_cycle_index = 1;
-          }
-        }
-      }
-    }
-  }
-  return ret;
+  uint64_t intervalMs = uint64_t(WAKE_INTERVAL_SECONDS) * 1000;
+  uint64_t sleepMs = millis() < intervalMs ? intervalMs - millis() : 1000;
+  Serial.printf("Timing: total awake time %lu ms.\n", (unsigned long)millis());
+  Serial.printf("Sleeping: SD card closed, sensors off, and cellular radio in standby. Next measurement in %llu seconds.\n", sleepMs / 1000);
+  Serial.flush();
+  esp_sleep_enable_timer_wakeup(sleepMs * 1000);
+  esp_deep_sleep_start();
 }
 
-bme68x_data bsecCallBack(uint8_t sens_num)
+void newBsecData(const bme68xData data, const bsecOutputs outputs, Bsec2 sensor)
 {
-  demo_ret_code ret;
-  bme68x_data *sensor_data[3];
-  bme68x_data raw_data = {}; // Initialize to prevent undefined behavior
-
-  /* Returns the selected sensor address */
-  bme68x_sensor *sensor = sensorMgr.get_sensor(sens_num);
-
-  /* Retrieves the selected sensor data */
-  ret = sensorMgr.collect_data(sens_num, sensor_data);
-
-  if (ret < EDK_OK)
-  {
-    StaticJsonDocument<1024> jsonDoc;
-    JsonObject errorObj = jsonDoc.createNestedObject("errorCode");
-
-    errorObj["sensor_number"] = sens_num;
-    // errorObj["error_code"] = bleController::SENSOR_READ_ERROR;
-
-    // bleCtlr.send_notification(jsonDoc);
-  }
-  else
-  {
-    for (const auto data : sensor_data)
-    {
-      if (data != nullptr)
-      {
-
-        raw_data.temperature = data->temperature;
-        raw_data.pressure = (data->pressure * 0.01f);
-        raw_data.humidity = data->humidity;
-        raw_data.gas_resistance = data->gas_resistance;
-        raw_data.gas_index = data->gas_index;
-
-        /* sends the sensor raw data via ble */
-        // ble_notify_bme68x_data(raw_data, sens_num);
-        /* Writes the sensor data to the current log file */
-        ret = bme68xDlog.write_sensor_data(&sens_num, &sensor->id, &sensor->mode, data,
-                                           &sensor->scan_cycle_index, label, ret);
-
-        /* Increments scanCycleIndex by one, if cycle completes */
-        if (raw_data.gas_index == sensor->heater_profile.length - 1)
-        {
-          sensor->scan_cycle_index += 1;
-
-          if (sensor->scan_cycle_index > sensor->heater_profile.nb_repetitions)
-          {
-            sensor->scan_cycle_index = 1;
-          }
-        }
-      }
-    }
-  }
-  Serial.print("Raw data temp: ");
-  Serial.println(raw_data.temperature);
-  Serial.print("Raw data %Rh: ");
-  Serial.println(raw_data.humidity);
-  Serial.print("Raw data press: ");
-  Serial.println(raw_data.pressure);
-  Serial.print("Raw data gass: ");
-  Serial.println(raw_data.gas_resistance);
-  return raw_data; // Now returns raw_data correctly
-}
-
-void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bsec)
-{
-  if (!outputs.nOutputs)
-  {
+  (void)sensor;
+  if (currentBmeSensor >= BME_COUNT || !outputs.nOutputs || bmeSampleReceived[currentBmeSensor])
     return;
-  }
-
-  // Serial.println("BSEC outputs:\n\tSensor num = " + String(sensor));
-  // Serial.println("\tTime stamp = " + String((int) (outputs.output[0].time_stamp / INT64_C(1000000))));
-  for (uint8_t i = 0; i < outputs.nOutputs; i++)
+  String suffix = String(currentBmeSensor);
+  bool temperature = false, humidity = false, iaq = false, co2 = false, voc = false;
+  for (uint8_t i = 0; i < outputs.nOutputs; ++i)
   {
-    const bsecData output = outputs.output[i];
-    switch (output.sensor_id)
+    const bsecData &o = outputs.output[i];
+    switch (o.sensor_id)
     {
     case BSEC_OUTPUT_IAQ:
-      // Serial.println("\tIAQ = " + String(output.signal));
-      // Serial.println("\tIAQ accuracy = " + String((int) output.accuracy));
+      currentSample["iaq_" + suffix] = o.signal;
+      currentSample["iaqAcc_" + suffix] = o.accuracy;
+      iaq = true;
       break;
     case BSEC_OUTPUT_RAW_TEMPERATURE:
-      // Serial.println("\tTemperature = " + String(output.signal));
-      break;
-    case BSEC_OUTPUT_RAW_PRESSURE:
-      // Serial.println("\tPressure = " + String(output.signal));
+      currentSample["temp_" + suffix] = o.signal;
+      temperature = true;
       break;
     case BSEC_OUTPUT_RAW_HUMIDITY:
-      // Serial.println("\tHumidity = " + String(output.signal));
-      break;
-    case BSEC_OUTPUT_RAW_GAS:
-      // Serial.println("\tGas resistance = " + String(output.signal));
-      break;
-    case BSEC_OUTPUT_STABILIZATION_STATUS:
-      // Serial.println("\tStabilization status = " + String(output.signal));
-      break;
-    case BSEC_OUTPUT_RUN_IN_STATUS:
-      // Serial.println("\tRun in status = " + String(output.signal));
-      break;
-    case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
-      // Serial.println("\tCompensated temperature = " + String(output.signal));
-      break;
-    case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
-      // Serial.println("\tCompensated humidity = " + String(output.signal));
-      break;
-    case BSEC_OUTPUT_STATIC_IAQ:
-      // Serial.println("\tStatic IAQ = " + String(output.signal));
+      currentSample["hum_" + suffix] = o.signal;
+      humidity = true;
       break;
     case BSEC_OUTPUT_CO2_EQUIVALENT:
-      // Serial.println("\tCO2 Equivalent = " + String(output.signal));
+      currentSample["co2_" + suffix] = o.signal;
+      co2 = true;
       break;
     case BSEC_OUTPUT_BREATH_VOC_EQUIVALENT:
-      // Serial.println("\tbVOC equivalent = " + String(output.signal));
+      currentSample["bvoc_" + suffix] = o.signal;
+      voc = true;
       break;
-    case BSEC_OUTPUT_GAS_PERCENTAGE:
-      // Serial.println("\tGas percentage = " + String(output.signal));
-      break;
-    case BSEC_OUTPUT_COMPENSATED_GAS:
-      // Serial.println("\tCompensated gas = " + String(output.signal));
-      break;
-
     default:
       break;
     }
   }
-}
-
-demo_ret_code configure_sensor_logging(const String &bme_config_file)
-{
-  demo_ret_code ret = sensorMgr.begin(bme_config_file);
-
-  if (ret >= EDK_OK)
-  {
-    ret = bme68xDlog.begin(bme_config_file);
+  if (!(temperature && humidity && iaq && co2 && voc))
+    return;
+  // Raw measurements already supplied by Bosch; no BSEC subscription changes.
+  if (data.status & BME68X_NEW_DATA_MSK) {
+    currentSample["pres_" + suffix] = data.pressure / 100.0f; // Pa to hPa
+    if ((data.status & (BME68X_GASM_VALID_MSK | BME68X_HEAT_STAB_MSK)) ==
+        (BME68X_GASM_VALID_MSK | BME68X_HEAT_STAB_MSK))
+      currentSample["gasR_" + suffix] = data.gas_resistance; // ohms
   }
-  return ret;
+  // com_gas remains null: its legacy meaning/calculation is not known.
+  bmeSampleReceived[currentBmeSensor] = true;
+  sensorStepCount++;
+  Serial.printf("Air sensor %u: %.1f C, %.1f %% humidity, air-quality index %.1f (accuracy %u/3).\n",
+                currentBmeSensor + 1, currentSample["temp_" + suffix].as<float>(), currentSample["hum_" + suffix].as<float>(),
+                currentSample["iaq_" + suffix].as<float>(), currentSample["iaqAcc_" + suffix].as<unsigned>());
 }
 
-demo_ret_code configure_bsec_logging(const String &ai_config_file, const String &bsec_config_file,
-                                     uint8_t bsec_config_str[BSEC_MAX_PROPERTY_BLOB_SIZE], uint8_t sensor_num)
-{
-  memset(bsec_config_str, 0, BSEC_MAX_PROPERTY_BLOB_SIZE);
-  demo_ret_code ret = bsecDlog.begin(ai_config_file, bsec2[0].version, sensor_num);
-
-  if (ret >= EDK_OK)
-  {
-    ret = utils::get_bsec_config(bsec_config_file, bsec_config_str);
-  }
-  return ret;
-}
-
-demo_ret_code config_file_read(const String &config_file)
-{
-  demo_ret_code ret;
-  static bool first_time = true;
-  StaticJsonDocument<1024> jsonDoc;
-
-  while ((ret = utils::read_file(config_file, FILE_DATA_READ_SIZE, config_file_data)) == EDK_OK)
-  {
-    if (first_time)
-    {
-      if (config_file == BME68X_LABEL_INFO_FILE_EXT)
-      {
-        // jsonDoc["getlabelinfo"] = bleController::CMD_VALID;
-      }
-      else
-      {
-        // jsonDoc["readconfig"] = bleController::CMD_VALID;
-      }
-      first_time = false;
-    }
-
-    jsonDoc.clear();               // Clear any existing data
-    jsonDoc.add(config_file_data); // Add the new data (make sure it's in the right format)
-
-    // bleCtlr.send_notification(jsonDoc);  // Send the JSON document (uncomment to use)
-  }
-  first_time = true;
-  return ret;
-}
-
-void read_sys_time()
-{
-  while (Serial.available())
-  {
-    String rx_msg;
-
-    rx_msg = Serial.readStringUntil('\n');
-    received_sys_time = rx_msg.toInt();
-
-    utils::get_rtc().adjust(DateTime(received_sys_time));
-  }
-}
-
-JsonObject serialPrintEnvSensorJson(const bme68xData data, const bsecOutputs outputs, Bsec2 bsec)
-{
-  StaticJsonDocument<1024> jsonDoc;
-  JsonObject sensorObj = jsonDoc.createNestedObject("sensor_data");
-
-  if (!outputs.nOutputs)
-  {
-    sensorObj["status"] = "No output data available";
-  }
-  else
-  {
-    sensorObj["timestamp"] = (int)(outputs.output[0].time_stamp / INT64_C(1000000));
-    JsonArray sensorDataArray = sensorObj.createNestedArray("data");
-
-    for (uint8_t i = 0; i < outputs.nOutputs; i++)
-    {
-      const bsecData output = outputs.output[i];
-      JsonObject dataObj = sensorDataArray.createNestedObject();
-
-      switch (output.sensor_id)
-      {
-      case BSEC_OUTPUT_CO2_EQUIVALENT:
-        dataObj["type"] = "CO2 Equivalent";
-        dataObj["value"] = output.signal;
-        break;
-      case BSEC_OUTPUT_BREATH_VOC_EQUIVALENT:
-        dataObj["type"] = "bVOC Equivalent";
-        dataObj["value"] = output.signal;
-        break;
-      case BSEC_OUTPUT_GAS_PERCENTAGE:
-        dataObj["type"] = "Gas Percentage";
-        dataObj["value"] = output.signal;
-        break;
-      case BSEC_OUTPUT_COMPENSATED_GAS:
-        dataObj["type"] = "Compensated Gas";
-        dataObj["value"] = output.signal;
-        break;
-      case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE:
-        dataObj["type"] = "Temperature";
-        dataObj["value"] = output.signal;
-        break;
-      case BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY:
-        dataObj["type"] = "Humidity";
-        dataObj["value"] = output.signal;
-        break;
-      case BSEC_OUTPUT_RAW_PRESSURE:
-        dataObj["type"] = "Pressure";
-        dataObj["value"] = output.signal;
-        break;
-      default:
-        continue; // Skip any other sensor outputs
-      }
-
-      dataObj["accuracy"] = output.accuracy;
-    }
-  }
-
-  /* Print JSON to Serial */
-  Serial.println();
-  serializeJsonPretty(jsonDoc, Serial);
-  Serial.println();
-
-  return sensorObj; // Return the JSON object
-}
-
-void disableWifiAndBluetooth()
-{
-  esp_wifi_stop();
-  esp_bt_controller_disable();
-}
-
-void configureLowPowerModem()
-{
-  // Enable Power Saving Mode (PSM)
-  // T3412 = "00100001" (1 hour TAU), T3324 = "00000101" (10s active time)
-  // 30s TAU, 10s Active time
-  modem.configPSM(WALTER_MODEM_PSM_ENABLE, "00011110", "00000101");
-}
-
-void enterLightSleep(uint32_t seconds)
-{
-  // ESP32 timer wakeup
-  esp_sleep_enable_timer_wakeup(seconds * 1000000ULL);
-
-  // Walter library manages RTS line before/after sleep
-  modem.sleep(seconds, true); // true = light sleep
-}

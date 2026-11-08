@@ -1,6 +1,6 @@
-/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/libraries/WalterModem/proto/WalterBlueCherry.cpp.o: \
+/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/libraries/WalterModem/proto/WalterBlueCherry.cpp.o: \
  /Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/proto/WalterBlueCherry.cpp \
- /Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/WalterDefines.h \
+ /Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/WalterBlueCherry.h \
  /Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/WalterModem.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/Arduino.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/esp_arduino_version.h \
@@ -170,4 +170,102 @@
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/wear_levelling/include/wear_levelling.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/spi_flash/include/spi_flash_mmap.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/spi_flash/include/esp_spi_flash_counters.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_driver_uart/include/driver/uart.h
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_driver_uart/include/driver/uart.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_app_format/include/esp_app_desc.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/bootloader_support/include/esp_image_format.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/bootloader_support/include/esp_flash_partitions.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_common/include/esp_types.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/bootloader_support/include/esp_app_format.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_hw_support/include/esp_mac.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/app_update/include/esp_ota_ops.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_bootloader_format/include/esp_bootloader_desc.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_system/include/esp_task_wdt.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/bootloader_support/include/bootloader_random.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/net_sockets.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/private_access.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/build_info.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/mbedtls/esp_config.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/mbedtls_config.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/esp_mem.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/config_psa.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_legacy.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_adjust_config_synonyms.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_adjust_config_dependencies.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/config_adjust_psa_superset_legacy.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/config_adjust_psa_from_legacy.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_adjust_config_key_pair_types.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_adjust_auto_enabled.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/config_adjust_legacy_crypto.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/config_adjust_x509.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/config_adjust_ssl.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/check_config.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ssl.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/platform_util.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/mbedtls/bignum.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/bignum.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/mbedtls/ecp.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ecp.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ssl_ciphersuites.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/pk.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/md.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/rsa.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ecdsa.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_platform.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/build_info.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_types.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_values.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_sizes.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_struct.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_driver_contexts_primitives.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_driver_common.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_sizes.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_builtin_primitives.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/md5.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/md5_alt.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/md/esp_md.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_rom/include/esp_rom_md5.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ripemd160.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/sha1.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/sha1_alt.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/hal/include/hal/sha_types.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_rom/include/esp32s3/rom/sha.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/sha256.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/sha256_alt.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/sha512.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/sha512_alt.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/sha3.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/cipher.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_driver_contexts_composites.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_builtin_composites.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/cmac.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/mbedtls/gcm.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/gcm.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/gcm_alt.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/aes/esp_aes_gcm.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/aes/esp_aes.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/hal/include/hal/aes_types.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ccm.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/chachapoly.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/poly1305.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/chacha20.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ecjpake.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_driver_contexts_key_derivation.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_builtin_key_derivation.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_extra.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/psa/crypto_compat.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/x509_crt.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/x509.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/asn1.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/x509_crl.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ecdh.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/platform_time.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/pem.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/version.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/x509_csr.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/ctr_drbg.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/aes.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/port/include/aes_alt.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/entropy.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/md.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/mbedtls/mbedtls/include/mbedtls/entropy.h

@@ -1,0 +1,59 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "SensorShield: Build and Upload",
+      "type": "process",
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/tools/firmware.py",
+        "build-upload"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "SensorShield: Build only",
+      "type": "process",
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/tools/firmware.py",
+        "build"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "SensorShield: Upload built firmware",
+      "type": "process",
+      "command": "python3",
+      "args": [
+        "${workspaceFolder}/tools/firmware.py",
+        "upload"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    }
+  ]
+}

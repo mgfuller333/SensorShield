@@ -1,1122 +1,348 @@
+// Odrade: wake, measure, save locally, upload when eligible, then sleep.
+#include "AirSensors.h"
+#include "Charger.h"
+#include "DataLogger.h"
+#include "Display.h"
+#include "GpsClock.h"
+#include "LoggerConfig.h"
+#include "Modem.h"
+#include "ParticleSensor.h"
+#include "PowerSensors.h"
+#include "board_pins.h"
+#include "sketch_types.h"
 #include <Wire.h>
 #include <SPI.h>
-#include "gpsHelper.h"
-#include "bsec2.h" // Bosch BSEC2 library for BME688
-#include "bme68x_datalogger.h"
-#include "bsec_datalogger.h"
-#include "label_provider.h"
-#include "led_controller.h"
-#include "batteryHelper.h"
-#include "utils.h"
-#include "sensor_manager.h"
-#include "commMux.h" // Communication multiplexer for SPI/I2C
-#include <ArduinoJson.h>
-#include <inttypes.h>
-#include <WalterModem.h>
 #include <esp_mac.h>
-#include <HardwareSerial.h>
-#include <Wire.h>
-
+#include <esp_system.h>
 #include <esp_sleep.h>
+#include <driver/gpio.h>
 
-#include <ArduinoJson.h>    // <-- new
-#include "cellularHelper.h" // <-- for lteConnect() + sendSensorData()
-#include "PMS.h"
-#define BUFFER_SIZE 8
+JsonDocument payloadDoc;
+JsonObject currentSample;
+bool bmeSampleReceived[BME_COUNT] = {};
+uint8_t sensorStepCount = 0;
+uint32_t measurementStartedMs = 0;
+bool storageAvailable = false;
+bool cycleFinished = false;
+bool devicesStopped = false;
+String deviceId;
+DeviceStatus status;
 
-// Define UART1 pins (example: TX = GPIO17, RX = GPIO18)
-
-const int PMS_RX = 9;  // sensor TX → ESP32 RX
-const int PMS_TX = 10; // sensor RX ← ESP32 TX (must be an output-capable pin)
-
-// Use hardware UART2
-PMS pms(Serial1); // Use Serial1 for PMS sensor
-PMS::DATA pmData;
-bool pmsWakeStatus = false;
-
-uint8_t sampleCount = 0;
-uint8_t payloadCounter = 0;
-DynamicJsonDocument payloadDoc(6144); // 16 KB on heap
-JsonArray sensors = payloadDoc.to<JsonArray>();
-
-// adjust these to your needs
-constexpr uint8_t NUM_SENSORS = 8;
-
-static uint8_t sensorStepCount = 0; // how many sensor callbacks in current sample
-
-static JsonObject currentSampleObj; // points into `sensors`
-
-#define LED_PIN 42 // Use a free IO pin for LED (example IO2 or any other free)
-
-// --- these retain GPS Values across deep sleep! ---
-RTC_DATA_ATTR double savedLatitude = 0.0;
-RTC_DATA_ATTR double savedLongitude = 0.0;
-RTC_DATA_ATTR double savedAltitude = 0.0;
-RTC_DATA_ATTR uint8_t savedSatCount = 0;
-RTC_DATA_ATTR WalterModemGNSSFix _lastGNSSFix;
-sensorManager sensorMgr;
-// // ESP32Time rtc;
-// ESP32Time rtc(-6 * 3600); // offset in seconds GMT+1
-
-//--INA Comm Pin Definitions--//
-constexpr uint8_t CHAN_INA = 0; // same as whichever port the INA219s are wired to
-
-//--End of INA Comm Pin Definitions--//
-
-/**
- * @brief The serial interface to talk to the modem.
- */
-#define ModemSerial Serial2
-
-//------Start of BME Initialization-------------//
-
-/* Macros used */
-/*! FILE_DATA_READ_SIZE determines the size of the data to be read from the file */
-#define FILE_DATA_READ_SIZE UINT16_C(400)
-
-/*!
- * @brief : This function is called by the BSEC library when a new output is available
- *
- * @param[in] input 	: BME68X data
- * @param[in] outputs	: BSEC output data
- */
-void bsecCallBack(const bme68x_data input, const bsecOutputs outputs);
-
-/**
-   @brief : This function checks the BSEC status, prints the respective error code. Halts in case of error
-   @param[in] bsec  : Bsec2 class object
-*/
-void checkBsecStatus(Bsec2 bsec);
-
-BatteryHelper powerReader; // defaults: 0x40 for battery, 0x41 for solar panel
-
-Bsec2 bsec; // BSEC2 instance for the BME688
-Bsec2 envSensor[NUM_OF_SENS];
-// Communication multiplexer configuration for the sensor (use sensor index 0)
-commMux commConfig;
-
-// Memory for the BSEC instance (size defined in bsec2.h)
-uint8_t bsecInstanceMem[BSEC_INSTANCE_SIZE];
-
-/* Helper functions declarations */
-/**
-   @brief : This function toggles the led when a fault was detected
-*/
-void errLeds(void);
-
-/**
-   @brief : This function is called by the BSEC library when a new output is available
-   @param[in] input     : BME68X sensor data before processing
-   @param[in] outputs   : Processed BSEC BSEC output data
-   @param[in] bsec      : Instance of BSEC2 calling the callback
-*/
-void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bsec);
-
-/* Create an array of objects of the class Bsec2 */
-
-uint8_t sensor = 0;
-
-/*!
- * @brief : This function handles sensor manager and BME68X datalogger configuration
- *
- * @param[in] bmeExtension : reference to the bmeconfig file extension
- *
- * @return  Application return code
- */
-demo_ret_code configure_sensor_logging(const String &bme_extension);
-
-/*!
- * @brief : This function handles the read configuration File
- *
- * @param[in] configFile	: reference to the config File Name
- *
- * @return  Application return code
- */
-demo_ret_code config_file_read(const String &config_file);
-
-/*!
- * @brief : This function handles collecting, sending sensor raw data via ble and data logging
- *
- * @param[in] sensNum :	sensor number to collect and log the data
- *
- * @return  a Bosch return code
- */
-demo_ret_code log_sensor_data(uint8_t sens_num);
-
-void configureUltraLowPowerModem();
-/*!
- * @brief : This function receive the system time (in unix epoch time format) from serial port and update into RTC time
- *
- * @return  void
- */
-void read_sys_time();
-
-uint8_t bsec_config[BSEC_MAX_PROPERTY_BLOB_SIZE];
-char config_file_data[FILE_DATA_READ_SIZE];
-Bsec2 bsec2[NUM_OF_SENS];
-// bleController  			bleCtlr(bleMessageReceived);
-labelProvider labelPvr;
-ledController ledCtlr;
-
-DualPowerData powerData = {};
-
-bme68xDataLogger bme68xDlog;
-bsecDataLogger bsecDlog;
-demo_ret_code ret_code;
-
-String bme68x_conf_file_name, bsec_conf_file_name, ai_conf_file_name, config_file_name, label_file_name;
-
-gas_label label;
-bool is_bme68x_conf_available, is_bsec_conf_available, is_ai_conf_available, is_label_info_available;
-
-uint8_t bsec_mem_block[NUM_OF_SENS][BSEC_INSTANCE_SIZE];
-
-commMux communicationSetup[NUM_OF_SENS];
-
-uint8_t sensor_num;
-uint32_t ground_truth;
-static uint8_t buff_count = 0;
-static bsecDataLogger::sensor_io_data buff[NUM_OF_SENS];
-
-String deviceSetupStatus = "---";
-String modemStatus = "---";
-String gpsFixStatus = "---";
-String batStatus = "---";
-String solStatus = "---";
-String powerSensorStatus = "---";
-String sd_clock_status = "---";
-String BMEStatus = "---";
-
-uint32_t received_sys_time = 0;
-
-WalterModemGNSSFix gpsData;
-bsecSensor sensorList[] = {
-    BSEC_OUTPUT_IAQ,
-    BSEC_OUTPUT_RAW_TEMPERATURE,
-    BSEC_OUTPUT_RAW_PRESSURE,
-    BSEC_OUTPUT_RAW_HUMIDITY,
-    BSEC_OUTPUT_RAW_GAS,
-    BSEC_OUTPUT_STABILIZATION_STATUS,
-    BSEC_OUTPUT_RUN_IN_STATUS,
-    BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
-    BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
-    BSEC_OUTPUT_STATIC_IAQ,
-    BSEC_OUTPUT_CO2_EQUIVALENT,
-    BSEC_OUTPUT_BREATH_VOC_EQUIVALENT,
-    BSEC_OUTPUT_GAS_PERCENTAGE,
-    BSEC_OUTPUT_COMPENSATED_GAS};
-
-//--End of BME Initialization--//
-
-/**
- * @brief Set up the system.
- *
- * This function will set up the system and initialize the modem.
- *
- * @return None.
- */
-int sensorInactiveCount = 0;
-int packetsSenTotal = 0;
-void setup()
+// These messages distinguish a processor reset from a disconnected USB monitor.
+const char *resetDescription()
 {
-  delay(4000); // wait for serial monitor to open
-  deviceSetupStatus = "setup";
-  Serial.begin(115200);
-  Serial1.begin(9600, SERIAL_8N1, PMS_TX, PMS_RX); // Serial1 for PMS sensor, TX: GPIO10, RX: GPIO9
-                                                   // Initialize I2C bus for the expander (commMux)
-
-  Serial.println("setting plantower to passive mode");
-  pms.passiveMode();
-  pmsWakeStatus = false;
-  Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
-
-  // Initialize SPI bus with custom pin assignments
-  SPI.begin(SPI_SCK_PIN, SPI_MISO_PIN, SPI_MOSI_PIN);
-  Serial.println("Wire and SPI set");
-
-  commMuxBegin(Wire, SPI); //  Switch to passive mode
-  if (!sensorMgr.initializeOLED())
+  switch (esp_reset_reason())
   {
-    Serial.println("OLED initialization failed");
+  case ESP_RST_POWERON:
+    return "power-on";
+  case ESP_RST_DEEPSLEEP:
+    return "scheduled wake from sleep";
+  case ESP_RST_BROWNOUT:
+    return "brownout: supply voltage dropped";
+  case ESP_RST_PWR_GLITCH:
+    return "power glitch detected";
+  case ESP_RST_SW:
+    return "software restart";
+  case ESP_RST_PANIC:
+    return "software crash";
+  case ESP_RST_TASK_WDT:
+  case ESP_RST_INT_WDT:
+  case ESP_RST_WDT:
+    return "watchdog: software stopped responding";
+  case ESP_RST_USB:
+    return "USB reset";
+  default:
+    return "other reset; see diagnostic code";
   }
-  else
-  {
-    Serial.println("OLED initialized successfully");
-  }
-
-  sensorMgr.printDeviceStatus(
-      deviceSetupStatus,
-      modemStatus,
-      gpsFixStatus,
-      batStatus,
-      solStatus,
-      sd_clock_status,
-      powerSensorStatus,
-      BMEStatus);
-
-  // 1 Blink Set up the LED pin
-  pinMode(LED_PIN, OUTPUT);
-
-  //------End of Modem Initialization------//
-
-  //---------BME 688 Setup-----------------//
-  /* Desired subscription list of BSEC2 outputs */
-
-  Serial.println("Wire and SPI initialized");
-  delay(100);
-
-  for (uint8_t i = 0; i < NUM_OF_SENS; i++)
-  {
-    /* Sets the Communication interface for the sensors */
-    Serial.println("Setting up sensor:");
-    Serial.println(i);
-    // Wait 5 ms
-
-    communicationSetup[i] = commMuxSetConfig(Wire, SPI, i, communicationSetup[i]);
-
-    //   /* Assigning a chunk of memory block to the bsecInstance */
-    envSensor[i].allocateMemory(bsec_mem_block[i]);
-
-    Serial.println("allocating memory:");
-    Serial.println(i);
-
-    //   /* Initialize the library and interfaces */
-    if (!envSensor[i].begin(BME68X_SPI_INTF, commMuxRead, commMuxWrite, commMuxDelay, &communicationSetup[i]))
-    {
-      Serial.println("Failed to init comms to sensor outputs");
-      checkBsecStatus(envSensor[i]);
-
-      BMEStatus = String(i) + "-Bad";
-    }
-    else
-    {
-      BMEStatus = String(i) + "-Good";
-    }
-
-    Serial.println("beginning sensor comm:");
-    Serial.println(i);
-    sensorMgr.printDeviceStatus(
-        deviceSetupStatus,
-        modemStatus,
-        gpsFixStatus,
-        batStatus,
-        solStatus,
-        sd_clock_status,
-        powerSensorStatus,
-        BMEStatus);
-
-    /*
-     *	The default offset provided has been determined by testing the sensor in LP and ULP mode on application board 3.0
-     *	Please update the offset value after testing this on your product
-     */
-    if (SAMPLE_RATE == BSEC_SAMPLE_RATE_ULP)
-    {
-      envSensor[i].setTemperatureOffset(TEMP_OFFSET_ULP);
-    }
-    else if (SAMPLE_RATE == BSEC_SAMPLE_RATE_LP)
-    {
-      envSensor[i].setTemperatureOffset(TEMP_OFFSET_LP);
-    }
-
-    //     /* Subscribe to the desired BSEC2 outputs */
-    if (!envSensor[i].updateSubscription(sensorList, ARRAY_LEN(sensorList), SAMPLE_RATE))
-    {
-      Serial.println("Failed to sub to sensor outputs");
-    }
-
-    Serial.println("subscribing to sensor:");
-    Serial.println(i);
-
-    //     /* Whenever new data is available call the newDataCallback function */
-    envSensor[i].attachCallback(newDataCallback);
-
-    Serial.println("adding callback to sensor:");
-    Serial.println(i);
-  }
-
-  Serial.println("BSEC library version " + String(envSensor[0].version.major) + "." + String(envSensor[0].version.minor) + "." + String(envSensor[0].version.major_bugfix) + "." + String(envSensor[0].version.minor_bugfix));
-
-  if (!powerReader.begin())
-  {
-    powerSensorStatus = "unhealthy";
-    Serial.println("ERROR: INA219 init failed. Check wiring & addresses.");
-
-    delay(10);
-  }
-  else
-  {
-    powerSensorStatus = "Healthy";
-
-    Serial.println("batteryHelper: sensors ready.");
-  }
-  powerData = powerReader.readAllSensors();
-  solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-  batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-  sensorMgr.printDeviceStatus(
-      deviceSetupStatus,
-      modemStatus,
-      gpsFixStatus,
-      batStatus,
-      solStatus,
-      sd_clock_status,
-      powerSensorStatus,
-      BMEStatus);
-
-  /* Initializes the SD and RTC module */
-  Serial.println("init SD ...");
-  ret_code = utils::begin();
-  Serial.println("SD init complete");
-  if (ret_code == EDK_OK)
-  {
-    sd_clock_status = "Healthy";
-    powerData = powerReader.readAllSensors();
-    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-    sensorMgr.printDeviceStatus(
-        deviceSetupStatus,
-        modemStatus,
-        gpsFixStatus,
-        batStatus,
-        solStatus,
-        sd_clock_status,
-        powerSensorStatus,
-        BMEStatus);
-  }
-  else
-  {
-    sd_clock_status = "Unhealthy";
-    powerData = powerReader.readAllSensors();
-    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-    sensorMgr.printDeviceStatus(
-        deviceSetupStatus,
-        modemStatus,
-        gpsFixStatus,
-        batStatus,
-        solStatus,
-        sd_clock_status,
-        powerSensorStatus,
-        BMEStatus);
-  }
-
-  // Adjust Time
-
-  // read_sys_time();
-
-  if (ret_code == EDK_OK)
-  {
-    is_bme68x_conf_available = utils::get_file_with_extension(bme68x_conf_file_name, BME68X_CONFIG_FILE_EXT);
-
-    /* checks the availability of BME board configuration file */
-    Serial.println("is_bme68x_conf_available...");
-    if (is_bme68x_conf_available)
-    {
-
-      if (configure_sensor_logging(bme68x_conf_file_name) < EDK_OK)
-      {
-        Serial.println("EDK_SENSOR_INITIALIZATION_FAILED");
-        ret_code = EDK_SENSOR_INITIALIZATION_FAILED;
-      }
-    }
-    else
-    {
-      Serial.println("EDK_SENSOR_CONFIG_MISSING_ERROR");
-      ret_code = EDK_SENSOR_CONFIG_MISSING_ERROR;
-    }
-  }
-
-  if (ret_code < EDK_OK)
-  {
-    Serial.println("ret_code Good: Setting to DEMO_IDLE_MODE");
-  }
-
-  /* Modem initialization */
-  if (modemSetup())
-  {
-    Serial.println("Modem initialization OK");
-    modemStatus = "Healthy";
-    powerData = powerReader.readAllSensors();
-    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-    sensorMgr.printDeviceStatus(
-        deviceSetupStatus,
-        modemStatus,
-        gpsFixStatus,
-        batStatus,
-        solStatus,
-        sd_clock_status,
-        powerSensorStatus,
-        BMEStatus);
-    // disableWifiAndBluetooth();
-  }
-  else
-  {
-
-    Serial.println("Modem initialization ERROR");
-    modemStatus = "Bad";
-    powerData = powerReader.readAllSensors();
-    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-    sensorMgr.printDeviceStatus(
-        deviceSetupStatus,
-        modemStatus,
-        gpsFixStatus,
-        batStatus,
-        solStatus,
-        sd_clock_status,
-        powerSensorStatus,
-        BMEStatus);
-    return;
-  }
-
-  //-------Start GPS-------//
-
-  /* Check clock and assistance data, update if required */
-  Serial.println("Initialize GPS");
-
-  gpsFixStatus = "trying...";
-  powerData = powerReader.readAllSensors();
-  solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-  batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-  sensorMgr.printDeviceStatus(
-      deviceSetupStatus,
-      modemStatus,
-      gpsFixStatus,
-      batStatus,
-      solStatus,
-      sd_clock_status,
-      powerSensorStatus,
-      BMEStatus);
-
-  WalterModemGNSSFix gpsData = getGPSFix();
-  //  5 - Blinks
-
-  //-------Start GPS-------//
-
-  // // Save the fix to RTC memory
-  _lastGNSSFix = gpsData;
-  savedLatitude = gpsData.latitude;
-  savedLongitude = gpsData.longitude;
-  savedAltitude = gpsData.height;
-  savedSatCount = gpsData.satCount;
-
-  Serial.printf("  retrieved Longitude: %.6f\n", gpsData.longitude);
-  Serial.printf("  retrieved Satcount: %d\n", gpsData.satCount);
-
-  gpsFixStatus = "bad";
-  if (gpsData.satCount > 1)
-  {
-    modemStatus = "Not Connected";
-    gpsFixStatus = "Healthy";
-    powerData = powerReader.readAllSensors();
-    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-    sensorMgr.printDeviceStatus(
-        deviceSetupStatus,
-        modemStatus,
-        gpsFixStatus,
-        batStatus,
-        solStatus,
-        sd_clock_status,
-        powerSensorStatus,
-        BMEStatus);
-  }
-  else
-  {
-    gpsFixStatus = "Bad";
-    powerData = powerReader.readAllSensors();
-    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-    sensorMgr.printDeviceStatus(
-        deviceSetupStatus,
-        modemStatus,
-        gpsFixStatus,
-        batStatus,
-        solStatus,
-        sd_clock_status,
-        powerSensorStatus,
-        BMEStatus);
-  }
-
-  deviceSetupStatus = "Setup good";
-
-  powerData = powerReader.readAllSensors();
-  solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-  batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-  sensorMgr.printDeviceStatus(
-      deviceSetupStatus,
-      modemStatus,
-      gpsFixStatus,
-      batStatus,
-      solStatus,
-      sd_clock_status,
-      powerSensorStatus,
-      BMEStatus);
 }
 
-int badSensorCounter = 0; // Reset bad sensor counter
+void printStartupStep(const char *message)
+{
+  Serial.printf("[Startup %lu ms] %s\n", (unsigned long)millis(), message);
+}
+
+void printResetReason()
+{
+  Serial.printf("[Startup %lu ms] Boot reason: %s (code %d).\n",
+                (unsigned long)millis(), resetDescription(), (int)esp_reset_reason());
+}
+
+void setup()
+{
+  Serial.begin(115200);
+  // Keep time to open Serial after a manual start; timer wakes measure immediately.
+  if (esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_TIMER)
+    delay(2000);
+  Serial.println("\nODRADE | Environmental monitoring");
+  Serial.println("Starting: measure once, save to SD, attempt upload, then sleep until the next 15-minute cycle.");
+  printResetReason();
+  printStartupStep("Enabling external 3.3 V; allowing sensors to settle.");
+
+  // pinMode(48, OUTPUT);
+  // printStartupStep("Test 0");
+  // digitalWrite(48, 1);
+  // printStartupStep("Test 1");
+  // delay(200);
+  // printStartupStep("Test 2");
+  // digitalWrite(48, 0);
+  // printStartupStep("Test 3");
+  // gpio_hold_dis((gpio_num_t)WALTER_3V3_EN);
+  // #define WALTER_3V3_EN 0 // Active LOW, matching the working INA3221 test.
+
+  // printStartupStep("Test 4");
+  // pinMode(WALTER_3V3_EN, OUTPUT);
+  // printStartupStep("Test 5");
+  // digitalWrite(WALTER_3V3_EN, 0);
+  // printStartupStep("Test 6");
+
+  delay(200); // Retain the power settling time from the working hardware test.
+  printStartupStep("Power settling wait finished; voltage has not been verified.");
+  printResetReason(); // Repeat in case the monitor disconnected during power-up.
+  uint8_t mac[6];
+  esp_read_mac(mac, ESP_MAC_WIFI_STA);
+  char id[13];
+  snprintf(id, sizeof(id), "%02X%02X%02X%02X%02X%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  deviceId = id;
+  Serial.printf("Device: %s\n", id);
+
+  // All chip selects must be high before any device uses the shared bus.
+  for (uint8_t cs : BME_CS)
+  {
+    pinMode(cs, OUTPUT);
+    digitalWrite(cs, HIGH);
+  }
+  pinMode(BMV080_CS, OUTPUT);
+  digitalWrite(BMV080_CS, HIGH);
+  pinMode(SD_CS, OUTPUT);
+  digitalWrite(SD_CS, HIGH);
+  SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
+  printStartupStep("Allowing the SD card to settle before its first initialization attempt.");
+  Serial.flush();
+  delay(SD_STARTUP_DELAY_MS);
+  printStartupStep("Starting SD card initialization.");
+  storageAvailable = beginDataLogger();
+  printStartupStep(storageAvailable ? "SD storage ready." : "SD initialization/recovery failed; continuing sensor checks.");
+  if (!storageAvailable)
+    Serial.println("Storage needs attention: this cycle cannot be saved until the card is working.");
+
+  printStartupStep("Test 4");
+  pinMode(WALTER_3V3_EN, OUTPUT);
+  printStartupStep("Test 5");
+  digitalWrite(WALTER_3V3_EN, 0);
+  printStartupStep("Test 6");
+
+  setupGpsClock();
+  // Get time/location before measuring, so this cycle saves the new fix too.
+  // Mobile platform: the configured zero refresh interval requests a fix every wake.
+  if (GPS_FIX_ENABLED && locationRefreshDue()) {
+    Serial.println("Location: starting GPS before this measurement.");
+    if (setupModem()) {
+      if (!refreshLocationIfDue())
+        Serial.println("Location: radio standby was not confirmed; sensor checks continue, and upload remains blocked while GPS is active.");
+    } else {
+      Serial.println("Location: modem unavailable; this mobile measurement will have no new GPS position.");
+    }
+  } else if (GPS_FIX_ENABLED) {
+    Serial.println("Location: using saved position and GPS-synchronized clock; no new fix needed.");
+  }
+
+  Wire.begin(I2C_SDA, I2C_SCL);
+  Wire.setClock(100000);
+  Serial.println("Checking power sensors and battery...");
+  printStartupStep("Starting power monitor checks.");
+
+  setupPowerSensors();
+  printPowerReadings();
+  setupCharger();
+  printChargerReadings();
+  setupDisplay();
+  Serial.println("Checking air-quality and particle sensors...");
+  currentSample = payloadDoc.to<JsonObject>();
+  currentSample["bID"] = nullptr; // Legacy batch ID is not assigned; queue identity uses device + seq.
+  // Missing readings stay null, including sensors that never call back.
+  for (uint8_t i = 0; i < BME_COUNT; ++i) {
+    String suffix = String(i);
+    for (const char *key : {"iaq_", "iaqAcc_", "co2_", "bvoc_", "pres_", "gasR_", "temp_", "hum_", "com_gas"})
+      currentSample[String(key) + suffix] = nullptr;
+  }
+  printStartupStep("Starting air and particle sensor checks.");
+  setupAirSensors();
+  measurementStartedMs = millis();
+  Serial.println("Measuring: readings appear as each sensor becomes ready.");
+}
 
 void loop()
 {
-
-  deviceSetupStatus = "In Loop...";
-
-  for (sensor = 0; sensor < NUM_OF_SENS; sensor++)
+  if (!cycleFinished)
   {
-    // Serial.print("Running sensor ");
-    // Serial.println(sensor);
-
-    if (!envSensor[sensor].run())
+    readAirSensors();
+    readCharger();
+    bool complete = sensorStepCount == BME_COUNT && hasParticleReading();
+    bool timedOut = millis() - measurementStartedMs >= MEASUREMENT_TIMEOUT_MS;
+    if (!complete && !timedOut)
     {
-      checkBsecStatus(envSensor[sensor]);
-      badSensorCounter++;
-      Serial.printf("Sensor %d failed to run, count: %d\n", sensor, badSensorCounter);
-
-      BMEStatus = String(sensor) + "-Bad";
-      Serial.print("Free heap: ");
-      Serial.println(esp_get_free_heap_size());
+      delay(10);
+      return;
     }
-
-    if (badSensorCounter > 32)
+    // Stop the particle worker cooperatively before SD or modem operations.
+    if (!stopParticleSensor())
     {
-      Serial.println("Too many bad sensors, restarting...");
-      ESP.restart();
+      Serial.println("Waiting: the particle sensor is finishing its current operation.");
+      delay(1000);
+      return;
     }
-  }
-
-  // If buffer full, serialize & clear everything
-  if (sampleCount >= BUFFER_SIZE)
-  {
-    BMEStatus = "full data";
-
-    bool isConnected = lteConnected();
-
-    if (!isConnected)
+    stopAirSensors();
+    currentSample["device"] = deviceId;
+    currentSample["measurementComplete"] = complete;
+    currentSample["measurementDurationMs"] = millis() - measurementStartedMs;
+    addAirSensorHealth(currentSample);
+    JsonArray health = currentSample["bmeHealth"];
+    for (uint8_t i = 0; i < BME_COUNT; ++i)
+      health[i]["readingValid"] = bmeSampleReceived[i];
+    addPowerToPayload(currentSample);
+    stopPowerSensors();
+    addParticlesToPayload(currentSample);
+    addChargerToPayload(currentSample);
+    addLocationMetadata(currentSample);
+    Serial.printf("Measurement: %u of %u air sensors supplied data. Particle reading: %s.\n",
+                  sensorStepCount, BME_COUNT, hasParticleReading() ? "available" : "unavailable");
+    Serial.printf("Timing: sensor collection took %lu ms.\n", (unsigned long)(millis() - measurementStartedMs));
+    if (!complete)
+      Serial.println("Some readings are unavailable; the saved record will identify them.");
+    if (PRINT_PAYLOAD_JSON)
     {
-      Serial.println("Modem not connected, attempting to connect...");
-      if (!lteConnect())
-      {
+      serializeJsonPretty(currentSample, Serial);
+      Serial.println();
+    }
+    if (payloadDoc.overflowed())
+      Serial.println("Measurement: not enough memory to assemble the full record; this reading will not be marked saved.");
+    // A late/slow card gets one final chance, with BME and particle SPI activity stopped.
+    if (!storageAvailable)
+      storageAvailable = retryDataLoggerAfterMeasurements();
+    uint32_t saveStartedMs = millis();
+    bool saved = !payloadDoc.overflowed() && storageAvailable && saveSample(currentSample);
+    Serial.printf("Timing: saving the reading took %lu ms.\n", (unsigned long)(millis() - saveStartedMs));
+    if (!saved)
+      Serial.println("Not saved: storage needs attention. Existing queued readings have not been discarded.");
 
-        Serial.println("Failed to connect to LTE network.");
-        modemStatus = "Failed to reconnect";
-
-        ESP.restart();
-      }
+    // Only start the modem after the current sample is durably stored.
+    if (saved)
+    {
+      if (!httpsEndpointConfigured())
+        Serial.println("Upload paused: the server address is not configured. Readings stay on SD.");
       else
       {
-        modemStatus = "connected";
-      }
-    }
-
-    if (!pmsWakeStatus)
-    {
-      Serial.println("pms is sleep, waking up sensor...");
-      pms.wakeUp();         // Ensure PMS is awake
-      pmsWakeStatus = true; // Set wake status to true
-      Serial.println("pms is awake and waiting for readings...");
-    }
-
-    // if (!sensorMgr.initialize_pm_sensor())
-    // {
-    //   Serial.println("BMV080 initialization failed");
-    // }
-    // else
-    // {
-    //   Serial.println("BMV080 initialized successfully");
-    // }
-
-    for (int i = 0; i < 40; i++)
-    {
-      Serial.print(".");
-      delay(1000);
-    }
-    // Add PMS sensor data
-    Serial.println("Send PM read request...");
-    pms.requestRead();
-    Serial.println("Wait max. 1 second for read...");
-    Serial.println("PMS sensor reading...");
-
-    if (pms.readUntil(pmData))
-    {
-      Serial.print("PM 1.0 (ug/m3): ");
-      Serial.println(pmData.PM_AE_UG_1_0);
-      Serial.print("PM 2.5 (ug/m3): ");
-      Serial.println(pmData.PM_AE_UG_2_5);
-      Serial.print("PM 10.0 (ug/m3): ");
-      Serial.println(pmData.PM_AE_UG_10_0);
-      sensors[0]["pm10"] = pmData.PM_AE_UG_10_0;
-      sensors[0]["pm2_5"] = pmData.PM_AE_UG_2_5;
-      sensors[0]["pm1"] = pmData.PM_AE_UG_1_0;
-    }
-    else
-    {
-      Serial.println("PMS read failed");
-      sensors[0]["pm10"] = -1;
-      sensors[0]["pm2_5"] = -1;
-      sensors[0]["pm1"] = -1;
-    }
-
-    pms.sleep();
-    pmsWakeStatus = false; // Set wake status to true
-
-    // Wait 100 ms
-    // SparkFunBMV080 bmvPMData = sensorMgr.get_pm_data();
-    // if (!bmvPMData.isObstructed() && bmvPMData.PM25())
-    // {
-    //   Serial.println("BMV080 could not fetch data");
-    //   sensors[1]["pm10"] = -1;
-    //   sensors[1]["pm2_5"] = -1;
-    //   sensors[1]["pm1"] = -1;
-    // }
-    // else
-    // {
-    //   Serial.println("BMV080 fetched data successfully");
-
-    //   Serial.println("PMS read failed");
-    //   sensors[1]["pm10"] = bmvPMData.PM10();
-    //   sensors[1]["pm2_5"] = bmvPMData.PM25();
-    //   sensors[1]["pm1"] = bmvPMData.PM1();
-    // }
-
-    Serial.println("=== SENDING BATCH ===");
-    serializeJson(sensors, Serial); // This prints the JSON array to Serial
-    Serial.println();               // This prints a newline after the JSON
-
-    powerData = powerReader.readAllSensors();
-    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-    sensorMgr.printDeviceStatus(
-        deviceSetupStatus,
-        modemStatus,
-        gpsFixStatus,
-        batStatus,
-        solStatus,
-        sd_clock_status,
-        powerSensorStatus,
-        BMEStatus);
-
-    char jsonBuffer[40000];
-
-    serializeJson(sensors, jsonBuffer); // This prints the JSON array to Serial
-
-    Serial.println("serialize json parts...");
-    if (sendSensorData(jsonBuffer))
-    {
-      Serial.println("sending data to cloud...");
-
-      powerData = powerReader.readAllSensors();
-      solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-      batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-      sensorMgr.printDeviceStatus(
-          deviceSetupStatus,
-          modemStatus,
-          gpsFixStatus,
-          batStatus,
-          solStatus,
-          sd_clock_status,
-          powerSensorStatus,
-          BMEStatus);
-    }
-    else
-    {
-      Serial.println("Send failed.");
-      ESP.restart();
-    }
-
-    // TODO: Send payloadDoc via modem or BLE
-
-    // Clear for next round
-    sensors.clear();
-    payloadDoc.clear();
-    sensors = payloadDoc.to<JsonArray>();
-    sampleCount = 0;
-    // Serial.println("disconnecting from LTE...");
-
-    // {
-    Serial.println("entering light sleep for 10 min...");
-
-    modemStatus = "Disconnected";
-    if (lteDisconnect())
-    {
-      powerData = powerReader.readAllSensors();
-      solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-      batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-      sensorMgr.printDeviceStatus(
-          deviceSetupStatus,
-          modemStatus,
-          gpsFixStatus,
-          batStatus,
-          solStatus,
-          sd_clock_status,
-          powerSensorStatus,
-          BMEStatus);
-    }
-    else
-    {
-      ESP.restart();
-    }
-    deviceSetupStatus = "Sleep...";
-    // Reinitialize SPI and I2C
-    powerData = powerReader.readAllSensors();
-    solStatus = String(powerData.solar.busVoltage) + "|" + String(powerData.solar.power_mW);
-    batStatus = String(powerData.battery.busVoltage) + "|" + String(powerData.battery.current_mA);
-    sensorMgr.printDeviceStatus(
-        deviceSetupStatus,
-        modemStatus,
-        gpsFixStatus,
-        batStatus,
-        solStatus,
-        sd_clock_status,
-        powerSensorStatus,
-        BMEStatus);
-
-    modem.sleep(60 * 15); // true = light sleep, sleep for 12 min
-    ESP.restart();
-  }
-
-  // Send data in batches of 4
-}
-
-demo_ret_code log_sensor_data(uint8_t sens_num)
-{
-
-  demo_ret_code ret;
-  bme68x_data *sensor_data[3];
-
-  /* Returns the selected sensor address */
-  bme68x_sensor *sensor = sensorMgr.get_sensor(sens_num);
-
-  /* Retrieves the selected sensor data */
-  ret = sensorMgr.collect_data(sens_num, sensor_data);
-
-  if (ret < EDK_OK)
-  {
-
-    DynamicJsonDocument jsonDoc(8192); // 16 KB on heap
-    JsonObject errorObj = jsonDoc.createNestedObject("errorCode");
-
-    errorObj["sensor_number"] = sens_num;
-    // errorObj["error_code"] = bleController::SENSOR_READ_ERROR;
-
-    // bleCtlr.send_notification(jsonDoc);
-  }
-  else
-  {
-
-    for (const auto data : sensor_data)
-    {
-
-      if (data != nullptr)
-      {
-        bme68x_data raw_data;
-        raw_data.temperature = data->temperature;
-        raw_data.pressure = (data->pressure * 0.01f);
-        raw_data.humidity = data->humidity;
-        raw_data.gas_resistance = data->gas_resistance;
-        raw_data.gas_index = data->gas_index;
-
-        /* sends the sensor raw data via ble */
-        // ble_notify_bme68x_data(raw_data, sens_num);
-        /* Writes the sensor data to the current log file */
-        ret = bme68xDlog.write_sensor_data(&sens_num, &sensor->id, &sensor->mode, data,
-                                           &sensor->scan_cycle_index, label, ret);
-
-        /* Increments scanCycleIndex by one, if cycle completes */
-        if (raw_data.gas_index == sensor->heater_profile.length - 1)
+        // Faulty/missing battery readings are diagnostic data, not an upload veto.
+        Serial.println("Upload: sending readings with their health flags, including any battery faults.");
+        String body, response;
+        uint64_t first = 0, last = 0;
+        int httpStatus = 0;
+        uint32_t uploadStartedMs = millis();
+        bool uploaded = false;
+        if (prepareUpload(deviceId, body, first, last) && setupModem())
         {
-          sensor->scan_cycle_index += 1;
-
-          if (sensor->scan_cycle_index > sensor->heater_profile.nb_repetitions)
-          {
-            sensor->scan_cycle_index = 1;
-          }
+          if (sendStoredPayload(body, httpStatus, response))
+            uploaded = acknowledgeUpload(deviceId, first, last, httpStatus, response);
         }
+        Serial.printf("Timing: upload attempt took %lu ms.\n", (unsigned long)(millis() - uploadStartedMs));
+        if (!uploaded)
+          Serial.println("Upload incomplete: readings stay on SD. Trying again next measurement cycle.");
       }
     }
+    cycleFinished = true;
   }
-  return ret;
+  finishAndSleep();
 }
 
-bme68x_data bsecCallBack(uint8_t sens_num)
+void finishAndSleep()
 {
-  demo_ret_code ret;
-  bme68x_data *sensor_data[3];
-  bme68x_data raw_data = {}; // Initialize to prevent undefined behavior
-
-  /* Returns the selected sensor address */
-  bme68x_sensor *sensor = sensorMgr.get_sensor(sens_num);
-
-  /* Retrieves the selected sensor data */
-  ret = sensorMgr.collect_data(sens_num, sensor_data);
-
-  if (ret < EDK_OK)
+  if (!devicesStopped)
   {
-    DynamicJsonDocument jsonDoc(1024);
-    JsonObject errorObj = jsonDoc.createNestedObject("errorCode");
-
-    errorObj["sensor_number"] = sens_num;
-    // errorObj["error_code"] = bleController::SENSOR_READ_ERROR;
-
-    // bleCtlr.send_notification(jsonDoc);
-  }
-  else
-  {
-    for (const auto data : sensor_data)
+    if (!stopChargerTelemetry())
     {
-      if (data != nullptr)
-      {
-
-        raw_data.temperature = data->temperature;
-        raw_data.pressure = (data->pressure * 0.01f);
-        raw_data.humidity = data->humidity;
-        raw_data.gas_resistance = data->gas_resistance;
-        raw_data.gas_index = data->gas_index;
-
-        /* sends the sensor raw data via ble */
-        // ble_notify_bme68x_data(raw_data, sens_num);
-        /* Writes the sensor data to the current log file */
-        ret = bme68xDlog.write_sensor_data(&sens_num, &sensor->id, &sensor->mode, data,
-                                           &sensor->scan_cycle_index, label, ret);
-
-        /* Increments scanCycleIndex by one, if cycle completes */
-        if (raw_data.gas_index == sensor->heater_profile.length - 1)
-        {
-          sensor->scan_cycle_index += 1;
-
-          if (sensor->scan_cycle_index > sensor->heater_profile.nb_repetitions)
-          {
-            sensor->scan_cycle_index = 1;
-          }
-        }
-      }
+      Serial.println("Waiting: battery monitor has not confirmed standby. Sleep postponed.");
+      delay(5000);
+      return;
     }
+    stopDisplay();
+    closeDataLogger();
+    SPI.end();
+    Wire.end();
+    // Prevent signal pins from feeding the switched-off sensor supply.
+    for (uint8_t cs : BME_CS)
+      pinMode(cs, INPUT);
+    for (uint8_t pin : {BMV080_CS, SD_CS, SPI_SCK, SPI_MISO, SPI_MOSI, I2C_SDA, I2C_SCL})
+      pinMode(pin, INPUT);
+    digitalWrite(WALTER_3V3_EN, HIGH);
+    gpio_hold_en((gpio_num_t)WALTER_3V3_EN);
+    gpio_deep_sleep_hold_en();
+    devicesStopped = true;
   }
-  Serial.print("Raw data temp: ");
-  Serial.println(raw_data.temperature);
-  Serial.print("Raw data %Rh: ");
-  Serial.println(raw_data.humidity);
-  Serial.print("Raw data press: ");
-  Serial.println(raw_data.pressure);
-  Serial.print("Raw data gass: ");
-  Serial.println(raw_data.gas_resistance);
-  return raw_data; // Now returns raw_data correctly
-}
-
-void newDataCallback(const bme68xData data, const bsecOutputs outputs, Bsec2 bsec)
-{
-  if (!outputs.nOutputs)
+  if (!shutdownModem())
+  {
+    Serial.println("Sleep postponed: the cellular radio has not confirmed standby. Checking again in five seconds.");
+    delay(5000);
     return;
-
-  // On first sensor of a new time-slice, create a fresh object in the array
-  if (sensorStepCount == 0)
-  {
-    currentSampleObj = sensors.createNestedObject();
   }
-  deviceSetupStatus = "Data...";
-  // Temporary JsonObject to collect BSEC outputs
-  DynamicJsonDocument tempDoc(4096); // 4 KB on heap
-  JsonObject tempObj = tempDoc.to<JsonObject>();
+  uint64_t intervalMs = uint64_t(WAKE_INTERVAL_SECONDS) * 1000;
+  uint64_t sleepMs = millis() < intervalMs ? intervalMs - millis() : 1000;
+  Serial.printf("Timing: total awake time %lu ms.\n", (unsigned long)millis());
+  Serial.printf("Sleeping: SD card closed, sensors off, and cellular radio in standby. Next measurement in %llu seconds.\n", sleepMs / 1000);
+  Serial.flush();
+  esp_sleep_enable_timer_wakeup(sleepMs * 1000);
+  esp_deep_sleep_start();
+}
 
-  uint8_t runInStatus = -1;
-
-  // Collect BSEC outputs in tempObj
-  for (uint8_t i = 0; i < outputs.nOutputs; i++)
+void newBsecData(const bme68xData data, const bsecOutputs outputs, Bsec2 sensor)
+{
+  (void)sensor;
+  if (currentBmeSensor >= BME_COUNT || !outputs.nOutputs || bmeSampleReceived[currentBmeSensor])
+    return;
+  String suffix = String(currentBmeSensor);
+  bool temperature = false, humidity = false, iaq = false, co2 = false, voc = false;
+  for (uint8_t i = 0; i < outputs.nOutputs; ++i)
   {
     const bsecData &o = outputs.output[i];
-    String sensorIdx = String(sensorStepCount);
     switch (o.sensor_id)
     {
     case BSEC_OUTPUT_IAQ:
-      tempObj[String("iaq_") + sensorIdx] = o.signal;
-      tempObj[String("iaqAcc_") + sensorIdx] = o.accuracy;
+      currentSample["iaq_" + suffix] = o.signal;
+      currentSample["iaqAcc_" + suffix] = o.accuracy;
+      iaq = true;
       break;
     case BSEC_OUTPUT_RAW_TEMPERATURE:
-      tempObj[String("temp_") + sensorIdx] = o.signal;
-      break;
-    case BSEC_OUTPUT_RAW_PRESSURE:
-      if (sensorStepCount == 0)
-        tempObj[String("pres_") + sensorIdx] = o.signal;
+      currentSample["temp_" + suffix] = o.signal;
+      temperature = true;
       break;
     case BSEC_OUTPUT_RAW_HUMIDITY:
-      tempObj[String("hum_") + sensorIdx] = o.signal;
-      break;
-    case BSEC_OUTPUT_RAW_GAS:
-      tempObj[String("gasR_") + sensorIdx] = o.signal;
+      currentSample["hum_" + suffix] = o.signal;
+      humidity = true;
       break;
     case BSEC_OUTPUT_CO2_EQUIVALENT:
-      tempObj[String("co2_") + sensorIdx] = o.signal;
+      currentSample["co2_" + suffix] = o.signal;
+      co2 = true;
       break;
     case BSEC_OUTPUT_BREATH_VOC_EQUIVALENT:
-      tempObj[String("bvoc_") + sensorIdx] = o.signal;
-      break;
-    case BSEC_OUTPUT_COMPENSATED_GAS:
-      tempObj[String("com_gas") + sensorIdx] = o.signal;
+      currentSample["bvoc_" + suffix] = o.signal;
+      voc = true;
       break;
     default:
       break;
     }
-    if (o.sensor_id == BSEC_OUTPUT_RUN_IN_STATUS)
-      runInStatus = o.signal;
   }
-
-  // If runInStatus != 1, add collected data to currentSampleObj
-  if (runInStatus != 1)
-  {
-    badSensorCounter = 0;
-    // Copy tempObj to currentSampleObj
-    for (JsonPair kv : tempObj)
-    {
-      currentSampleObj[kv.key()] = kv.value();
-    }
-
-    // Add power data
-    Serial.println("Configuring communication for INA219...");
-    Serial.println("Reading battery and solar sensors...");
-    powerData = powerReader.readAllSensors();
-    currentSampleObj["batV"] = powerData.battery.busVoltage;
-    currentSampleObj["batSV"] = powerData.battery.shuntVoltage;
-    currentSampleObj["batC"] = powerData.battery.current_mA;
-    currentSampleObj["batP"] = powerData.battery.power_mW;
-    currentSampleObj["solV"] = powerData.solar.busVoltage;
-    currentSampleObj["solSV"] = powerData.solar.shuntVoltage;
-    currentSampleObj["solC"] = powerData.solar.power_mW;
-    currentSampleObj["solP"] = powerData.solar.power_mW;
-
-    // Add metadata
-    uint8_t mac[6];
-    esp_read_mac(mac, ESP_MAC_WIFI_STA);
-    char deviceId[13];
-    snprintf(deviceId, sizeof(deviceId), "%02X%02X%02X%02X%02X%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-    currentSampleObj["device"] = deviceId;
-    DateTime now = utils::get_rtc().now();
-    unsigned long ms = millis() % 1000; // current millis within this second
-
-    // Format timestamp with milliseconds: "YYYY-MM-DDTHH:MM:SS.mmmZ"
-    char isoTimestamp[25]; // 24 chars + null terminator
-    snprintf(isoTimestamp, sizeof(isoTimestamp),
-             "%04d-%02d-%02dT%02d:%02d:%02d.%03luZ",
-             now.year(), now.month(), now.day(),
-             now.hour(), now.minute(), now.second(),
-             ms);
-
-    // Print the timestamp to Serial
-    Serial.print("Payload UTC time: ");
-    Serial.println(isoTimestamp);
-
-    // Assign to JSON object
-    currentSampleObj["ts"] = isoTimestamp;
-    char wkt[50];
-    snprintf(wkt, sizeof(wkt), "POINT(%f %f)", savedLongitude, savedLatitude);
-    currentSampleObj["loc"] = wkt;
-    currentSampleObj["alt"] = savedAltitude;
-    currentSampleObj["satCnt"] = savedSatCount;
-    currentSampleObj["bID"] = sampleCount;
-
-    sensorStepCount++;
-    Serial.print("Sensor count: ");
-    Serial.println(sensorStepCount);
-    Serial.print("Sample count: ");
-    Serial.println(sampleCount);
+  if (!(temperature && humidity && iaq && co2 && voc))
+    return;
+  // Raw measurements already supplied by Bosch; no BSEC subscription changes.
+  if (data.status & BME68X_NEW_DATA_MSK) {
+    currentSample["pres_" + suffix] = data.pressure / 100.0f; // Pa to hPa
+    if ((data.status & (BME68X_GASM_VALID_MSK | BME68X_HEAT_STAB_MSK)) ==
+        (BME68X_GASM_VALID_MSK | BME68X_HEAT_STAB_MSK))
+      currentSample["gasR_" + suffix] = data.gas_resistance; // ohms
   }
-
-  // Once all sensors for this time-slice are processed
-  if (sensorStepCount >= NUM_SENSORS)
-  {
-    sampleCount++;
-    sensorStepCount = 0; // Reset for next sample
-  }
-}
-demo_ret_code configure_sensor_logging(const String &bme_config_file)
-{
-  demo_ret_code ret = sensorMgr.begin(bme_config_file);
-
-  if (ret >= EDK_OK)
-  {
-    ret = bme68xDlog.begin(bme_config_file);
-  }
-  return ret;
-}
-
-demo_ret_code config_file_read(const String &config_file)
-{
-  demo_ret_code ret;
-  static bool first_time = true;
-  DynamicJsonDocument jsonDoc(1024);
-
-  while ((ret = utils::read_file(config_file, FILE_DATA_READ_SIZE, config_file_data)) == EDK_OK)
-  {
-    if (first_time)
-    {
-      if (config_file == BME68X_LABEL_INFO_FILE_EXT)
-      {
-        // jsonDoc["getlabelinfo"] = bleController::CMD_VALID;
-      }
-      else
-      {
-        // jsonDoc["readconfig"] = bleController::CMD_VALID;
-      }
-      first_time = false;
-    }
-
-    jsonDoc.clear();               // Clear any existing data
-    jsonDoc.add(config_file_data); // Add the new data (make sure it's in the right format)
-
-    // bleCtlr.send_notification(jsonDoc);  // Send the JSON document (uncomment to use)
-  }
-  first_time = true;
-  return ret;
-}
-
-void read_sys_time()
-{
-  Serial.println("trying to read time...");
-  while (Serial.available())
-  {
-    String rx_msg;
-
-    rx_msg = Serial.readStringUntil('\n');
-    received_sys_time = rx_msg.toInt();
-
-    utils::get_rtc().adjust(DateTime(received_sys_time));
-  }
-
-  Serial.println("read time...");
-  return;
-}
-
-// void disableWifiAndBluetooth()
-// {
-//   esp_wifi_stop();
-//   esp_bt_controller_disable();
-// }
-
-void configureUltraLowPowerModem()
-{
-  // Enable Power Saving Mode (PSM)
-  // T3412 = "00100001" (1 hour TAU), T3324 = "00000101" (10s active time)
-  // 30s TAU, 10s Active time
-  modem.configPSM(WALTER_MODEM_PSM_ENABLE, "00011110", "00000101");
-}
-
-void checkBsecStatus(Bsec2 bsec)
-{
-  if (bsec.status < BSEC_OK)
-  {
-    Serial.println("BSEC error code : " + String(bsec.status));
-    // errLeds(); /* Halt in case of failure */
-  }
-  else if (bsec.status > BSEC_OK)
-  {
-    Serial.println("BSEC warning code : " + String(bsec.status));
-  }
-
-  if (bsec.sensor.status < BME68X_OK)
-  {
-    Serial.println("BME68X error code : " + String(bsec.sensor.status));
-    // errLeds(); /* Halt in case of failure */
-  }
-  else if (bsec.sensor.status > BME68X_OK)
-  {
-    Serial.println("BME68X warning code : " + String(bsec.sensor.status));
-  }
+  // com_gas remains null: its legacy meaning/calculation is not known.
+  bmeSampleReceived[currentBmeSensor] = true;
+  sensorStepCount++;
+  Serial.printf("Air sensor %u: %.1f C, %.1f %% humidity, air-quality index %.1f (accuracy %u/3).\n",
+                currentBmeSensor + 1, currentSample["temp_" + suffix].as<float>(), currentSample["hum_" + suffix].as<float>(),
+                currentSample["iaq_" + suffix].as<float>(), currentSample["iaqAcc_" + suffix].as<unsigned>());
 }
