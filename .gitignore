@@ -21,3 +21,7 @@
 /devttyusbmodem101_2025_06_21.16.28.32.860.txt
 /devttyusbmodem101_2025_06_21.16.42.34.441.txt
 /devttyusbmodem101_2025_06_21.16.49.48.849.txt
+
+# Output from the direct Arduino build/upload task.
+/build/direct-upload/
+/tools/__pycache__/

@@ -1,0 +1,378 @@
+[
+  {
+    "name": "usbcV",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "usbc: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "usbcC",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "usbc: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "usbcP",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "usbc: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v12V",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v12: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v12C",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v12: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v12P",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v12: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v5V",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v5: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v5C",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v5: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v5P",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v5: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v3_3V",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v3_3: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v3_3C",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v3_3: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "v3_3P",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "v3_3: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "extV",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "ext: volts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "extC",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "ext: milliamps; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "extP",
+    "type": "FLOAT",
+    "mode": "NULLABLE",
+    "description": "ext: milliwatts; battery values come from BQ25798, other rails from INA3221"
+  },
+  {
+    "name": "epoch",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Measurement Unix timestamp, seconds"
+  },
+  {
+    "name": "timestampValid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Whether measurement time is valid"
+  },
+  {
+    "name": "timestampSource",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Source of device clock"
+  },
+  {
+    "name": "locationValid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Whether a stored GNSS fix is available"
+  },
+  {
+    "name": "locationFresh",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Whether location meets refresh policy"
+  },
+  {
+    "name": "locationFixEpoch",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Unix seconds of last valid fix"
+  },
+  {
+    "name": "locationAgeSeconds",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Age of last fix at measurement"
+  },
+  {
+    "name": "measurementComplete",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "All eight BME readings and particle reading received"
+  },
+  {
+    "name": "measurementDurationMs",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Sensor collection duration, milliseconds"
+  },
+  {
+    "name": "particleAvailable",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "particleValid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "pmObs",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "pmOor",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "chargerValid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "batteryReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ina40Valid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ina41Valid",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "particleState",
+    "type": "STRING",
+    "mode": "NULLABLE",
+    "description": "Particle driver status text"
+  },
+  {
+    "name": "particleAgeMs",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Age of particle reading, milliseconds"
+  },
+  {
+    "name": "solReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "usbcReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "v12ReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "v5ReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "v3_3ReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "extReadingSuspect",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE",
+    "description": "Reading missing or outside expected range"
+  },
+  {
+    "name": "ina40Flags",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Raw diagnostic/status flags; null when unavailable"
+  },
+  {
+    "name": "ina41Flags",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Raw diagnostic/status flags; null when unavailable"
+  },
+  {
+    "name": "bmsVreg",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Charge voltage setting, mV"
+  },
+  {
+    "name": "bmsIchg",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Charge current setting, mA"
+  },
+  {
+    "name": "batMv",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Battery voltage, mV"
+  },
+  {
+    "name": "sysMv",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "System voltage, mV"
+  },
+  {
+    "name": "ibatMa",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Signed battery current, mA"
+  },
+  {
+    "name": "chgState",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Raw diagnostic/status flags; null when unavailable"
+  },
+  {
+    "name": "bmsF0",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Raw diagnostic/status flags; null when unavailable"
+  },
+  {
+    "name": "bmsF1",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Raw diagnostic/status flags; null when unavailable"
+  },
+  {
+    "name": "bmeHealth",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      {
+        "name": "index",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "cs",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "initialized",
+        "type": "BOOLEAN",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "subscriptionStatus",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "configurationMatched",
+        "type": "BOOLEAN",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "bsecStatus",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "sensorStatus",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+      },
+      {
+        "name": "readingValid",
+        "type": "BOOLEAN",
+        "mode": "NULLABLE"
+      }
+    ],
+    "description": "One health entry per BME sensor, index 0-7"
+  },
+  {
+    "name": "seq",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Record sequence ID; unique with device"
+  },
+  {
+    "name": "day",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "Record day: Unix days; zero means unknown date"
+  },
+  {
+    "name": "crc32",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "SD record integrity checksum"
+  },
+  {
+    "name": "uploadVersion",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "From batch.version"
+  },
+  {
+    "name": "uploadFirstSeq",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "From batch.firstSeq"
+  },
+  {
+    "name": "uploadLastSeq",
+    "type": "INTEGER",
+    "mode": "NULLABLE",
+    "description": "From batch.lastSeq"
+  }
+]

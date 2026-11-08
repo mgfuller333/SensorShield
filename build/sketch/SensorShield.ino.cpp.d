@@ -1,5 +1,5 @@
-/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp.o: \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/SensorShield.ino.cpp \
+/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/SensorShield.ino.cpp.o: \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/SensorShield.ino.cpp \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/Arduino.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/esp_arduino_version.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/freertos/FreeRTOS-Kernel/include/freertos/FreeRTOS.h \
@@ -153,14 +153,30 @@
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_hw_support/include/hal/cpu_hal.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_hw_support/include/hal/cpu_ll.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/freertos_stats.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/AirSensors.h \
+ /Users/morganfuller/Documents/Arduino/libraries/ArduinoJson/src/ArduinoJson.h \
+ /Users/morganfuller/Documents/Arduino/libraries/ArduinoJson/src/ArduinoJson.hpp \
+ /Users/morganfuller/Documents/Arduino/libraries/ArduinoJson/src/ArduinoJson/Configuration.hpp \
+ /Users/morganfuller/Documents/Arduino/libraries/bsec2/src/bsec2.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/libraries/Wire/src/Wire.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/esp32-hal.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/esp32-hal-log.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/HardwareI2C.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/libraries/SPI/src/SPI.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/esp32-hal-spi.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/cellularHelper.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_hw_support/include/esp_mac.h \
+ /Users/morganfuller/Documents/Arduino/libraries/BME68x_Sensor_library/src/bme68xLibrary.h \
+ /Users/morganfuller/Documents/Arduino/libraries/BME68x_Sensor_library/src/bme68x/bme68x.h \
+ /Users/morganfuller/Documents/Arduino/libraries/BME68x_Sensor_library/src/bme68x/bme68x_defs.h \
+ /Users/morganfuller/Documents/Arduino/libraries/bsec2/src/inc/bsec_datatypes.h \
+ /Users/morganfuller/Documents/Arduino/libraries/bsec2/src/inc/bsec_interface_multi.h \
+ /Users/morganfuller/Documents/Arduino/libraries/bsec2/src/inc/bsec_datatypes.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/Charger.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/DataLogger.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/Display.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/sketch_types.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/GpsClock.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/LoggerConfig.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/Modem.h \
  /Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/WalterModem.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/vfs/include/esp_vfs.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/newlib/platform_include/sys/termios.h \
@@ -179,102 +195,7 @@
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/spi_flash/include/spi_flash_mmap.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/spi_flash/include/esp_spi_flash_counters.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_driver_uart/include/driver/uart.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/gpsHelper.h \
- /Users/morganfuller/Documents/Arduino/libraries/bsec2/src/bsec2.h \
- /Users/morganfuller/Documents/Arduino/libraries/BME68x_Sensor_library/src/bme68xLibrary.h \
- /Users/morganfuller/Documents/Arduino/libraries/BME68x_Sensor_library/src/bme68x/bme68x.h \
- /Users/morganfuller/Documents/Arduino/libraries/BME68x_Sensor_library/src/bme68x/bme68x_defs.h \
- /Users/morganfuller/Documents/Arduino/libraries/bsec2/src/inc/bsec_datatypes.h \
- /Users/morganfuller/Documents/Arduino/libraries/bsec2/src/inc/bsec_interface_multi.h \
- /Users/morganfuller/Documents/Arduino/libraries/bsec2/src/inc/bsec_datatypes.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/bme68x_datalogger.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdFat.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/common/SysCall.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/common/../SdFatConfig.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/SdCard.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/SdioCard.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/../common/SysCall.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/SdCardInterface.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/../common/FsBlockDeviceInterface.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/SdCardInfo.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/SdSpiCard.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/../SpiDriver/SdSpiDriver.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/../SpiDriver/../common/SysCall.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/../SpiDriver/SdSpiArduinoDriver.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatLib.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatVolume.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatFile.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/FsDateTime.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/CompileDateTime.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/SysCall.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/FsApiConstants.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/FmtNumber.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/FsName.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatPartition.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/SysCall.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/FsBlockDevice.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/SdCard/SdCard.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/FsCache.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/FsBlockDevice.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/FsStructs.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/../common/ArduinoFiles.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatFormatter.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatLib.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatVolume.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatFile.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/../common/FmtNumber.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/../common/FsApiConstants.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/../common/FsDateTime.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/../common/FsName.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatPartition.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/../common/SysCall.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/../common/FsBlockDevice.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/../common/FsCache.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/../common/FsStructs.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/../common/ArduinoFiles.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatFormatter.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FsLib/FsLib.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FsLib/FsVolume.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FsLib/FsNew.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FsLib/../FatLib/FatLib.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FsLib/../ExFatLib/ExFatLib.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FsLib/FsFile.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FatLib/FatLib.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/ExFatLib/ExFatLib.h \
- /Users/morganfuller/Documents/Arduino/libraries/SdFat/src/FsLib/FsFormatter.h \
- /Users/morganfuller/Documents/Arduino/libraries/RTClib/src/RTClib.h \
- /Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_I2CDevice.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/base64.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/utils.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/demo_app.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/label_provider.h \
- /Users/morganfuller/Documents/Arduino/libraries/ArduinoJson/src/ArduinoJson.h \
- /Users/morganfuller/Documents/Arduino/libraries/ArduinoJson/src/ArduinoJson.hpp \
- /Users/morganfuller/Documents/Arduino/libraries/ArduinoJson/src/ArduinoJson/Configuration.hpp \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/bsec_datalogger.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/led_controller.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/batteryHelper.h \
- /Users/morganfuller/Documents/Arduino/libraries/Adafruit_INA219/Adafruit_INA219.h \
- /Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_BusIO_Register.h \
- /Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_GenericDevice.h \
- /Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_SPIDevice.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/sensor_manager.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/commMux.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/sketch/commMux.h \
- /Users/morganfuller/Documents/Arduino/libraries/Adafruit_LTR329_and_LTR303/Adafruit_LTR329_LTR303.h \
- /Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_I2CRegister.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/hardware/esp32/3.1.3/cores/esp32/HardwareSerial.h \
- /Users/morganfuller/Documents/Arduino/libraries/Adafruit_MPL3115A2_Library/Adafruit_MPL3115A2.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_wifi/include/esp_wifi.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_wifi/include/esp_wifi_types.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_wifi/include/esp_wifi_types_generic.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_hw_support/include/esp_interface.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_wifi/include/local/esp_wifi_types_native.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_wifi/include/esp_wifi_types_generic.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_wifi/include/esp_wifi_crypto_types.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_wifi/include/esp_wifi_default.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_netif/include/esp_netif.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_netif/include/esp_netif_ip_addr.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_netif/include/esp_netif_types.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_netif/include/esp_netif_defaults.h \
- /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/bt/include/esp32c3/include/esp_bt.h
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/ParticleSensor.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/PowerSensors.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/board_pins.h \
+ /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_hw_support/include/esp_mac.h

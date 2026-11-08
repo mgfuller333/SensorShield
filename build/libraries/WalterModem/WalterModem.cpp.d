@@ -1,4 +1,4 @@
-/Users/morganfuller/Documents/Sireen/Sharingan/ConnectivityTest/SensorShield/build/libraries/WalterModem/WalterModem.cpp.o: \
+/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/libraries/WalterModem/WalterModem.cpp.o: \
  /Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/WalterModem.cpp \
  /Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/WalterDefines.h \
  /Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/WalterModem.h \
@@ -171,6 +171,8 @@
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/spi_flash/include/spi_flash_mmap.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/spi_flash/include/esp_spi_flash_counters.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_driver_uart/include/driver/uart.h \
+ /Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/WalterBlueCherry.h \
+ /Users/morganfuller/Documents/Arduino/libraries/WalterModem/src/WalterModem.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/app_update/include/esp_ota_ops.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_app_format/include/esp_app_desc.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_bootloader_format/include/esp_bootloader_desc.h \
