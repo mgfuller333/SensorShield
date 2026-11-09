@@ -17,5 +17,6 @@ const uint8_t BME_CS[BME_COUNT] = {4, 6, 7, 15, 16, 17, 18, 8};
 
 const uint8_t BMV080_CS = 1;
 const uint8_t SD_CS = 38; // uSD_CS in the supplied Walter/socket schematics.
+const uint8_t BQ_CE_PIN = 10; // BQ25798 /CE: LOW permits charging.
 
 #endif // BOARD_PINS_H

@@ -69,11 +69,14 @@ void printResetReason()
 
 void setup()
 {
+  // Keep /CE LOW before Serial delays, SD initialization, or a long GPS search.
+  bool chargePinHeld = holdChargerEnableLow();
   Serial.begin(115200);
   // Keep time to open Serial after a manual start; timer wakes measure immediately.
   if (esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_TIMER)
     delay(2000);
   Serial.println("\nODRADE | Environmental monitoring");
+  if (!chargePinHeld) Serial.println("Charger: could not hold /CE LOW; checking again during charger setup.");
   Serial.println("Starting: measure once, save to SD, attempt upload, then sleep until the next 15-minute cycle.");
   printResetReason();
   printStartupStep("Enabling external 3.3 V; allowing sensors to settle.");
@@ -131,6 +134,10 @@ void setup()
   digitalWrite(WALTER_3V3_EN, 0);
   printStartupStep("Test 6");
 
+  Wire.begin(I2C_SDA, I2C_SCL);
+  Wire.setClock(100000);
+  setupCharger(); // Apply battery settings before waiting for GPS.
+
   setupGpsClock();
   // Get time/location before measuring, so this cycle saves the new fix too.
   // Mobile platform: the configured zero refresh interval requests a fix every wake.
@@ -146,14 +153,12 @@ void setup()
     Serial.println("Location: using saved position and GPS-synchronized clock; no new fix needed.");
   }
 
-  Wire.begin(I2C_SDA, I2C_SCL);
-  Wire.setClock(100000);
   Serial.println("Checking power sensors and battery...");
   printStartupStep("Starting power monitor checks.");
 
   setupPowerSensors();
   printPowerReadings();
-  setupCharger();
+  readCharger();
   printChargerReadings();
   setupDisplay();
   Serial.println("Checking air-quality and particle sensors...");
@@ -260,7 +265,7 @@ void finishAndSleep()
   {
     if (!stopChargerTelemetry())
     {
-      Serial.println("Waiting: battery monitor has not confirmed standby. Sleep postponed.");
+      Serial.println("Waiting: charger ADC shutdown or /CE hold failed. Sleep postponed.");
       delay(5000);
       return;
     }

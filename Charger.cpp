@@ -1,17 +1,21 @@
 #include "Charger.h"
 #include "sketch_types.h"
+#include "board_pins.h"
 
 bool configureCharger();
 void readChargerTelemetry();
 
-// Follows test_bq25798, with this board's existing 2-cell charger settings.
+// Follows the supplied working Sriko 33140 2S / Adafruit example.
 // Raw ADC/status reads are retained because the installed library lacks these helpers.
 #include <Adafruit_BQ25798.h>
 #include <Wire.h>
+#include <driver/gpio.h>
+#include <cmath>
 
-const float CHARGE_VOLTAGE = 8.1f;
-const float CHARGE_CURRENT = 1.0f;
-const float MIN_SYSTEM_VOLTAGE = 7.0f;
+const float CHARGE_VOLTAGE = 7.90f;
+const float CHARGE_CURRENT = 2.00f;
+const float INPUT_CURRENT = 2.00f;
+const float MIN_SYSTEM_VOLTAGE = 5.00f;
 const uint32_t POLL_INTERVAL_MS = 5000;
 
 Adafruit_BQ25798 charger;
@@ -20,8 +24,22 @@ bool chargerReady = false;
 bool chargerTelemetryValid = false;
 uint32_t lastChargerReadMs = 0;
 
+bool holdChargerEnableLow() {
+  // Configure the wake-up output BEFORE releasing the previous hold, so /CE
+  // stays LOW. Open-drain only sinks current; it never drives this net HIGH.
+  pinMode(BQ_CE_PIN, OUTPUT_OPEN_DRAIN);
+  digitalWrite(BQ_CE_PIN, LOW);
+  if (gpio_hold_dis((gpio_num_t)BQ_CE_PIN) != ESP_OK) return false;
+  if (gpio_hold_en((gpio_num_t)BQ_CE_PIN) != ESP_OK) return false;
+  gpio_deep_sleep_hold_en();
+  return true;
+  // This hold does not survive power loss or fix the PCB's REGN pull-up voltage.
+}
+
 bool setupCharger() {
-  chargerReady = charger.begin(BQ25798_DEFAULT_ADDR, &Wire) && configureCharger();
+  // begin() resets the charger; call it once per wake, then apply all settings.
+  chargerReady = holdChargerEnableLow() &&
+                 charger.begin(BQ25798_DEFAULT_ADDR, &Wire) && configureCharger();
   readChargerTelemetry();
 
   Serial.print("Battery monitor: ");
@@ -117,23 +135,59 @@ uint16_t readChargerRegister16(uint8_t reg) {
 }
 
 bool configureCharger() {
-  // Keep the board's existing battery settings. Stop if any write fails.
-  if (!charger.setCellCount(BQ25798_CELL_COUNT_2S))
+  // Match the working example: pause charging, configure, verify, then enable.
+  if (!charger.setChargeEnable(false) || charger.getChargeEnable()) {
+    Serial.println("Charger: could not pause charging for configuration.");
     return false;
-  if (!charger.setChargeLimitV(CHARGE_VOLTAGE))
+  }
+  bool ok = true;
+  ok &= charger.setWDT(BQ25798_WDT_DISABLE); // No host servicing needed in sleep.
+  ok &= charger.setCellCount(BQ25798_CELL_COUNT_2S);
+  ok &= charger.setMinSystemV(MIN_SYSTEM_VOLTAGE);
+  ok &= charger.setChargeLimitV(CHARGE_VOLTAGE);
+  ok &= charger.setChargeLimitA(CHARGE_CURRENT);
+  ok &= charger.setInputLimitA(INPUT_CURRENT);
+  ok &= charger.setPrechargeLimitA(2.0f);
+  ok &= charger.setTerminationA(0.48f);
+  ok &= charger.setTerminationEnable(true);
+  ok &= charger.setTrickleChargeTimerEnable(true);
+  ok &= charger.setPrechargeTimerEnable(true);
+  ok &= charger.setFastChargeTimerEnable(true);
+  ok &= charger.setOTGenable(false);
+  ok &= charger.setIINDPMenable(true);
+  ok &= charger.setHIZMode(false);
+  ok &= charger.setVINDPM_VOCpercent(BQ25798_VOC_PCT_87_5);
+  ok &= charger.setVOCrate(BQ25798_VOC_RATE_2MIN);
+  ok &= charger.setVOCdelay(BQ25798_VOC_DLY_300MS);
+  // Preserve the working example's USB/low-battery mode. Solar input can charge
+  // without MPPT; do not enable a different solar algorithm without testing it.
+  ok &= charger.setMPPTenable(false);
+  uint8_t adc = 0;
+  if (readChargerRegisters(BQ25798_REG_ADC_CONTROL, &adc, 1))
+    ok &= writeChargerRegister(BQ25798_REG_ADC_CONTROL, (adc | 0x80) & ~0x40);
+  else
+    ok = false;
+
+  ok &= charger.getCellCount() == BQ25798_CELL_COUNT_2S;
+  ok &= fabsf(charger.getChargeLimitV() - CHARGE_VOLTAGE) < 0.03f;
+  ok &= fabsf(charger.getChargeLimitA() - CHARGE_CURRENT) < 0.03f;
+  ok &= fabsf(charger.getInputLimitA() - INPUT_CURRENT) < 0.06f;
+  ok &= fabsf(charger.getMinSystemV() - MIN_SYSTEM_VOLTAGE) < 0.03f;
+  ok &= charger.getWDT() == BQ25798_WDT_DISABLE;
+  if (!ok) {
+    charger.setChargeEnable(false);
+    Serial.println("Charger: configuration check failed; charging has not been enabled.");
     return false;
-  if (!charger.setChargeLimitA(CHARGE_CURRENT))
+  }
+  if (!charger.setChargeEnable(true) || !charger.getChargeEnable()) {
+    charger.setChargeEnable(false);
+    Serial.println("Charger: could not confirm charging enabled.");
     return false;
-  if (!charger.setMinSystemV(MIN_SYSTEM_VOLTAGE))
-    return false;
-  if (!charger.setWDT(BQ25798_WDT_DISABLE))
-    return false;
-  if (!charger.setHIZMode(false))
-    return false;
-  if (!charger.setChargeEnable(true))
-    return false;
-  // Existing ADC control value: enable conversions for telemetry.
-  return writeChargerRegister(BQ25798_REG_ADC_CONTROL, 0xB0);
+  }
+  Serial.println("Charger: 2 cells, 7.90 V target, 2.00 A charge/input limits, 5.00 V minimum system voltage.");
+  Serial.println("Charging enabled: GPIO10 /CE held LOW, including during deep sleep. Watchdog disabled; protection timers enabled.");
+  Serial.println("Solar: MPPT remains off, matching the working USB/low-battery example.");
+  return true;
 }
 
 void readChargerTelemetry() {
@@ -167,6 +221,10 @@ bool batteryAllowsUpload(uint16_t minimumMv) {
          chargerData.batteryMv <= 9000 && !chargerData.fault0 && !chargerData.fault1;
 }
 bool stopChargerTelemetry() {
-  // Charging stays enabled; only the telemetry ADC is stopped for sleep.
-  return !chargerReady || writeChargerRegister(BQ25798_REG_ADC_CONTROL, 0x00);
+  // Keep the charger running independently of the sleeping ESP32. Stop only ADC.
+  if (!holdChargerEnableLow()) return false;
+  if (!chargerReady) return true;
+  uint8_t adc = 0;
+  return readChargerRegisters(BQ25798_REG_ADC_CONTROL, &adc, 1) &&
+         writeChargerRegister(BQ25798_REG_ADC_CONTROL, adc & ~0x80);
 }
