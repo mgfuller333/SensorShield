@@ -10,6 +10,9 @@
 // bookkeeping live in LogStorage.cpp so the normal flow stays easy to follow.
 // SD access happens before sensor tasks start or after they have stopped.
 bool cardStartupRetryPending = false;
+// RAM only: older SD records are never selected after a restart.
+uint64_t currentWakeSeq = 0;
+bool currentUploadPrepared = false;
 
 // Call only before sensor tasks start or after they have stopped.
 // SdFat end() also stops SPI, so restore our board's pins before EVERY attempt.
@@ -98,7 +101,7 @@ bool startStorage(uint8_t attempts) {
   printStorageTiming("Checkpoint save", stepStartedMs, progressSaved);
   if (!progressSaved) return false;
   storageReady = true;
-  Serial.printf("Storage: ready. %llu saved readings are waiting to upload.\n", pendingRecords());
+  Serial.println("Storage: ready. Older readings stay on SD; only this wake's reading will upload.");
   return true;
 }
 
@@ -116,6 +119,8 @@ bool retryDataLoggerAfterMeasurements() {
 }
 
 bool saveSample(JsonObject sample) {
+  currentWakeSeq = 0;
+  currentUploadPrepared = false;
   if (!storageReady) return false;
 
   // 1. Wrap the existing sensor payload with a sequence number and checksum.
@@ -160,14 +165,15 @@ bool saveSample(JsonObject sample) {
     storageReady = false;
     return false;
   }
-  Serial.printf("Saved: reading %llu is safely on the SD card. %llu waiting to upload.\n", seq, pendingRecords());
+  currentWakeSeq = seq;
+  Serial.printf("Saved: reading %llu is on SD and ready for one upload attempt.\n", seq);
   return true;
 }
 
-uint64_t pendingRecords() { return checkpoint.nextSeq - checkpoint.lastAckedSeq - 1; }
 bool prepareUpload(const String &device, String &body, uint64_t &first, uint64_t &last) {
-  if (!storageReady || !pendingRecords()) return false;
-  first = checkpoint.lastAckedSeq + 1;
+  if (!storageReady || !currentWakeSeq || currentUploadPrepared) return false;
+  currentUploadPrepared = true; // One attempt per wake, including failed HTTPS.
+  first = currentWakeSeq;
   last = first - 1;
   JsonDocument batch;
   // Upload only the compact field list; keep full diagnostics on the SD card.
@@ -189,7 +195,7 @@ bool prepareUpload(const String &device, String &body, uint64_t &first, uint64_t
   for (Segment &archive : segments) {
     if (!archive.count || archive.last < first) continue;
     uint64_t n = first > archive.first ? first - archive.first : 0;
-    for (; n < archive.count && records.size() < UPLOAD_MAX_RECORDS; ++n) {
+    for (; n < archive.count && records.size() < 1; ++n) {
       String line;
       RecordIndex entry;
       if (!readIndexed(archive, n, line, entry) || entry.seq != last+1) return false;
@@ -211,7 +217,7 @@ bool prepareUpload(const String &device, String &body, uint64_t &first, uint64_t
       }
       last = entry.seq;
     }
-    if (records.size() >= UPLOAD_MAX_RECORDS || (n < archive.count)) break;
+    if (records.size() >= 1 || (n < archive.count)) break;
   }
   if (last < first) return false;
   if (batch.overflowed()) return false;
@@ -223,10 +229,28 @@ bool prepareUpload(const String &device, String &body, uint64_t &first, uint64_t
 
 bool acknowledgeUpload(const String &device, uint64_t first, uint64_t last,
                        int httpStatus, const String &response) {
-  if (!storageReady || last >= checkpoint.nextSeq ||
-      !validUploadAck(device.c_str(), first, last, checkpoint.lastAckedSeq, httpStatus, response.c_str())) {
-    Serial.println("Upload: server confirmation was missing or did not match. All readings remain queued.");
+  if (!storageReady || !currentUploadPrepared || !currentWakeSeq ||
+      first != currentWakeSeq || last != first || last >= checkpoint.nextSeq ||
+      !validUploadAck(device.c_str(), first, last, first - 1, httpStatus, response.c_str())) {
+    Serial.println("Upload: server confirmation was missing or did not match. The reading stays on SD and will not be retried.");
     return false;
+  }
+  // Keep an exact receipt per successful reading. Never mark skipped records sent.
+  String receiptPath = "/odrade/sent_" + String((unsigned long long)first) + ".json";
+  FsFile receipt = logCard.open(receiptPath.c_str(), O_WRONLY | O_CREAT | O_TRUNC);
+  bool receiptSaved = receipt && receipt.write(response.c_str(), response.length()) == response.length();
+  if (receiptSaved) receiptSaved = receipt.sync();
+  receipt.close();
+  if (!receiptSaved) {
+    Serial.println("Upload: server confirmed storage, but its receipt could not be saved on SD.");
+    return false;
+  }
+  currentWakeSeq = 0;
+  // Preserve the contiguous checkpoint for safe archive cleanup. A gap stays
+  // protected even when later records have individual sent receipts.
+  if (first != checkpoint.lastAckedSeq + 1) {
+    Serial.printf("Upload confirmed: reading %llu saved by the server; receipt saved on SD.\n", first);
+    return true;
   }
   Checkpoint next = checkpoint;
   next.lastAckedSeq = last;

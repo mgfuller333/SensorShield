@@ -4,6 +4,8 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+// Assert /CE before startup delays; retain LOW through deep sleep and wake.
+bool holdChargerEnableLow();
 bool setupCharger();
 void readCharger();
 void addChargerToPayload(JsonObject sample);

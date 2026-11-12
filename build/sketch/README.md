@@ -54,7 +54,7 @@ BME/BMV SPI mutex remains in place. The card is never automatically formatted.
 Start with `DataLogger.cpp`. `beginDataLogger()` opens the card, and
 `saveSample()` follows four steps: build a JSON line, append it, save its file
 position, and remember the next sequence number. `prepareUpload()` reads the
-oldest waiting records; `acknowledgeUpload()` records the server confirmation.
+current wake's reading only; `acknowledgeUpload()` records the server confirmation.
 `closeDataLogger()` releases the card before sleep.
 
 The file operations use SdFat's normal `SdFs`, `FsFile`, `open()`, `write()`,
@@ -105,11 +105,18 @@ battery telemetry does not block transmission. The web app receives the measured
 values, `chargerValid`, `batteryReadingSuspect`, and `bmsF0`/`bmsF1` fault registers.
 Unavailable readings remain null with validity flags rather than invented zeros.
 
-One oldest-first batch is attempted per wake, up to eight records or 48,000 bytes.
-A failed upload leaves readings on SD for the next measurement cycle. Old retry
-fields remain in the checkpoint format so existing cards can still be read, but
-no longer delay uploads. A valid server acknowledgment is still required before
-marking records uploaded.
+One fresh reading is attempted per wake, in a one-element JSON array. Failed
+uploads stay on SD and are never retried on later wakes. Archived readings are
+not uploaded, even if they have no server confirmation. A valid, device-scoped
+server acknowledgment is saved as `/odrade/sent_<seq>.json`; HTTP success alone
+is not a saved-reading confirmation. Sequence IDs can therefore have gaps in
+the cloud. The server must acknowledge the exact submitted sequence, not demand
+that all previous sequences were uploaded.
+
+The old contiguous checkpoint remains compatible with existing SD cards and
+never advances across an unsent record. Cleanup conservatively preserves archives
+beyond such a gap, including later confirmed records; a full card may require
+manual archiving. Old measurements are not relabeled as sent or deleted.
 
 `Modem.cpp` sends to `https://odrade.vercel.app/api/data`. The API must implement
 the acknowledgment contract in `Upload_API.md`. The firmware installs GTS Root R1
@@ -264,7 +271,7 @@ server acknowledgment and TLS checks remain enabled.
 
 Every successful measurement is eligible for an upload immediately; the logger
 no longer waits for three samples. Normally one new record is sent per wake.
-An older backlog may be included in the same batch, oldest first. There is no upload backoff; verified radio standby still precedes sleep.
+Older readings stay on SD and are never included in uploads. There is no upload backoff; verified radio standby still precedes sleep.
 
 SD startup now prints the start and elapsed time for card initialization,
 filesystem mounting, queue recovery, free-space checking, and checkpoint saving.
@@ -366,3 +373,39 @@ The sensor sketch still measures after GPS, saves locally, then reconnects LTE
 for its existing verified HTTPS POST. It does not send to the example UDP server.
 The earlier requested 180-second total satellite-search budget remains, rather
 than five separate 120-second waits from the standalone demonstration.
+
+## OLED status guide
+
+The SSD1306 screen uses plain words and no blinking error codes. The first page
+shows Init, GPS, Modem, Sensors, SD, and Payload. It switches to the sensor page
+when sensor startup begins, keeping GPS, Modem and Payload visible. Sensor rows
+rotate every two seconds. Failed or questionable sensors take priority.
+
+- `A1`–`A8`: the eight air sensors (payload indices 0–7).
+- `PM`: particle sensor.
+- `PW`: the two power monitors.
+- `BT`: battery/charger monitor.
+- `gathering` / `searching`: wait; the device is still working.
+- `done`: a reading arrived; this does not promise calibrated air-quality values.
+- `failed`: the operation failed or no reading arrived before the time limit.
+- `check`: a reading arrived with an obstruction, range, or charger fault warning.
+- GPS `fix done`: the existing firmware accepted a fix, not a new accuracy guarantee.
+- Modem `connected`: mobile data setup succeeded; cloud storage is separate.
+- Payload `sent/no proof`: HTTP succeeded, but storage confirmation was missing or invalid.
+- Payload `sent + saved`: the server's exact confirmation was validated and recorded.
+- Payload `SD failed`: the reading could not be saved, so no upload was attempted.
+
+If GPS fails, check the antenna and sky view. If the modem fails, check the SIM
+and cellular antenna. For sensor failures check power and connections; Serial
+provides the individual driver details. SD failures need card/free-space checks.
+The OLED turns off for deep sleep. No extra wait is added just to show a result.
+
+Layout guidance: [plain-language errors](https://www.nngroup.com/articles/error-message-guidelines/)
+and [separate network/cloud states](https://docs.particle.io/guide/getting-started/modes/photon/).
+Run `python3 tests/test_display_status.py` to test row width, page rotation, failure
+priority and upload labels without hardware.
+
+Sensor summary: `done` means all sensor groups supplied readings; `done (check)`
+means readings arrived but at least one group reported a warning. `partial` means
+some groups supplied readings and others did not. `failed` is reserved for no
+group supplying a reading. The individual sensor rows retain their warnings.

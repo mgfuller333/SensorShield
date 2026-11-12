@@ -15,5 +15,5 @@ bool refreshLocationIfDue();
 // DataLogger validates the response before marking records uploaded.
 bool sendStoredPayload(const String &body, int &httpStatus, String &response);
 
-// Enter verified MINIMUM radio state before deep sleep (not full power-off).
+// Send MINIMUM once to disable the radio; no polling or application retries.
 bool shutdownModem();

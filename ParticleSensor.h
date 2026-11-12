@@ -13,4 +13,5 @@ void addParticlesToPayload(JsonObject sample);
 void printParticleReadings();
 
 bool hasParticleReading();
+bool particleSensorFailed();
 bool stopParticleSensor();

@@ -26,26 +26,27 @@ uint8_t sensorStepCount = 0;
 uint32_t measurementStartedMs = 0;
 bool storageAvailable = false;
 bool cycleFinished = false;
-bool devicesStopped = false;
 String deviceId;
 DeviceStatus status;
 
 // These messages distinguish a processor reset from a disconnected USB monitor.
-#line 32 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+#line 31 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
 const char * resetDescription();
-#line 59 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+#line 58 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
 void printStartupStep(const char *message);
-#line 64 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+#line 63 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
 void printResetReason();
-#line 70 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+#line 72 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+bool enableSensorPower();
+#line 82 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
 void setup();
-#line 174 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+#line 196 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
 void loop();
-#line 257 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+#line 305 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
 void finishAndSleep();
-#line 296 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+#line 329 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
 void newBsecData(const bme68xData data, const bsecOutputs outputs, Bsec2 sensor);
-#line 32 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
+#line 31 "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/SensorShield.ino"
 const char *resetDescription()
 {
   switch (esp_reset_reason())
@@ -82,39 +83,34 @@ void printResetReason()
 {
   Serial.printf("[Startup %lu ms] Boot reason: %s (code %d).\n",
                 (unsigned long)millis(), resetDescription(), (int)esp_reset_reason());
+  if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_TIMER)
+    Serial.println("Wake confirmed: the ESP32 deep-sleep timer restarted the program.");
+}
+
+// GPIO0 is active LOW. Sleep holds it HIGH, so writing LOW alone is not enough.
+bool enableSensorPower()
+{
+  pinMode(WALTER_3V3_EN, OUTPUT);
+  digitalWrite(WALTER_3V3_EN, LOW);
+  // Prepare the output before releasing its hold, as required by ESP-IDF.
+  bool released = gpio_hold_dis((gpio_num_t)WALTER_3V3_EN) == ESP_OK;
+  digitalWrite(WALTER_3V3_EN, LOW);
+  return released;
 }
 
 void setup()
 {
+  // Keep /CE LOW before Serial delays, SD initialization, or a long GPS search.
+  bool chargePinHeld = holdChargerEnableLow();
   Serial.begin(115200);
   // Keep time to open Serial after a manual start; timer wakes measure immediately.
   if (esp_sleep_get_wakeup_cause() != ESP_SLEEP_WAKEUP_TIMER)
     delay(2000);
   Serial.println("\nODRADE | Environmental monitoring");
-  Serial.println("Starting: measure once, save to SD, attempt upload, then sleep until the next 15-minute cycle.");
+  if (!chargePinHeld)
+    Serial.println("Charger: could not hold /CE LOW; checking again during charger setup.");
+  Serial.printf("Starting: measure, save, attempt upload, then sleep for %lu seconds.\n", (unsigned long)SLEEP_SECONDS);
   printResetReason();
-  printStartupStep("Enabling external 3.3 V; allowing sensors to settle.");
-
-  // pinMode(48, OUTPUT);
-  // printStartupStep("Test 0");
-  // digitalWrite(48, 1);
-  // printStartupStep("Test 1");
-  // delay(200);
-  // printStartupStep("Test 2");
-  // digitalWrite(48, 0);
-  // printStartupStep("Test 3");
-  // gpio_hold_dis((gpio_num_t)WALTER_3V3_EN);
-  // #define WALTER_3V3_EN 0 // Active LOW, matching the working INA3221 test.
-
-  // printStartupStep("Test 4");
-  // pinMode(WALTER_3V3_EN, OUTPUT);
-  // printStartupStep("Test 5");
-  // digitalWrite(WALTER_3V3_EN, 0);
-  // printStartupStep("Test 6");
-
-  delay(200); // Retain the power settling time from the working hardware test.
-  printStartupStep("Power settling wait finished; voltage has not been verified.");
-  printResetReason(); // Repeat in case the monitor disconnected during power-up.
   uint8_t mac[6];
   esp_read_mac(mac, ESP_MAC_WIFI_STA);
   char id[13];
@@ -142,48 +138,76 @@ void setup()
   if (!storageAvailable)
     Serial.println("Storage needs attention: this cycle cannot be saved until the card is working.");
 
-  printStartupStep("Test 4");
-  pinMode(WALTER_3V3_EN, OUTPUT);
-  printStartupStep("Test 5");
-  digitalWrite(WALTER_3V3_EN, 0);
-  printStartupStep("Test 6");
+  // Preserve the board's working order: SD first, then external sensor power.
+  bool sensorPowerEnabled = enableSensorPower();
+  if (sensorPowerEnabled)
+    printStartupStep("Sensor power: GPIO0 sleep hold released; 3.3 V enable set LOW. Allowing sensors to settle.");
+  else
+    printStartupStep("Sensor power: could not release GPIO0 sleep hold; check external 3.3 V with a meter.");
 
-  setupGpsClock();
-  // Get time/location before measuring, so this cycle saves the new fix too.
-  // Mobile platform: the configured zero refresh interval requests a fix every wake.
-  if (GPS_FIX_ENABLED && locationRefreshDue()) {
-    Serial.println("Location: starting GPS before this measurement.");
-    if (setupModem()) {
-      if (!refreshLocationIfDue())
-        Serial.println("Location: radio standby was not confirmed; sensor checks continue, and upload remains blocked while GPS is active.");
-    } else {
-      Serial.println("Location: modem unavailable; this mobile measurement will have no new GPS position.");
-    }
-  } else if (GPS_FIX_ENABLED) {
-    Serial.println("Location: using saved position and GPS-synchronized clock; no new fix needed.");
-  }
+  delay(200); // Retain the power settling time from the working hardware test.
+  printStartupStep("Power settling wait finished; voltage has not been verified.");
 
   Wire.begin(I2C_SDA, I2C_SCL);
   Wire.setClock(100000);
+  bool chargerStarted = setupCharger(); // Apply battery settings before waiting for GPS.
+
+  setupDisplay();
+  setDisplayStatus(SD_STATUS, storageAvailable ? "ready" : "failed");
+  setDisplaySensor(10, chargerStarted ? "done" : "failed");
+  setupGpsClock();
+  // Get time/location before measuring, so this cycle saves the new fix too.
+  // Mobile platform: the configured zero refresh interval requests a fix every wake.
+  if (GPS_FIX_ENABLED && locationRefreshDue())
+  {
+    setDisplayStatus(GPS_STATUS, "gathering");
+    Serial.println("Location: starting GPS before this measurement.");
+    if (setupModem())
+    {
+      if (!refreshLocationIfDue())
+        Serial.println("Location: radio standby was not confirmed; sensor checks continue, and upload remains blocked while GPS is active.");
+    }
+    else
+    {
+      setDisplayStatus(GPS_STATUS, "failed");
+      setDisplayStatus(MODEM_STATUS, "failed");
+      Serial.println("Location: modem unavailable; this mobile measurement will have no new GPS position.");
+    }
+  }
+  else if (GPS_FIX_ENABLED)
+  {
+    Serial.println("Location: using saved position and GPS-synchronized clock; no new fix needed.");
+  }
+
+  setDisplayStatus(SENSOR_STATUS, "gathering");
+  showSensorPage();
   Serial.println("Checking power sensors and battery...");
   printStartupStep("Starting power monitor checks.");
 
+  setDisplaySensor(9, "gathering");
   setupPowerSensors();
   printPowerReadings();
-  setupCharger();
+  setDisplaySensor(9, getPowerStatus() == "Healthy" ? "done" : "check");
+  readCharger();
   printChargerReadings();
-  setupDisplay();
+  setDisplaySensor(10, !chargerStarted ? "failed" : getChargerStatus() == "Fault" ? "check" : "done");
   Serial.println("Checking air-quality and particle sensors...");
   currentSample = payloadDoc.to<JsonObject>();
   currentSample["bID"] = nullptr; // Legacy batch ID is not assigned; queue identity uses device + seq.
   // Missing readings stay null, including sensors that never call back.
-  for (uint8_t i = 0; i < BME_COUNT; ++i) {
+  for (uint8_t i = 0; i < BME_COUNT; ++i)
+  {
     String suffix = String(i);
     for (const char *key : {"iaq_", "iaqAcc_", "co2_", "bvoc_", "pres_", "gasR_", "temp_", "hum_", "com_gas"})
       currentSample[String(key) + suffix] = nullptr;
   }
   printStartupStep("Starting air and particle sensor checks.");
   setupAirSensors();
+  for (uint8_t i = 0; i < BME_COUNT; ++i)
+    setDisplaySensor(i, isBmeSensorReady(i) ? "gathering" : "failed");
+  setDisplaySensor(8, "gathering");
+  setDisplayStatus(INIT_STATUS, storageAvailable && chargerStarted && getActiveBmeCount() == BME_COUNT ? "done" : "failed");
+  refreshDisplay();
   measurementStartedMs = millis();
   Serial.println("Measuring: readings appear as each sensor becomes ready.");
 }
@@ -194,6 +218,11 @@ void loop()
   {
     readAirSensors();
     readCharger();
+    for (uint8_t i = 0; i < BME_COUNT; ++i)
+      if (bmeSampleReceived[i]) setDisplaySensor(i, "done");
+    if (hasParticleReading()) setDisplaySensor(8, "done");
+    else if (particleSensorFailed()) setDisplaySensor(8, "failed");
+    refreshDisplay();
     bool complete = sensorStepCount == BME_COUNT && hasParticleReading();
     bool timedOut = millis() - measurementStartedMs >= MEASUREMENT_TIMEOUT_MS;
     if (!complete && !timedOut)
@@ -221,6 +250,19 @@ void loop()
     addParticlesToPayload(currentSample);
     addChargerToPayload(currentSample);
     addLocationMetadata(currentSample);
+    for (uint8_t i = 0; i < BME_COUNT; ++i)
+      setDisplaySensor(i, bmeSampleReceived[i] ? "done" : "failed");
+    bool pmValid = currentSample["particleValid"].as<bool>();
+    setDisplaySensor(8, !hasParticleReading() ? "failed" : pmValid ? "done" : "check");
+    bool powerValid = currentSample["ina40Valid"].as<bool>() && currentSample["ina41Valid"].as<bool>();
+    bool powerSuspect = false;
+    for (const char *key : {"solReadingSuspect", "usbcReadingSuspect", "v12ReadingSuspect", "v5ReadingSuspect", "v3_3ReadingSuspect", "extReadingSuspect"})
+      powerSuspect |= currentSample[key].as<bool>();
+    bool batteryValid = currentSample["chargerValid"].as<bool>();
+    bool batteryFault = currentSample["bmsF0"].as<unsigned>() || currentSample["bmsF1"].as<unsigned>();
+    setDisplaySensor(9, !powerValid ? "failed" : powerSuspect ? "check" : "done");
+    setDisplaySensor(10, !batteryValid ? "failed" : batteryFault ? "check" : "done");
+    finishDisplaySensors();
     Serial.printf("Measurement: %u of %u air sensors supplied data. Particle reading: %s.\n",
                   sensorStepCount, BME_COUNT, hasParticleReading() ? "available" : "unavailable");
     Serial.printf("Timing: sensor collection took %lu ms.\n", (unsigned long)(millis() - measurementStartedMs));
@@ -236,11 +278,16 @@ void loop()
     // A late/slow card gets one final chance, with BME and particle SPI activity stopped.
     if (!storageAvailable)
       storageAvailable = retryDataLoggerAfterMeasurements();
+    setDisplayStatus(SD_STATUS, "saving");
     uint32_t saveStartedMs = millis();
     bool saved = !payloadDoc.overflowed() && storageAvailable && saveSample(currentSample);
     Serial.printf("Timing: saving the reading took %lu ms.\n", (unsigned long)(millis() - saveStartedMs));
+    setDisplayStatus(SD_STATUS, saved ? "saved" : "failed");
+    if (!saved) {
+      setDisplayStatus(PAYLOAD_STATUS, "SD failed");
+    }
     if (!saved)
-      Serial.println("Not saved: storage needs attention. Existing queued readings have not been discarded.");
+      Serial.println("Not saved: storage needs attention. Older SD readings have not been discarded.");
 
     // Only start the modem after the current sample is durably stored.
     if (saved)
@@ -250,7 +297,8 @@ void loop()
       else
       {
         // Faulty/missing battery readings are diagnostic data, not an upload veto.
-        Serial.println("Upload: sending readings with their health flags, including any battery faults.");
+        Serial.println("Upload: sending only the fresh reading from this wake. Older readings stay on SD.");
+        setDisplayStatus(PAYLOAD_STATUS, "sending");
         String body, response;
         uint64_t first = 0, last = 0;
         int httpStatus = 0;
@@ -261,9 +309,11 @@ void loop()
           if (sendStoredPayload(body, httpStatus, response))
             uploaded = acknowledgeUpload(deviceId, first, last, httpStatus, response);
         }
+        setDisplayStatus(PAYLOAD_STATUS, uploaded ? "sent + saved" :
+                         (httpStatus >= 200 && httpStatus < 300) ? "sent/no proof" : "failed");
         Serial.printf("Timing: upload attempt took %lu ms.\n", (unsigned long)(millis() - uploadStartedMs));
         if (!uploaded)
-          Serial.println("Upload incomplete: readings stay on SD. Trying again next measurement cycle.");
+          Serial.println("Upload incomplete: this reading stays on SD without retry. Next cycle sends a new reading.");
       }
     }
     cycleFinished = true;
@@ -273,41 +323,26 @@ void loop()
 
 void finishAndSleep()
 {
-  if (!devicesStopped)
-  {
-    if (!stopChargerTelemetry())
-    {
-      Serial.println("Waiting: battery monitor has not confirmed standby. Sleep postponed.");
-      delay(5000);
-      return;
-    }
-    stopDisplay();
-    closeDataLogger();
-    SPI.end();
-    Wire.end();
-    // Prevent signal pins from feeding the switched-off sensor supply.
-    for (uint8_t cs : BME_CS)
-      pinMode(cs, INPUT);
-    for (uint8_t pin : {BMV080_CS, SD_CS, SPI_SCK, SPI_MISO, SPI_MOSI, I2C_SDA, I2C_SCL})
-      pinMode(pin, INPUT);
-    digitalWrite(WALTER_3V3_EN, HIGH);
-    gpio_hold_en((gpio_num_t)WALTER_3V3_EN);
-    gpio_deep_sleep_hold_en();
-    devicesStopped = true;
-  }
+  // The sensor workers have already stopped and each SD write was synced.
+  if (!stopChargerTelemetry())
+    Serial.println("Charger: ADC/CE shutdown check failed; continuing to sleep.");
   if (!shutdownModem())
-  {
-    Serial.println("Sleep postponed: the cellular radio has not confirmed standby. Checking again in five seconds.");
-    delay(5000);
-    return;
-  }
-  uint64_t intervalMs = uint64_t(WAKE_INTERVAL_SECONDS) * 1000;
-  uint64_t sleepMs = millis() < intervalMs ? intervalMs - millis() : 1000;
-  Serial.printf("Timing: total awake time %lu ms.\n", (unsigned long)millis());
-  Serial.printf("Sleeping: SD card closed, sensors off, and cellular radio in standby. Next measurement in %llu seconds.\n", sleepMs / 1000);
+    Serial.println("Modem: standby command failed; ESP32 will sleep, but modem power use is unconfirmed.");
+  stopDisplay();
+  closeDataLogger();
+  SPI.end();
+  Wire.end();
+  for (uint8_t cs : BME_CS)
+    pinMode(cs, INPUT);
+  for (uint8_t pin : {BMV080_CS, SD_CS, SPI_SCK, SPI_MISO, SPI_MOSI, I2C_SDA, I2C_SCL})
+    pinMode(pin, INPUT);
+  digitalWrite(WALTER_3V3_EN, HIGH);
+  gpio_hold_en((gpio_num_t)WALTER_3V3_EN);
+  gpio_deep_sleep_hold_en();
+
+  Serial.printf("Sleeping for %lu seconds. Saved readings remain on SD.\n", (unsigned long)SLEEP_SECONDS);
   Serial.flush();
-  esp_sleep_enable_timer_wakeup(sleepMs * 1000);
-  esp_deep_sleep_start();
+  esp_deep_sleep(uint64_t(SLEEP_SECONDS) * 1000000ULL);
 }
 
 void newBsecData(const bme68xData data, const bsecOutputs outputs, Bsec2 sensor)
@@ -350,7 +385,8 @@ void newBsecData(const bme68xData data, const bsecOutputs outputs, Bsec2 sensor)
   if (!(temperature && humidity && iaq && co2 && voc))
     return;
   // Raw measurements already supplied by Bosch; no BSEC subscription changes.
-  if (data.status & BME68X_NEW_DATA_MSK) {
+  if (data.status & BME68X_NEW_DATA_MSK)
+  {
     currentSample["pres_" + suffix] = data.pressure / 100.0f; // Pa to hPa
     if ((data.status & (BME68X_GASM_VALID_MSK | BME68X_HEAT_STAB_MSK)) ==
         (BME68X_GASM_VALID_MSK | BME68X_HEAT_STAB_MSK))
