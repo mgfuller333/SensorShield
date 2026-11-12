@@ -1,3 +1,4 @@
+#include "Display.h"
 // Adapted flow: Walter examples/positioning/positioning.ino and examples/https/https.ino.
 // Uses the installed WalterModem 1.6.1 APIs; see README.md for example links.
 #include "Modem.h"
@@ -114,6 +115,7 @@ bool setupModem()
   {
     modemStatus = "Unavailable";
     Serial.println("Connection: modem initialization failed.");
+    setDisplayStatus(MODEM_STATUS, "failed");
     return false;
   }
   Serial.println("Connection: modem initialized. Checking communication...");
@@ -121,6 +123,7 @@ bool setupModem()
   {
     modemStatus = "Unavailable";
     Serial.println("Connection: modem did not answer the communication check.");
+    setDisplayStatus(MODEM_STATUS, "failed");
     return false;
   }
   modem.setNetworkEventHandler(myNetworkEventHandler);
@@ -129,12 +132,14 @@ bool setupModem()
   WalterModemRsp radio = {};
   if (!modem.getRAT(&radio)) {
     Serial.println("Connection: could not read the radio technology; modem setup failed.");
+    setDisplayStatus(MODEM_STATUS, "failed");
     return false;
   }
   if (radio.data.rat != WALTER_MODEM_RAT_LTEM) {
     Serial.println("Connection: selecting LTE-M for Soracom.");
     if (!modem.setRAT(WALTER_MODEM_RAT_LTEM)) {
       Serial.println("Connection: could not select LTE-M.");
+      setDisplayStatus(MODEM_STATUS, "failed");
       return false;
     }
   }
@@ -240,7 +245,8 @@ void updateGNSSAssistance() {
                       (unsigned long)((millis() - started) / 1000));
         progress = millis();
       }
-      delay(50);
+      refreshDisplay();
+    delay(50);
     }
     Serial.println(gnssAssistanceReceived == int(type) ?
                    "Location: satellite assistance updated." :
@@ -405,6 +411,7 @@ bool attemptGNSSFix()
                     (unsigned long)((millis() - start) / 1000));
       lastProgress = millis();
     }
+    refreshDisplay();
     delay(50);
   }
   if (gnssPending && modem.gnssPerformAction(WALTER_MODEM_GNSS_ACTION_CANCEL))
@@ -423,7 +430,10 @@ bool refreshLocationIfDue()
   if (!locationRefreshDue())
     return true;
 
-  if (!attemptGNSSFix())
+  setDisplayStatus(GPS_STATUS, "gathering");
+  bool gotFix = attemptGNSSFix();
+  setDisplayStatus(GPS_STATUS, gotFix ? "fix done" : "failed");
+  if (!gotFix)
     Serial.println("Location: continuing measurement without a new GPS fix.");
   // Clock/assistance preparation can fail while LTE is still on. Put it back
   // in standby before sensor acquisition, and cancel any unfinished GPS search.
@@ -482,6 +492,7 @@ bool enableCellularRadio()
                     (unsigned long)((millis() - start) / 1000));
       lastProgress = millis();
     }
+    refreshDisplay();
     delay(50);
   }
   if (radioCommandResult == WALTER_MODEM_STATE_OK)
@@ -523,6 +534,7 @@ bool waitForNetwork()
                     (unsigned long)((millis() - start) / 1000));
       lastProgress = millis();
     }
+    refreshDisplay();
     delay(500);
   }
   Serial.println("Connection successful: connected to the mobile network. Preparing internet access.");
@@ -557,13 +569,23 @@ bool waitForSIM()
       Serial.println("SIM: blocked; contact the SIM provider for the PUK unlock code.");
     else
       Serial.println("SIM: not ready; the SIM may require an unlock code from its provider.");
+    refreshDisplay();
     delay(500);
   } while (millis() - start < 10000);
   Serial.println("SIM: readiness check timed out. Check SIM seating or PIN requirements.");
   return false;
 }
 
+bool connectMobileData();
 bool lteConnect()
+{
+  setDisplayStatus(MODEM_STATUS, "searching");
+  bool connected = connectMobileData();
+  setDisplayStatus(MODEM_STATUS, connected ? "connected" : "failed");
+  return connected;
+}
+
+bool connectMobileData()
 {
   radioInStandby = false;
   Serial.println("Connection: 1/5 - turning off radio before configuration (NO_RF).");
@@ -774,6 +796,7 @@ bool sendStoredPayload(const String &body, int &httpStatus, String &response)
       printHttpsError(httpConnectionError.load());
       return false;
     }
+    refreshDisplay();
     delay(250);
   }
   Serial.println("Upload: server response timed out. Readings remain on the SD card.");
@@ -805,6 +828,7 @@ bool lteDisconnect()
                     (unsigned long)((millis() - disconnectStarted) / 1000));
       progress = millis();
     }
+    refreshDisplay();
     delay(100);
   }
   Serial.println("Connection: LTE disconnected. Verifying radio standby.");
@@ -820,33 +844,31 @@ bool lteDisconnect()
   }
   radioInStandby = true;
   modemStatus = "Standby";
+  setDisplayStatus(MODEM_STATUS, "disconnected");
   Serial.println("Connection: cellular radio standby confirmed.");
   return true;
 }
 
-// Keep the existing sketch interface. 'Shutdown' here means verified radio
-// standby; it does not mean complete removal of modem power.
+// One synchronous command, as in Walter's examples. MINIMUM disables the radio;
+// it does not remove modem power. The caller sleeps even if the command fails.
 bool shutdownModem()
 {
-  if (radioInStandby && !modemStarted)
-  {
-    Serial.println("Connection: radio remains in standby from the previous cycle.");
-    return true;
-  }
-  // On a cold boot the modem may be on even if no upload was attempted.
-  if (!modemStarted)
-    Serial.println("Connection: initializing modem only to put its radio in standby; no LTE connection requested.");
-  if (!setupModem())
+  if (!modemStarted) {
+    Serial.println("Modem: not initialized; no standby command sent.");
     return false;
-  if (gnssPending)
-  {
-    Serial.println("Location: stopping GPS before sleep.");
-    if (!modem.gnssPerformAction(WALTER_MODEM_GNSS_ACTION_CANCEL))
-    {
-      Serial.println("Location: GPS stop failed; sleep postponed.");
-      return false;
-    }
-    gnssPending = false;
   }
-  return lteDisconnect();
+  if (gnssPending) {
+    if (modem.gnssPerformAction(WALTER_MODEM_GNSS_ACTION_CANCEL))
+      gnssPending = false;
+    else
+      Serial.println("Location: GPS stop command failed.");
+  }
+  Serial.println("Modem: turning off cellular radio (MINIMUM).");
+  bool accepted = modem.setOpState(WALTER_MODEM_OPSTATE_MINIMUM);
+  if (accepted) {
+    radioInStandby = true;
+    modemStatus = "Standby";
+    Serial.println("Modem: radio standby command accepted.");
+  }
+  return accepted;
 }

@@ -79,9 +79,9 @@
         "-I/Users/morganfuller/Documents/Arduino/libraries/Adafruit_INA3221-main",
         "@/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/build_opt.h",
         "@/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/file_opts",
-        "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/DataLogger.cpp",
+        "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/ParticleSensor.cpp",
         "-o",
-        "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/DataLogger.cpp.o"
+        "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/ParticleSensor.cpp.o"
       ],
       "defines": [
         "F_CPU=240000000L",

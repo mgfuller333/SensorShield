@@ -1,3 +1,4 @@
+#include "Display.h"
 #include "AirSensors.h"
 #include "board_pins.h"
 #include "ParticleSensor.h"
@@ -65,6 +66,8 @@ bool setupAirSensors()
     bmeReady[i] = false;
     bmeSubscriptionStatus[i] = 0;
 
+    setDisplaySensor(i, "gathering");
+    refreshDisplay();
     Serial.printf("Air sensor %u: starting (connection pin %u).\n", i+1, BME_CS[i]);
 
     bme[i].allocateMemory(bsecMemory[i]);
@@ -83,6 +86,8 @@ bool setupAirSensors()
     {
       Serial.printf("Air sensor %u (pin %u): could not start. Diagnostic codes: %d / %d\n",
                     i+1, BME_CS[i], (int)bme[i].status, (int)bme[i].sensor.status);
+      setDisplaySensor(i, "failed");
+      refreshDisplay();
       continue;
     }
 
@@ -130,7 +135,10 @@ bool setupAirSensors()
   Serial.printf("Air sensors: %u of %u ready to measure\n", activeBmeCount, BME_COUNT);
 
   // Launch only after BME initialization, so both drivers share the SPI lock.
+  setDisplaySensor(8, "gathering");
+  refreshDisplay();
   bool particleTaskStarted = setupParticleSensor(sensorSpiMutex);
+  if (!particleTaskStarted) setDisplaySensor(8, "failed");
   return activeBmeCount > 0 || particleTaskStarted;
 }
 

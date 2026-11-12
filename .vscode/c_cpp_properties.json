@@ -78,9 +78,9 @@
         "-I/Users/morganfuller/Documents/Arduino/libraries/Adafruit_INA3221-main",
         "@/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/build_opt.h",
         "@/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/file_opts",
-        "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/Modem.cpp",
+        "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/Charger.cpp",
         "-o",
-        "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/Modem.cpp.o"
+        "/Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/Charger.cpp.o"
       ],
       "defines": [
         "F_CPU=240000000L",

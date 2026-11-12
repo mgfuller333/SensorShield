@@ -78,13 +78,19 @@ struct WMGNSSFixEvent {
 const int WALTER_MODEM_GNSS_FIX_STATUS_READY=0;
 void printGnssFix(const WMGNSSFixEvent&){}
 bool storageReady=true;
-struct {uint64_t lastAckedSeq=0;} checkpoint;
+struct Checkpoint {uint64_t lastAckedSeq=0,nextSeq=10,failures=0,retryWake=0;} checkpoint;
+uint64_t currentWakeSeq=0;
+bool currentUploadPrepared=false;
+bool receiptOk=true;
+struct FsFile {operator bool(){return receiptOk;} size_t write(const char*,size_t n){return n;} bool sync(){return receiptOk;} void close(){}};
+struct {FsFile open(const char*,int){return {};}} logCard;
+const int O_WRONLY=1,O_CREAT=2,O_TRUNC=4;
+bool commitState(Checkpoint next){checkpoint=next;return true;}
 struct Segment {uint64_t count,first,last;};
 struct RecordIndex {uint64_t seq;};
 std::vector<Segment> segments;
 std::vector<String> lines;
 const size_t UPLOAD_MAX_RECORDS=8,UPLOAD_MAX_BYTES=48000,MAX_RECORD_BYTES=16000;
-uint64_t pendingRecords(){return lines.size()-checkpoint.lastAckedSeq;}
 bool readIndexed(Segment&,uint64_t n,String &line,RecordIndex &entry){line=lines.at(n);entry.seq=n+1;return true;}
 int lastIndexOf(const String &s,const char* text){auto p=s.rfind(text);return p==String::npos?-1:int(p);}
 '''
@@ -104,20 +110,30 @@ int main(){
  assert(std::abs(row["alt"].as<double>()-1854.210)<0.000001); assert(row["satCnt"]==12);
  String line; assert(buildRecord(row,9,epochNow/86400,line)); lines.push_back(line);
  segments={{9,1,9}}; auto original=lines;
- String body; uint64_t first,last; assert(prepareUpload("ABC",body,first,last));
+ String body; uint64_t first,last;
+ // Boot with an archive alone must not upload an old record.
+ assert(!prepareUpload("ABC",body,first,last));
+ currentWakeSeq=9; // saveSample publishes this only after durable storage.
+ assert(prepareUpload("ABC",body,first,last));
  JsonDocument uploaded; assert(!deserializeJson(uploaded,body));
- assert(first==1 && last==8 && uploaded.size()==8);
- assert(uploaded[0]["ts"].isNull() && uploaded[7]["loc"].isNull());
- // Simulate server acknowledging the first eight: now the fresh sample uploads.
- checkpoint.lastAckedSeq=8; assert(prepareUpload("ABC",body,first,last));
- assert(!deserializeJson(uploaded,body)); assert(first==9 && last==9);
+ assert(first==9 && last==9 && uploaded.size()==1);
+ assert(!prepareUpload("ABC",body,first,last)); // No retry after a failed attempt.
+ String ack=R"({"version":1,"device":"ABC","firstSeq":9,"lastSeq":9,"durable":true})";
+ assert(!acknowledgeUpload("ABC",9,9,500,ack));
+ assert(!acknowledgeUpload("ABC",9,9,200,""));
+ assert(!acknowledgeUpload("wrong-device",9,9,200,ack));
+ assert(checkpoint.lastAckedSeq==0);
+ receiptOk=false; assert(!acknowledgeUpload("ABC",9,9,200,ack));
+ receiptOk=true; assert(acknowledgeUpload("ABC",9,9,200,ack));
+ assert(checkpoint.lastAckedSeq==0); // Old failed records cannot become 'sent'.
+ assert(!prepareUpload("ABC",body,first,last));
  for(const char* key:{"ts","loc","satCnt"}) assert(uploaded[0][key]==row[key]);
  assert(std::abs(uploaded[0]["alt"].as<double>()-row["alt"].as<double>())<0.001);
  assert(lines==original); std::cout<<"Fresh upload: "<<body<<"\n";
  // A later wake with no fix must not pretend to have a new mobile location.
  setupGpsClock(); JsonDocument next; addLocationMetadata(next.to<JsonObject>());
  assert(next["loc"].isNull()); assert(!next["ts"].isNull());
- std::cout<<"PASS: fix acceptance (including 20,000,000 m uncertainty), UTC/WKT conversion, sensor document creation, SD record/checksum, upload projection, old backlog, and next-wake missing fix.\n";
+ std::cout<<"PASS: fix acceptance (including 20,000,000 m uncertainty), UTC/WKT conversion, sensor document creation, SD record/checksum, fresh-only upload, failed HTTP/invalid acknowledgments, protected old backlog, and next-wake missing fix.\n";
 }
 '''
 # Follow the real queue limits and GPS refresh policy instead of duplicating them.
@@ -129,6 +145,7 @@ for name in ['GPS_REFRESH_SECONDS', 'UPLOAD_MAX_RECORDS', 'UPLOAD_MAX_BYTES']:
 include = os.environ.get('ARDUINOJSON_INCLUDE', str(Path.home() / 'Documents/Arduino/libraries/ArduinoJson/src'))
 with tempfile.TemporaryDirectory(prefix='gps-payload-') as tmp:
     source=Path(tmp)/'test.cpp'; binary=Path(tmp)/'test'
-    source.write_text(pre+clock+accept+parse+record+function('DataLogger.cpp','bool prepareUpload(')+post)
+    ack = function('DataLogger.cpp','bool acknowledgeUpload(').replace('String((unsigned long long)first)', 'std::to_string(first)')
+    source.write_text(pre+clock+accept+parse+record+function('DataLogger.cpp','bool prepareUpload(')+ack+post)
     subprocess.run(['c++','-std=c++17','-I'+include,'-I'+str(ROOT),str(source),'-o',str(binary)],check=True)
     subprocess.run([str(binary)],check=True)

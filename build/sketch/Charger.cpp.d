@@ -158,6 +158,7 @@
  /Users/morganfuller/Documents/Arduino/libraries/ArduinoJson/src/ArduinoJson.hpp \
  /Users/morganfuller/Documents/Arduino/libraries/ArduinoJson/src/ArduinoJson/Configuration.hpp \
  /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/sketch_types.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/board_pins.h \
  /Users/morganfuller/Documents/Arduino/libraries/Adafruit_bq25798-main/Adafruit_BQ25798.h \
  /Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_BusIO_Register.h \
  /Users/morganfuller/Documents/Arduino/libraries/Adafruit_BusIO/Adafruit_GenericDevice.h \

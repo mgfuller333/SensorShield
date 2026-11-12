@@ -1,10 +1,13 @@
 #pragma once
+#include <Arduino.h>
 
-#include "sketch_types.h"
-
+// Updated from the main Arduino task, never from modem/particle callbacks.
+enum DisplayField { INIT_STATUS, GPS_STATUS, MODEM_STATUS, SENSOR_STATUS, SD_STATUS, PAYLOAD_STATUS };
 bool setupDisplay();
-void showDisplay(const DeviceStatus &status);
-
+void setDisplayStatus(DisplayField field, const char *value);
+void setDisplaySensor(uint8_t index, const char *value); // A1-A8, PM, PW, BT
+void showSensorPage();
+void finishDisplaySensors();
+void refreshDisplay();
 bool isDisplayReady();
-
 void stopDisplay();

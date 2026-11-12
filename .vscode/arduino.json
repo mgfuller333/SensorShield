@@ -1,5 +1,5 @@
 {
-  "port": "/dev/cu.usbmodem101",
+  "port": "/dev/cu.FOSIAUDIO",
   "configuration": "UploadSpeed=921600,USBMode=hwcdc,CDCOnBoot=cdc,MSCOnBoot=default,DFUOnBoot=default,UploadMode=default,CPUFreq=240,FlashMode=qio,FlashSize=16M,PartitionScheme=fatflash,DebugLevel=none,PSRAM=enabled,LoopCore=1,EventsCore=1,EraseFlash=all,JTAGAdapter=builtin,ZigbeeMode=default",
   "output": "build",
   "board": "esp32:esp32:esp32s3",
@@ -7,7 +7,7 @@
   "useProgrammer": false,
   "configurationRequired": true,
   "monitorPortSettings": {
-    "port": "/dev/tty.usbmodem101",
+    "port": "/dev/tty.FOSIAUDIO",
     "baudRate": 115200,
     "lineEnding": "\r\n",
     "dataBits": 8,

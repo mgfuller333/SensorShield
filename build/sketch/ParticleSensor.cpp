@@ -183,3 +183,11 @@ bool stopParticleSensor() {
   } while (millis() - start < 5000);
   return false;
 }
+
+// Read from the main loop; the particle worker never writes to the OLED/I2C bus.
+bool particleSensorFailed() {
+  portENTER_CRITICAL(&particleDataLock);
+  bool failed = !particleTaskAlive && !hasParticleSample && !particleStopRequested;
+  portEXIT_CRITICAL(&particleDataLock);
+  return failed;
+}

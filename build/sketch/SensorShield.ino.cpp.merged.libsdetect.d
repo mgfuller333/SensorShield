@@ -173,7 +173,6 @@ SensorShield.ino.cpp.o: \
  /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/Charger.h \
  /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/DataLogger.h \
  /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/Display.h \
- /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/sketch_types.h \
  /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/GpsClock.h \
  /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/LoggerConfig.h \
  /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/Modem.h \
@@ -198,4 +197,5 @@ SensorShield.ino.cpp.o: \
  /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/ParticleSensor.h \
  /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/PowerSensors.h \
  /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/board_pins.h \
+ /Users/morganfuller/Documents/Sireen/Sharingan/CoralGablesOdradePCBRev1/SensorShield/build/sketch/sketch_types.h \
  /Users/morganfuller/Library/Arduino15/packages/esp32/tools/esp32-arduino-libs/idf-release_v5.3-489d7a2b-v1/esp32s3/include/esp_hw_support/include/esp_mac.h
