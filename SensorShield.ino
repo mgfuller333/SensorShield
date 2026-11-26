@@ -68,17 +68,6 @@ void printResetReason()
     Serial.println("Wake confirmed: the ESP32 deep-sleep timer restarted the program.");
 }
 
-// GPIO0 is active LOW. Sleep holds it HIGH, so writing LOW alone is not enough.
-bool enableSensorPower()
-{
-  pinMode(WALTER_3V3_EN, OUTPUT);
-  digitalWrite(WALTER_3V3_EN, LOW);
-  // Prepare the output before releasing its hold, as required by ESP-IDF.
-  bool released = gpio_hold_dis((gpio_num_t)WALTER_3V3_EN) == ESP_OK;
-  digitalWrite(WALTER_3V3_EN, LOW);
-  return released;
-}
-
 void setup()
 {
   // Keep /CE LOW before Serial delays, SD initialization, or a long GPS search.
@@ -118,13 +107,6 @@ void setup()
   printStartupStep(storageAvailable ? "SD storage ready." : "SD initialization/recovery failed; continuing sensor checks.");
   if (!storageAvailable)
     Serial.println("Storage needs attention: this cycle cannot be saved until the card is working.");
-
-  // Preserve the board's working order: SD first, then external sensor power.
-  bool sensorPowerEnabled = enableSensorPower();
-  if (sensorPowerEnabled)
-    printStartupStep("Sensor power: GPIO0 sleep hold released; 3.3 V enable set LOW. Allowing sensors to settle.");
-  else
-    printStartupStep("Sensor power: could not release GPIO0 sleep hold; check external 3.3 V with a meter.");
 
   delay(200); // Retain the power settling time from the working hardware test.
   printStartupStep("Power settling wait finished; voltage has not been verified.");
@@ -171,7 +153,8 @@ void setup()
   setDisplaySensor(9, getPowerStatus() == "Healthy" ? "done" : "check");
   readCharger();
   printChargerReadings();
-  setDisplaySensor(10, !chargerStarted ? "failed" : getChargerStatus() == "Fault" ? "check" : "done");
+  setDisplaySensor(10, !chargerStarted ? "failed" : getChargerStatus() == "Fault" ? "check"
+                                                                                  : "done");
   Serial.println("Checking air-quality and particle sensors...");
   currentSample = payloadDoc.to<JsonObject>();
   currentSample["bID"] = nullptr; // Legacy batch ID is not assigned; queue identity uses device + seq.
@@ -200,9 +183,12 @@ void loop()
     readAirSensors();
     readCharger();
     for (uint8_t i = 0; i < BME_COUNT; ++i)
-      if (bmeSampleReceived[i]) setDisplaySensor(i, "done");
-    if (hasParticleReading()) setDisplaySensor(8, "done");
-    else if (particleSensorFailed()) setDisplaySensor(8, "failed");
+      if (bmeSampleReceived[i])
+        setDisplaySensor(i, "done");
+    if (hasParticleReading())
+      setDisplaySensor(8, "done");
+    else if (particleSensorFailed())
+      setDisplaySensor(8, "failed");
     refreshDisplay();
     bool complete = sensorStepCount == BME_COUNT && hasParticleReading();
     bool timedOut = millis() - measurementStartedMs >= MEASUREMENT_TIMEOUT_MS;
@@ -234,15 +220,18 @@ void loop()
     for (uint8_t i = 0; i < BME_COUNT; ++i)
       setDisplaySensor(i, bmeSampleReceived[i] ? "done" : "failed");
     bool pmValid = currentSample["particleValid"].as<bool>();
-    setDisplaySensor(8, !hasParticleReading() ? "failed" : pmValid ? "done" : "check");
+    setDisplaySensor(8, !hasParticleReading() ? "failed" : pmValid ? "done"
+                                                                   : "check");
     bool powerValid = currentSample["ina40Valid"].as<bool>() && currentSample["ina41Valid"].as<bool>();
     bool powerSuspect = false;
     for (const char *key : {"solReadingSuspect", "usbcReadingSuspect", "v12ReadingSuspect", "v5ReadingSuspect", "v3_3ReadingSuspect", "extReadingSuspect"})
       powerSuspect |= currentSample[key].as<bool>();
     bool batteryValid = currentSample["chargerValid"].as<bool>();
     bool batteryFault = currentSample["bmsF0"].as<unsigned>() || currentSample["bmsF1"].as<unsigned>();
-    setDisplaySensor(9, !powerValid ? "failed" : powerSuspect ? "check" : "done");
-    setDisplaySensor(10, !batteryValid ? "failed" : batteryFault ? "check" : "done");
+    setDisplaySensor(9, !powerValid ? "failed" : powerSuspect ? "check"
+                                                              : "done");
+    setDisplaySensor(10, !batteryValid ? "failed" : batteryFault ? "check"
+                                                                 : "done");
     finishDisplaySensors();
     Serial.printf("Measurement: %u of %u air sensors supplied data. Particle reading: %s.\n",
                   sensorStepCount, BME_COUNT, hasParticleReading() ? "available" : "unavailable");
@@ -264,7 +253,8 @@ void loop()
     bool saved = !payloadDoc.overflowed() && storageAvailable && saveSample(currentSample);
     Serial.printf("Timing: saving the reading took %lu ms.\n", (unsigned long)(millis() - saveStartedMs));
     setDisplayStatus(SD_STATUS, saved ? "saved" : "failed");
-    if (!saved) {
+    if (!saved)
+    {
       setDisplayStatus(PAYLOAD_STATUS, "SD failed");
     }
     if (!saved)
@@ -290,8 +280,8 @@ void loop()
           if (sendStoredPayload(body, httpStatus, response))
             uploaded = acknowledgeUpload(deviceId, first, last, httpStatus, response);
         }
-        setDisplayStatus(PAYLOAD_STATUS, uploaded ? "sent + saved" :
-                         (httpStatus >= 200 && httpStatus < 300) ? "sent/no proof" : "failed");
+        setDisplayStatus(PAYLOAD_STATUS, uploaded ? "sent + saved" : (httpStatus >= 200 && httpStatus < 300) ? "sent/no proof"
+                                                                                                             : "failed");
         Serial.printf("Timing: upload attempt took %lu ms.\n", (unsigned long)(millis() - uploadStartedMs));
         if (!uploaded)
           Serial.println("Upload incomplete: this reading stays on SD without retry. Next cycle sends a new reading.");
