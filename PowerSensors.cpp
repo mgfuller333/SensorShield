@@ -17,11 +17,11 @@ bool inaBottomReady = false;
 bool powerReadingsSuspect = false;
 
 // Plausibility warnings, not a diagnosis of wiring or supply faults.
-// With the existing 0.05-ohm shunts, about 3276 mA is the ADC limit.
+// With the board's 0.1-ohm shunts, about 1638 mA is the ADC limit.
 // Zero volts is allowed: a monitored input may simply be disconnected.
 bool powerReadingSuspect(float volts, float milliamps, float maximumVolts) {
   return !isfinite(volts) || !isfinite(milliamps) || volts < 0 ||
-         volts > maximumVolts || fabsf(milliamps) >= 3275.0f;
+         volts > maximumVolts || fabsf(milliamps) >= 1637.5f;
 }
 
 void warnPowerReading(const char *name, float volts, float milliamps, float maximumVolts) {
@@ -63,7 +63,7 @@ bool initializeINA3221(Adafruit_INA3221 &ina, uint8_t address) {
   Serial.print(address, HEX); Serial.println(")");
   ina.setAveragingMode(INA3221_AVG_16_SAMPLES);
   for (uint8_t channel = 0; channel < 3; channel++) {
-    ina.setShuntResistance(channel, 0.05f);
+    ina.setShuntResistance(channel, 0.1f);
   }
   ina.setPowerValidLimits(3.0f, 15.0f);
   return true;

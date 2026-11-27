@@ -204,7 +204,7 @@ folder/recovery failures are reported separately.
 
 INA readings remain available for diagnosis, with per-channel `ReadingSuspect`
 flags in the payload. Warnings mark non-finite/negative bus voltage, current near
-+/-3276 mA (the measurement limit with the configured 0.05-ohm shunts), and
++/-1638 mA (the measurement limit with the configured 0.1-ohm shunts), and
 unexpectedly high voltage. The regulated 5 V and 3.3 V channels use 5.5 V and
 3.6 V warning limits; other channels use 26 V. These are plausibility checks,
 not proof of a faulty supply or a substitute for measurement with a meter.
